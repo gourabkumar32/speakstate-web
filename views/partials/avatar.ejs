@@ -1,0 +1,30 @@
+<% /* Avatar partial: expects `tweet` object in scope. Renders anonymous image, profile picture (resolves path), or initial fallback. */ %>
+<% if (typeof tweet !== 'undefined') { %>
+    <% 
+        // First-letter fallback (single uppercase initial) when no profile image
+        var firstChar = (tweet.displayName || '').toString().trim().charAt(0) || '?';
+        firstChar = firstChar.toUpperCase();
+        var size = typeof sizeClass === 'string' ? sizeClass : 'w-12 h-12';
+        var showAnonImage = (typeof showAnonymousImage === 'boolean') ? showAnonymousImage : true;
+    %>
+
+    <% if (tweet.displayProfilePicture || (tweet.user && tweet.user.profilePicture)) { %>
+        <% 
+            // Prefer explicit displayProfilePicture (full path) but fall back to tweet.user.profilePicture filename
+            var avatarSrc = null;
+            if (tweet.displayProfilePicture) {
+                avatarSrc = (typeof tweet.displayProfilePicture === 'string' && tweet.displayProfilePicture.startsWith('/')) ? tweet.displayProfilePicture : ('/uploads/profiles/' + tweet.displayProfilePicture);
+            } else if (tweet.user && tweet.user.profilePicture) {
+                avatarSrc = '/uploads/profiles/' + tweet.user.profilePicture;
+            }
+        %>
+        <img src="<%= avatarSrc %>" alt="<%= tweet.displayName || 'User avatar' %>" loading="lazy" class="<%= size %> rounded-full object-cover" onerror="this.onerror=null;this.outerHTML='<div class=&quot;<%= size %> rounded-full bg-blue-600 flex items-center justify-center text-white text-sm font-semibold overflow-hidden&quot;><span aria-hidden=\'true\'> <%= firstChar %> </span></div>';">
+
+    <% } else { %>
+        <div class="<%= size %> rounded-full bg-blue-600 flex items-center justify-center text-white text-sm font-semibold overflow-hidden">
+            <span aria-hidden="true"><%= firstChar %></span>
+            <span class="sr-only"><%= (tweet.displayName || 'User') + ' avatar' %></span>
+        </div>
+    <% } %>
+
+<% } %>

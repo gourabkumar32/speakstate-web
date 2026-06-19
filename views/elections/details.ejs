@@ -1,0 +1,1043 @@
+<%- include('../partials/header') %>
+
+<!-- Add Swiper CSS with optimized loading -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css" />
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css" as="style" />
+
+<style>
+  /* Base styles with better mobile-first approach */
+  .mb-6 {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  
+  .border {
+    margin-left: 0px;
+    margin-right: 0px;
+  }
+  
+  .constituency-section {
+    margin-left: 10px;
+    margin-right: 10px;
+    padding: 15px;
+    margin-bottom: 20px;
+  }
+  
+  .text-3xl {
+    color: rgb(240, 236, 236);
+    font-size: 1.5rem;
+  }
+  
+  .text-xl {
+    text-align: center;
+    font-size: 1.2rem;
+  }
+  
+  /* Optimized Swiper styles */
+  .swiper-container {
+    width: 100%;
+    padding-bottom: 30px;
+    padding-top: 15px;
+    overflow: hidden; /* Changed from visible to hidden for better performance */
+    will-change: transform; /* Performance optimization */
+  }
+  
+  .swiper-slide {
+    width: 100%;
+    height: auto;
+    transition: transform 0.3s ease; /* Optimized transition property */
+    transform-origin: center;
+    transform: translate3d(0, 0, 0); /* Force GPU acceleration */
+    backface-visibility: hidden; /* Performance optimization */
+  }
+  
+  .swiper-slide-active {
+    z-index: 2;
+  }
+  
+  /* Optimized card styles */
+  .candidate-card {
+    transition: box-shadow 0.2s ease, transform 0.2s ease; /* Faster transition with transform */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Lighter shadow */
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 0 auto;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    max-width: 95%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  .candidate-card:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    transform: translateY(-3px); /* Subtle hover effect */
+  }
+  
+  .candidate-image {
+    width: 100%;
+    height: 180px; /* Slightly smaller for mobile */
+    object-fit: cover;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    will-change: transform; /* Performance optimization */
+    loading: lazy; /* Native lazy loading */
+  }
+
+  .candidate-info {
+    padding: 12px; /* Smaller padding for mobile */
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .candidate-name {
+    font-size: 1.3rem; /* Smaller font for mobile */
+    font-weight: bold;
+    margin-bottom: 4px;
+    color: #333;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap; /* Prevent text wrapping for better layout */
+  }
+
+  .candidate-party {
+    font-size: 0.9rem; /* Smaller font for mobile */
+    color: #666;
+    margin-bottom: 8px;
+  }
+
+  .vote-count {
+    font-size: 1.1rem; /* Smaller font for mobile */
+    font-weight: bold;
+    color: #007bff;
+    margin-top: auto;
+    margin-bottom: 8px;
+  }
+
+  .vote-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 12px; /* Smaller padding for mobile */
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s ease; /* Faster transition */
+    -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
+    touch-action: manipulation; /* Optimization for touch */
+  }
+
+  .vote-btn:hover {
+    background-color: #0056b3;
+  }
+
+  .voted-text {
+    color: #28a745;
+    font-weight: bold;
+    padding: 8px 12px; /* Smaller padding for mobile */
+    border-radius: 5px;
+    border: 1px solid #28a745;
+    text-align: center;
+  }
+  
+  /* Additional responsive styles for candidate cards */
+  @media (min-width: 640px) {
+    .candidate-image {
+      height: 190px;
+    }
+    
+    .candidate-info {
+      padding: 14px;
+    }
+    
+    .candidate-name {
+      font-size: 1.4rem;
+    }
+    
+    .candidate-party {
+      font-size: 0.95rem;
+    }
+    
+    .vote-count {
+      font-size: 1.15rem;
+    }
+    
+    .vote-btn, .voted-text {
+      padding: 9px 14px;
+    }
+  }
+  
+  @media (min-width: 768px) {
+    .candidate-image {
+      height: 200px;
+    }
+    
+    .candidate-info {
+      padding: 15px;
+    }
+    
+    .candidate-name {
+      font-size: 1.5rem;
+      margin-bottom: 5px;
+    }
+    
+    .candidate-party {
+      font-size: 1rem;
+      margin-bottom: 10px;
+    }
+    
+    .vote-count {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+    }
+    
+    .vote-btn, .voted-text {
+      padding: 10px 15px;
+    }
+  }
+  
+  /* Pagination and navigation optimizations */
+  .swiper-pagination {
+    bottom: 0;
+    position: relative;
+    margin-top: 8px;
+  }
+  
+  .swiper-pagination-bullet {
+    width: 8px;
+    height: 8px;
+    margin: 0 4px;
+  }
+  
+  .swiper-button-next, .swiper-button-prev {
+    color: #3b82f6;
+    background-color: rgba(255, 255, 255, 0.8);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease; /* Faster transition */
+    transform: scale(0.9); /* Slightly smaller on mobile */
+  }
+  
+  .swiper-button-next:after, .swiper-button-prev:after {
+    font-size: 14px;
+    font-weight: bold;
+  }
+  
+  /* Improved responsive breakpoints */
+  @media (min-width: 640px) {
+    .mb-6 {
+      padding-left: 15px;
+      padding-right: 15px;
+    }
+    
+    .border, .constituency-section {
+      margin-left: 15px;
+      margin-right: 15px;
+    }
+    
+    .constituency-section {
+      padding: 20px;
+    }
+    
+    .text-3xl {
+      font-size: 1.75rem;
+    }
+    
+    .text-xl {
+      font-size: 1.25rem;
+    }
+    
+    .candidate-card {
+      max-width: 90%;
+    }
+    
+    .swiper-button-next, .swiper-button-prev {
+      transform: scale(0.95);
+    }
+  }
+  
+  @media (min-width: 768px) {
+    .mb-6 {
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+    
+    .border, .constituency-section {
+      margin-left: 20px;
+      margin-right: 20px;
+    }
+    
+    .swiper-button-next, .swiper-button-prev {
+      width: 35px;
+      height: 35px;
+      transform: scale(1);
+    }
+    
+    .swiper-button-next:after, .swiper-button-prev:after {
+      font-size: 16px;
+    }
+    
+    .text-3xl {
+      font-size: 1.875rem;
+    }
+    
+    .swiper-container {
+      padding-bottom: 40px;
+      padding-top: 20px;
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .candidate-card {
+      max-width: 95%;
+    }
+    
+    .swiper-button-next, .swiper-button-prev {
+      width: 40px;
+      height: 40px;
+    }
+    
+    .swiper-button-next:after, .swiper-button-prev:after {
+      font-size: 18px;
+    }
+  }
+  .swiper-pagination{
+    margin-top: 20px;
+  }
+</style>
+
+
+<div class="mb-8">
+    <div class="flex flex-col md:flex-row justify-between items-center mb-6">
+       <!-- <h1 class="text-3xl font-bold mb-4 md:mb-0"><%= election.title %></h1>-->
+        <!--<a href="/elections/state/<%= election.state.toLowerCase() %>" class="text-blue-600 hover:text-blue-700">← Back to Elections</a>-->
+    </div>
+
+    <!-- Search Bar -->
+    <div class="mb-6">
+        <div class="max-w-xl mx-auto">
+            <div class="relative">
+                <input type="text" id="searchInput" 
+                       placeholder="Search candidates by name or constituency..." 
+                       class="w-full bg-white text-black rounded-lg px-4 py-2 pl-10 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <span class="absolute left-3 top-2.5 text-gray-600">
+                    <i class="fas fa-search"></i>
+                </span>
+            </div>
+        </div>
+    </div>
+    
+<!--
+    <div class="bg-white rounded-lg shadow-lg border border-gray-200 p-6 mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <div class="bg-white rounded-lg p-4 text-center border border-gray-200">
+                <p class="text-gray-600 text-sm mb-1">Start Date</p>
+                <p class="text-lg text-black"><%= new Date(election.startDate).toLocaleDateString() %></p>
+            </div>
+            <div class="bg-white rounded-lg p-4 text-center border border-gray-200">
+                <p class="text-gray-600 text-sm mb-1">End Date</p>
+                <p class="text-lg text-black"><%= new Date(election.endDate).toLocaleDateString() %></p>
+            </div>
+        </div>
+    </div>
+-->
+
+
+    <% election.constituencies.forEach(constituency => { %>
+        <div class="constituency-section bg-white rounded-lg p-6" data-constituency="<%= constituency.name.toLowerCase() %>">
+            <h2 class="text-xl font-bold text-black mb-4">Will he be able to win the next election from  <%= constituency.name %> constituency</h2>
+            
+            <!-- Swiper container -->
+            <div class="swiper-container candidate-swiper">
+                <div class="swiper-wrapper">
+                    <% constituency.candidates.forEach(candidate => { %>
+                        <div class="swiper-slide">
+                            <div class="candidate-card bg-white rounded-lg p-1 border border-gray-200 h-full" 
+                                data-candidate="<%= candidate._id %>"
+                                data-name="<%= candidate.name.toLowerCase() %>"
+                                data-constituency="<%= constituency.name.toLowerCase() %>">
+                                <div class="relative">
+                                    <img src="<%= candidate.image ? '/uploads/candidates/' + candidate.image : '/images/default-candidate.jpg' %>"
+                                        alt="<%= candidate.name %>"
+                                        class="w-full h-48 object-cover rounded-t-lg">
+                                    <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/50 to-transparent p-4">
+                                        <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm font-semibold">
+                                            <%= candidate.party %>
+                                        </span>
+                                    </div>
+                                </div>
+                                <h3 class="text-xl font-bold text-black p-4 pb-0 text-center"><%= candidate.name %></h3>
+                                <div class="p-4">
+                                    <div class="space-y-4">
+                                       <!--<div class="flex justify-between text-sm text-gray-600">
+                                            <span class="votes-count">Votes: <%= candidate.votes %></span>
+                                            <span class="text-blue-600">
+                                                <%= ((candidate.votes / election.totalVotes) * 100 || 0).toFixed(1) %>%
+                                            </span>
+                                        </div>--> 
+
+                                <div class="space-y-2">
+                                <% if (!isAuthenticated) { %>
+                                    <button onclick="showLoginMessage()"
+                                            class="vote-button w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200">
+                                        Vote for <%= candidate.name %>
+                                    </button>
+                                <% } else if (hasVoted) { %>
+                                    <div class="mt-2 flex justify-between text-sm font-bold">
+                                        <span class="yes-votes text-green-600">Yes: <%= candidate.yesVotes || 0 %></span>
+                                        <span class="no-votes text-red-600">No: <%= candidate.noVotes || 0 %></span>
+                                    </div>
+                                    <% if (userVote && userVote.candidate && userVote.candidate.toString() === candidate._id.toString()) { %>
+                                    <div class="mt-2 text-center text-sm text-gray-600">
+                                        You voted: <span class="<%= userVote.voteType === 'yes' ? 'text-green-600 font-bold' : 'text-red-600 font-bold' %>"><%= userVote.voteType === 'yes' ? 'Yes' : 'No' %></span>
+                                    </div>
+                                    <% } %>
+                                <% } else if (!hasVotedInState) { %>
+                                    <div class="flex space-x-2 w-full">
+                                        <button onclick="voteYesNo('<%= election._id %>', '<%= candidate._id %>', '<%= constituency.name %>', 'yes')"
+                                                class="vote-button flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200">
+                                            Yes
+                                        </button>
+                                        <button onclick="voteYesNo('<%= election._id %>', '<%= candidate._id %>', '<%= constituency.name %>', 'no')"
+                                                class="vote-button flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200">
+                                            No
+                                        </button>
+                                    </div>
+                                    <div class="mt-2 flex justify-between text-sm font-bold">
+                                        <span class="yes-votes text-green-600">Yes: <%= candidate.yesVotes || 0 %></span>
+                                        <span class="no-votes text-red-600">No: <%= candidate.noVotes || 0 %></span>
+                                    </div>
+                                <% } else { %>
+                                    <div class="mt-2 flex justify-between text-sm font-bold">
+                                        <span class="yes-votes text-green-600">Yes: <%= candidate.yesVotes || 0 %></span>
+                                        <span class="no-votes text-red-600">No: <%= candidate.noVotes || 0 %></span>
+                                    </div>
+                                    <div class="mt-2 text-center text-xs text-gray-500">
+                                        (Already voted in this state)
+                                    </div>
+                                <% } %>
+                                </div>
+                             <!--
+                                <button onclick="<%= isAuthenticated ? `showReviews('${candidate._id}')` : 'showLoginMessage()' %>"
+                                        class="w-full mt-2 bg-gray-100 hover:bg-gray-200 text-black-800 font-bold py-2 px-4 rounded-lg transition duration-200">
+                                    Reviews
+                                </button>
+                                -->  
+                                
+                                <% if (user) { %>
+                                    <a href="/elections/candidate/<%= candidate._id %>" 
+                                       class="block w-full mt-2 bg-purple-100 hover:bg-purple-200 text-purple-800 font-bold py-2 px-4 rounded-lg transition duration-200 text-center">
+                                        View Details
+                                    </a>
+                                <% } else { %>
+                                    <a href="/auth/login?returnTo=/elections/candidate/<%= candidate._id %>" 
+                                       class="block w-full mt-2 bg-purple-100 hover:bg-purple-200 text-purple-800 font-bold py-2 px-4 rounded-lg transition duration-200 text-center">
+                                        View Details
+                                    </a>
+                                <% } %>
+                                <% if (constituency.mla) { %>
+                               <!-- <button onclick="showMlaDetails('<%= constituency.mla._id %>', '<%= constituency.mla.name %>', '<%= constituency.mla.description %>', '<%= constituency.mla.party %>', '<%= constituency.mla.constituency %>', '<%= constituency.mla.state %>', '<%= constituency.mla.image %>')"
+                                        class="w-full mt-2 bg-green-100 hover:bg-green-200 text-green-800 font-bold py-2 px-4 rounded-lg transition duration-200">
+                                    View MLA Work
+                                </button>-->
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <% }); %>
+              </div>
+                <!-- Add Pagination -->
+                <div class="swiper-pagination"></div>
+                <!-- Add Navigation -->
+                <div class="swiper-button-next"></div>
+                <div class="swiper-button-prev"></div>
+            </div>
+        </div>
+    <% }); %>
+</div>
+
+<!-- Review Modal -->
+<div id="reviewModal" class="hidden fixed inset-0 bg-black bg-opacity-75 z-50">
+    <div class="bg-gray-800 rounded-lg max-w-lg mx-auto mt-20 p-6 relative">
+        <button onclick="closeReviewModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white">&times;</button>
+        
+        <h3 class="text-xl font-bold text-white mb-4">Reviews</h3>
+        
+        <div id="reviewsList" class="max-h-96 overflow-y-auto mb-6">
+            <!-- Reviews will be loaded here -->
+        </div>
+
+        <form id="reviewForm" class="space-y-4">
+            <div>
+                <label class="block text-gray-300 text-sm font-bold mb-2">Rating</label>
+                <div class="flex space-x-2">
+                    <% for(let i = 1; i <= 5; i++) { %>
+                        <button type="button" onclick="setRating(<%= i %>)"
+                                class="rating-star text-2xl text-gray-400 hover:text-yellow-400 focus:text-yellow-400">
+                            ☆
+                        </button>
+                    <% } %>
+                </div>
+                <input type="hidden" id="ratingInput" name="rating" required>
+            </div>
+
+            <div>
+                <label class="block text-gray-300 text-sm font-bold mb-2">Comment</label>
+                <textarea name="comment" rows="3" required
+                          class="w-full bg-gray-700 text-white rounded p-2 focus:ring-2 focus:ring-blue-500"></textarea>
+            </div>
+
+            <button type="submit" 
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                Submit Review
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- MLA Details Modal -->
+<div id="mlaDetailsModal" class="hidden fixed inset-0 bg-black bg-opacity-75 z-50">
+    <div class="bg-white rounded-lg max-w-lg mx-auto mt-20 p-6 relative">
+        <button onclick="closeMlaDetailsModal()" class="absolute top-4 right-4 text-gray-600 hover:text-black text-2xl">&times;</button>
+        
+        <div class="text-center mb-4">
+            <img id="mlaImage" src="" alt="MLA Image" class="w-32 h-32 rounded-full mx-auto mb-4 object-cover border-4 border-blue-500">
+            <h3 id="mlaName" class="text-2xl font-bold text-gray-800"></h3>
+        </div>
+        
+        <div class="grid grid-cols-2 gap-4 mb-4 text-center">
+            <div class="bg-gray-100 p-3 rounded-lg">
+                <p class="text-gray-600 text-sm">Party</p>
+                <p id="mlaParty" class="font-semibold text-gray-800"></p>
+            </div>
+            <div class="bg-gray-100 p-3 rounded-lg">
+                <p class="text-gray-600 text-sm">Constituency</p>
+                <p id="mlaConstituency" class="font-semibold text-gray-800"></p>
+            </div>
+        </div>
+        
+        <% if (election && election.constituencies) { %>
+            <% election.constituencies.forEach(constituency => { %>
+                <% constituency.candidates.forEach(candidate => { %>
+                    <div class="bg-gray-100 p-4 rounded-lg mb-4">
+                        <h4 class="font-bold text-gray-800 mb-2">Manifesto</h4>
+                        <% if (candidate.manifesto && candidate.manifesto.length > 0) { %>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <% candidate.manifesto.forEach(item => { %>
+                                    <li class="text-gray-700"><%= item %></li>
+                                <% }); %>
+                            </ul>
+                        <% } else { %>
+                            <p class="text-gray-600 italic">No manifesto points available.</p>
+                        <% } %>
+                    </div>
+                    
+                    <div class="bg-gray-100 p-4 rounded-lg mb-4">
+                        <h4 class="font-bold text-gray-800 mb-2">Key Achievements</h4>
+                        <% if (candidate.achievements && candidate.achievements.length > 0) { %>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <% candidate.achievements.forEach(item => { %>
+                                    <li class="text-gray-700"><%= item %></li>
+                                <% }); %>
+                            </ul>
+                        <% } else { %>
+                            <p class="text-gray-600 italic">No achievements listed yet.</p>
+                        <% } %>
+                    </div>
+                    
+                    <div class="bg-gray-100 p-4 rounded-lg mb-4">
+                        <h4 class="font-bold text-gray-800 mb-2">Corruption Records</h4>
+                        <% if (candidate.corruption && candidate.corruption.length > 0) { %>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <% candidate.corruption.forEach(item => { %>
+                                    <li class="text-gray-700"><%= item %></li>
+                                <% }); %>
+                            </ul>
+                        <% } else { %>
+                            <p class="text-gray-600 italic">No corruption records available.</p>
+                        <% } %>
+                    </div>
+                <% }); %>
+            <% }); %>
+        <% } else { %>
+            <p class="text-gray-600 italic">No election data available.</p>
+        <% } %>
+        
+        <div id="mlaDescription" class="mt-4 text-gray-700"></div>
+    </div>
+</div>
+
+<script>
+// Hamburger Menu Logic
+document.addEventListener('DOMContentLoaded', function() {
+            
+            // --- Hamburger Menu Logic ---
+            const hamburger = document.getElementById('hamburger');
+            const mobileMenu = document.getElementById('mobileMenu');
+            const menuClose = document.getElementById('menuClose');
+
+            // Check if the elements actually exist on the page before adding event listeners
+            if (hamburger && mobileMenu && menuClose) {
+                hamburger.addEventListener('click', () => {
+                    mobileMenu.classList.remove('translate-x-full');
+                });
+
+                menuClose.addEventListener('click', () => {
+                    mobileMenu.classList.add('translate-x-full');
+                });
+            }
+            });
+document.addEventListener('DOMContentLoaded', function() {
+        
+        // --- Hamburger Menu Logic ---
+        const hamburger = document.getElementById('hamburger');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const menuClose = document.getElementById('menuClose');
+
+        // This checks if the menu elements exist before trying to use them.
+        if (hamburger && mobileMenu && menuClose) {
+            
+            // Show the menu when hamburger is clicked
+            hamburger.addEventListener('click', () => {
+                mobileMenu.classList.remove('translate-x-full');
+            });
+
+            // Hide the menu when the close button is clicked
+            menuClose.addEventListener('click', () => {
+                mobileMenu.classList.add('translate-x-full');
+            });
+        }
+
+    });
+
+
+// Add star rating functionality
+function setRating(rating) {
+    document.getElementById('ratingInput').value = rating;
+    const stars = document.querySelectorAll('.rating-star');
+    stars.forEach((star, index) => {
+        if (index < rating) {
+            star.textContent = '★';
+            star.classList.add('text-yellow-400');
+        } else {
+            star.textContent = '☆';
+            star.classList.remove('text-yellow-400');
+        }
+    });
+}
+
+function resetStars() {
+    const stars = document.querySelectorAll('.rating-star');
+    stars.forEach(star => {
+        star.textContent = '☆';
+        star.classList.remove('text-yellow-400');
+    });
+    document.getElementById('ratingInput').value = '';
+}
+
+// MLA Details Modal Functions
+function showMlaDetails(mlaId, name, description, party, constituency, state, image) {
+    // Set MLA details in the modal
+    document.getElementById('mlaName').textContent = name;
+    document.getElementById('mlaParty').textContent = party;
+    document.getElementById('mlaConstituency').textContent = constituency;
+    
+    // Set description if available
+    const descriptionElement = document.getElementById('mlaDescription');
+    if (description) {
+        descriptionElement.textContent = description;
+        descriptionElement.classList.remove('hidden');
+    } else {
+        descriptionElement.classList.add('hidden');
+    }
+    
+    // Set image
+    const imageElement = document.getElementById('mlaImage');
+    if (image) {
+        imageElement.src = image.startsWith('/') ? image : `/${image}`;
+        imageElement.classList.remove('hidden');
+    } else {
+        imageElement.classList.add('hidden');
+    }
+    
+    // Corruption records section removed
+    
+    // Show the modal
+    document.getElementById('mlaDetailsModal').classList.remove('hidden');
+}
+
+function closeMlaDetailsModal() {
+    document.getElementById('mlaDetailsModal').classList.add('hidden');
+}
+
+async function loadReviews(candidateId) {
+    const reviewsList = document.getElementById('reviewsList');
+    reviewsList.innerHTML = '<p class="text-gray-400 text-center">Loading reviews...</p>';
+
+    try {
+        const response = await fetch(`/elections/candidate/${candidateId}/reviews`);
+        const data = await response.json();
+
+        if (data.success) {
+            if (data.reviews && data.reviews.length > 0) {
+        reviewsList.innerHTML = data.reviews.map(review => {
+          const isAnon = !!review.anonymous;
+          const displayName = review.displayName || (isAnon ? (review.anonymousName || (review.user && review.user.anonName) || 'Anonymous') : ((review.user && (review.user.anonName || review.user.name)) || 'Anonymous'));
+          return `
+          <div class="bg-gray-700 rounded-lg p-4 mb-4">
+            <div class="flex justify-between items-center mb-2">
+              <div class="flex items-center">
+                <span class="text-yellow-400 mr-2">
+                  ${'★'.repeat(review.rating)}${'☆'.repeat(5-review.rating)}
+                </span>
+                <span class="text-gray-300">${displayName}</span>
+              </div>
+              <span class="text-gray-400 text-sm">
+                ${new Date(review.createdAt).toLocaleDateString()}
+              </span>
+            </div>
+            <p class="text-gray-300">${review.comment}</p>
+          </div>
+        `}).join('');
+            } else {
+                reviewsList.innerHTML = '<p class="text-gray-400 text-center">No reviews yet</p>';
+            }
+        } else {
+            throw new Error(data.message);
+        }
+    } catch (error) {
+        console.error('Error loading reviews:', error);
+        reviewsList.innerHTML = '<p class="text-red-400 text-center">Error loading reviews</p>';
+    }
+}
+
+function showReviews(candidateId) {
+    currentCandidateId = candidateId;
+    document.getElementById('reviewModal').classList.remove('hidden');
+    loadReviews(candidateId);
+}
+
+function closeReviewModal() {
+    document.getElementById('reviewModal').classList.add('hidden');
+    document.getElementById('reviewForm').reset();
+    resetStars();
+    currentCandidateId = null;
+}
+
+// Handle form submission
+document.getElementById('reviewForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    if (!currentCandidateId) {
+        showNotification('No candidate selected', 'error');
+        return;
+    }
+
+    const rating = document.getElementById('ratingInput').value;
+    const comment = this.querySelector('[name="comment"]').value;
+
+    if (!rating || !comment.trim()) {
+        showNotification('Please provide both rating and comment', 'error');
+        return;
+    }
+
+    try {
+        const response = await fetch(`/elections/candidate/${currentCandidateId}/reviews`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ rating, comment })
+        });
+
+        const data = await response.json();
+        if (data.success) {
+            showNotification('Review submitted successfully', 'success');
+            await loadReviews(currentCandidateId);
+            this.reset();
+            resetStars();
+        } else {
+            showNotification(data.message || 'Error submitting review', 'error');
+        }
+    } catch (error) {
+        console.error('Error submitting review:', error);
+        showNotification('Error submitting review', 'error');
+    }
+});
+
+// Close modal when clicking outside
+document.getElementById('reviewModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeReviewModal();
+    }
+});
+
+function showNotification(message, type = 'success') {
+    const notification = document.createElement('div');
+    notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg ${
+        type === 'success' ? 'bg-green-900 text-green-200' : 'bg-red-900 text-red-200'
+    } z-50 transition-opacity duration-500`;
+    notification.textContent = message;
+
+    document.body.appendChild(notification);
+
+    setTimeout(() => {
+        notification.style.opacity = '0';
+        setTimeout(() => notification.remove(), 500);
+    }, 3000);
+}
+
+// Update vote count display
+function updateVoteCount(candidateId, newCount) {
+    const votesElement = document.querySelector(`[data-candidate="${candidateId}"] .votes-count`);
+    if (votesElement) {
+        votesElement.textContent = newCount;
+    }
+}
+
+async function voteForCandidate(electionId, candidateId, constituencyName) {
+    try {
+        const response = await fetch('/elections/vote', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ electionId, candidateId, constituencyName })
+        });
+
+        const data = await response.json();
+        if (data.success) {
+            // Update UI without reloading
+            const candidateCard = document.querySelector(`[data-candidate="${candidateId}"]`);
+            const voteButton = candidateCard.querySelector('.vote-button');
+            const votesCount = candidateCard.querySelector('.votes-count');
+            
+            // Update vote count
+            const currentVotes = parseInt(votesCount.textContent) || 0;
+            votesCount.textContent = currentVotes + 1;
+            
+            // Update total votes
+            const totalVotesElement = document.querySelector('.total-votes-count');
+            if (totalVotesElement) {
+                const currentTotal = parseInt(totalVotesElement.textContent) || 0;
+                totalVotesElement.textContent = currentTotal + 1;
+            }
+
+            // Disable vote button
+            voteButton.disabled = true;
+            voteButton.textContent = 'Voted';
+            voteButton.classList.add('bg-gray-500');
+            voteButton.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+
+            showNotification('Vote cast successfully', 'success');
+        } else {
+            showNotification(data.message, 'error');
+        }
+    } catch (error) {
+        console.error('Error casting vote:', error);
+        showNotification('Error casting vote', 'error');
+    }
+}
+
+// Add this function to prevent double reviews
+async function submitReview(candidateId, rating, comment) {
+    try {
+        const response = await fetch(`/elections/candidate/${candidateId}/reviews`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ rating, comment })
+        });
+
+        const data = await response.json();
+        if (data.success) {
+            showNotification('Review submitted successfully', 'success');
+            await loadReviews(candidateId); // Reload reviews
+            return true;
+        } else {
+            showNotification(data.message, 'error');
+            return false;
+        }
+    } catch (error) {
+        console.error('Error submitting review:', error);
+        showNotification('Error submitting review', 'error');
+        return false;
+    }
+}
+
+// Search functionality is now handled in the Swiper initialization script below
+
+// Function to show login message for unauthenticated users
+function showLoginMessage() {
+    showNotification('Please login to perform this action', 'error');
+    setTimeout(() => {
+        window.location.href = '/auth/login';
+    }, 2000);
+}
+</script>
+
+<script src="/js/election.js"></script>
+
+<!-- Add Swiper JS with optimized loading -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script>
+<script>
+  // Preload Swiper for better performance
+  if (window.matchMedia('(max-width: 768px)').matches) {
+    const preloadLink = document.createElement('link');
+    preloadLink.rel = 'preload';
+    preloadLink.as = 'script';
+    preloadLink.href = 'https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js';
+    document.head.appendChild(preloadLink);
+  }
+</script>
+
+<!-- Initialize Swiper -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Swiper for each constituency
+    const swiperContainers = document.querySelectorAll('.candidate-swiper');
+    
+    swiperContainers.forEach(container => {
+      new Swiper(container, {
+        // Optional parameters with optimized settings for mobile
+        slidesPerView: 1,
+        spaceBetween: 10,
+        loop: false, // Disable loop for better performance on mobile
+        centeredSlides: false,
+        grabCursor: true,
+        effect: 'slide',
+        preloadImages: false, // Don't preload all images
+        lazy: true, // Enable lazy loading for images
+        watchSlidesProgress: true,
+        autoplay: {
+          delay: 5000,
+          disableOnInteraction: false,
+          pauseOnMouseEnter: true
+        },
+        
+        // Pagination with optimized settings
+        pagination: {
+          el: container.querySelector('.swiper-pagination'),
+          clickable: true,
+          dynamicBullets: true,
+          dynamicMainBullets: 3,
+          renderBullet: function (index, className) {
+            return '<span class="' + className + '"></span>';
+          }
+        },
+        
+        // Navigation arrows
+        navigation: {
+          nextEl: container.querySelector('.swiper-button-next'),
+          prevEl: container.querySelector('.swiper-button-prev'),
+          hideOnClick: false,
+        },
+        
+        // Enable touch events for mobile with better sensitivity
+        touchEventsTarget: 'container',
+        touchRatio: 1.5,
+        touchAngle: 30,
+        longSwipes: true,
+        longSwipesRatio: 0.3,
+        speed: 400, // Slightly faster transitions
+        
+        // Better handling of dynamic content
+        observer: true,
+        observeParents: true,
+        
+        // Responsive breakpoints - mobile first approach
+        breakpoints: {
+          // when window width is >= 640px (tablet)
+          640: {
+            slidesPerView: 2,
+            spaceBetween: 15,
+            centeredSlides: false,
+            effect: 'slide',
+          },
+          // when window width is >= 768px (tablet)
+          768: {
+            slidesPerView: 2,
+            spaceBetween: 20,
+            effect: 'slide',
+            centeredSlides: false,
+          },
+          // when window width is >= 1024px (laptop)
+          1024: {
+            slidesPerView: 3,
+            spaceBetween: 25,
+            centeredSlides: false,
+            effect: 'slide',
+          },
+        },
+        
+        on: {
+          init: function() {
+            // Add a small delay to ensure proper layout calculation
+            setTimeout(() => {
+              this.update(); // Force Swiper to recalculate dimensions
+            }, 100);
+          }
+        }
+      });
+    });
+    
+    // Optimize for mobile by pausing autoplay when page is not visible
+    document.addEventListener('visibilitychange', function() {
+      swiperContainers.forEach(container => {
+        const swiperInstance = container.swiper;
+        if (swiperInstance) {
+          if (document.hidden) {
+            swiperInstance.autoplay.stop();
+          } else {
+            swiperInstance.autoplay.start();
+          }
+        }
+      });
+    });
+    
+    // Update search functionality to work with Swiper
+    document.getElementById('searchInput').addEventListener('input', function(e) {
+      const searchTerm = e.target.value.toLowerCase();
+      const constituencySections = document.querySelectorAll('.constituency-section');
+      
+      constituencySections.forEach(section => {
+        const candidates = section.querySelectorAll('.candidate-card');
+        let hasVisibleCandidates = false;
+        
+        candidates.forEach(card => {
+          const candidateName = card.dataset.name;
+          const cardConstituency = card.dataset.constituency;
+          const slide = card.closest('.swiper-slide');
+          
+          if (candidateName.includes(searchTerm) || cardConstituency.includes(searchTerm)) {
+            slide.style.display = '';
+            hasVisibleCandidates = true;
+          } else {
+            slide.style.display = 'none';
+          }
+        });
+        
+        section.style.display = hasVisibleCandidates ? '' : 'none';
+      });
+      
+      // Update Swiper instances after search
+      swiperContainers.forEach(container => {
+        const swiperInstance = container.swiper;
+        if (swiperInstance) {
+          swiperInstance.update();
+        }
+      });
+    });
+  });
+</script>
+
+<%- include('../partials/footer') %>

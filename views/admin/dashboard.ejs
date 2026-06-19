@@ -1,0 +1,1898 @@
+<%- include('../partials/header') %>
+<link rel="stylesheet" href="/css/style.css">
+
+<style>
+  .text-3xl{
+    margin-left: 20px;
+  }
+  .edit{
+    margin-bottom: 200px;
+  }
+
+</style>
+<div class="mb-8">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-3xl font-bold text-white">Admin Dashboard</h1>
+        <div class="flex space-x-4">
+            <button onclick="showCreateElectionModal()" 
+                    class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-200">
+                Create New Election
+            </button>
+            <button onclick="showAddConstituencyModal()" 
+                    class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition duration-200">
+                Add New Constituency
+            </button>
+            <button onclick="showAddStateModal()" 
+                    class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded transition duration-200">
+                Add New State
+            </button>
+        </div>
+    </div>
+
+    <!-- Stats Overview -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+            <h3 class="text-lg font-semibold text-gray-400 mb-2">Total Elections</h3>
+            <p class="text-3xl font-bold text-white"><%= elections.length %></p>
+        </div>
+        <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+            <h3 class="text-lg font-semibold text-gray-400 mb-2">Active Elections</h3>
+            <p class="text-3xl font-bold text-white"><%= elections.filter(e => e.isActive).length %></p>
+        </div>
+        <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+            <h3 class="text-lg font-semibold text-gray-400 mb-2">Total Votes</h3>
+            <p class="text-3xl font-bold text-white"><%= elections.reduce((sum, e) => sum + e.totalVotes, 0) %></p>
+        </div>
+    </div>
+
+   
+
+    <!-- Elections List -->
+    <div class="space-y-6">
+        <% elections.forEach(election => { %>
+            <div class="bg-gray-900 rounded-lg shadow-lg overflow-hidden">
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <div>
+                            <h3 class="text-2xl font-bold text-white"><%= election.title %></h3>
+                            <p class="text-gray-400">State: <%= election.state %></p>
+                        </div>
+                        <div class="flex space-x-4">
+                            <button onclick="toggleElectionStatus('<%= election._id %>')"
+                                    class="px-4 py-2 rounded-lg <%= election.isActive ?'bg-green-600 hover:bg-green-700' : 'bg-red-600 hover:bg-red-700' %> text-white">
+                                       <%= election.isActive ? 'Active' : 'Inactive' %> 
+                                      
+
+                            </button>
+                           <button onclick="deleteElection('<%= election._id %>')"
+                            
+
+
+                                    class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg">
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Constituencies Section -->
+                    <% election.constituencies.forEach(constituency => { %>
+                        <div class="mt-6 bg-gray-800 rounded-lg p-4">
+                            <h4 class="text-xl font-semibold text-white mb-4">
+                                Constituency: <%= constituency.name %>
+                            </h4>
+                            
+                            <!-- Candidates Grid -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                <% constituency.candidates.forEach(candidate => { %>
+                                    <div class="bg-gray-700 rounded-lg border border-gray-600 p-4">
+                                        <div class="flex items-start justify-between">
+                                            <div>
+                                                <h5 class="text-white font-semibold"><%= candidate.name %></h5>
+                                                <p class="text-gray-400"><%= candidate.party %></p>
+                                            </div>
+                                            <div class="flex space-x-2">
+                                                <button onclick="editCandidate('<%= candidate._id %>')"
+                                                        class="text-blue-400 hover:text-blue-300">
+                                                    Edit
+                                                </button>
+                                              <button onclick="deleteCandidate('<%= candidate._id %>')"  
+                                                
+                                                        class="text-red-400 hover:text-red-300">
+                                                    Delete
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <img src="/uploads/candidates/<%= candidate.image %>" 
+                                             alt="<%= candidate.name %>" 
+                                             class="w-full h-32 object-cover rounded mt-2">
+                                        <div class="mt-2 text-gray-400">
+                                            <p>Votes: <%= candidate.votes %></p>
+                                            <p>Reviews: <%= candidate.reviews.length %></p>
+                                              
+                                            <!-- Manifesto Links -->
+                                            <% if (candidate.manifesto && candidate.manifesto.length > 0) { %>
+                                            <div class="mt-2">
+                                                <p class="font-semibold">Manifesto:</p>
+                                                <ul class="list-disc pl-5">
+                                                    <% candidate.manifesto.forEach(item => { %>
+                                                    <li>
+                                                        <% if (item.startsWith('http')) { %>
+                                                            <a href="<%= item %>" target="_blank" class="text-blue-400 hover:underline"><%= item %></a>
+                                                        <% } else { %>
+                                                            <%= item %>
+                                                        <% } %>
+                                                    </li>
+                                                    <% }); %>
+                                                </ul>
+                                            </div>
+                                            <% } %>
+                                            
+                                            <!-- Achievements Links -->
+                                            <% if (candidate.achievements && candidate.achievements.length > 0) { %>
+                                            <div class="mt-2">
+                                                <p class="font-semibold">Achievements:</p>
+                                                <ul class="list-disc pl-5">
+                                                    <% candidate.achievements.forEach(item => { %>
+                                                    <li>
+                                                        <% if (item.startsWith('http')) { %>
+                                                            <a href="<%= item %>" target="_blank" class="text-blue-400 hover:underline"><%= item %></a>
+                                                        <% } else { %>
+                                                            <%= item %>
+                                                        <% } %>
+                                                    </li>
+                                                    <% }); %>
+                                                </ul>
+                                            </div>
+                                            <% } %>
+                                            
+                                            <!-- Corruption Links section removed -->
+                                        </div>
+                                    </div>
+                                <% }) %>
+                            </div>
+
+                            <!-- Add Candidate, Add Constituency, and Delete Constituency Buttons -->
+                            <div class="mt-4 flex space-x-4">
+                                <button onclick="showAddCandidateModal('<%= election._id %>', '<%= constituency.name %>')"
+                                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
+                                    Add Candidate
+                                </button>
+                                <button onclick="showAddConstituencyModal('<%= election._id %>')"
+                                        class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg">
+                                    Add Constituency
+                                </button>
+                                <button onclick="deleteConstituency('<%= election._id %>', '<%= constituency._id %>')"
+                                        class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg">
+                                    Delete Constituency
+                                </button>
+                            </div>
+                        </div>
+                    <% }) %>
+                </div>
+            </div>
+        <% }) %>
+    </div>
+</div>
+
+<!-- Admin: Manage States/Topics/News (embedded panel) -->
+<div class="mb-8 mt-8">
+    <h2 class="text-2xl font-bold text-white mb-4">Manage States, Topics & News</h2>
+    <div class="bg-gray-800 rounded-lg p-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-2">
+            <!-- Create State -->
+            <div>
+                <label class="block text-gray-300 text-sm font-medium mb-1">New State</label>
+                <input id="adminNewStateName" placeholder="State name" class="w-full bg-gray-700 text-white rounded px-3 py-2" />
+                <div class="flex items-center space-x-2 mt-2">
+                    <button id="adminCreateStateBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Create State</button>
+                    <span id="adminCreateStateMsg" class="text-green-400"></span>
+                </div>
+            </div>
+
+            <!-- Consolidated News Creation Form: State → Topic → Title/Content/Image -->
+            <div>
+                <label class="block text-gray-300 text-sm font-medium mb-1">State</label>
+                <select id="adminNewsStateSelect" class="w-full bg-gray-700 text-white rounded px-3 py-2"></select>
+
+                <label class="block text-gray-300 text-sm font-medium mt-3 mb-1">Topic</label>
+                <div class="flex gap-2">
+                    <select id="adminNewsTopicSelect" class="flex-1 bg-gray-700 text-white rounded px-3 py-2"></select>
+                    <button id="adminCreateQuickTopicBtn" class="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded whitespace-nowrap">+ New Topic</button>
+                </div>
+
+                <label class="block text-gray-300 text-sm font-medium mt-3 mb-1">Title</label>
+                <input id="adminNewsTitle" placeholder="Short headline" class="w-full bg-gray-700 text-white rounded px-3 py-2" />
+
+                <label class="block text-gray-300 text-sm font-medium mt-3 mb-1">Content</label>
+                <textarea id="adminNewsContent" placeholder="Brief description or excerpt" class="w-full bg-gray-700 text-white rounded px-3 py-2"></textarea>
+
+                <label class="block text-gray-300 text-sm font-medium mt-3 mb-1">URL (optional)</label>
+                <input id="adminNewsUrl" placeholder="https://..." class="w-full bg-gray-700 text-white rounded px-3 py-2" />
+
+                <label class="block text-gray-300 text-sm font-medium mt-3 mb-1">Image (optional)</label>
+                <input id="adminNewsImage" type="file" accept="image/*,.webp,.avif,.svg" class="mt-1" />
+                <div id="adminNewsImagePreview" class="mt-2"></div>
+
+                <div class="flex items-center space-x-2 mt-3">
+                    <button id="adminCreateNewsBtn" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">Create News</button>
+                    <span id="adminCreateNewsMsg" class="text-green-400"></span>
+                </div>
+                <div id="adminCreateNewsToast" class="hidden mt-3"></div>
+            </div>
+
+            <!-- Quick Topic Creation Modal -->
+            <div id="quickTopicModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div class="bg-gray-800 rounded-lg p-6 w-96">
+                    <h3 class="text-xl font-bold text-white mb-4">Create New Topic</h3>
+                    <input id="quickTopicName" placeholder="Topic name" class="w-full bg-gray-700 text-white rounded px-3 py-2 mb-3" />
+                    <textarea id="quickTopicDescription" placeholder="Description (optional)" class="w-full bg-gray-700 text-white rounded px-3 py-2 mb-3 h-20"></textarea>
+                    <label class="block text-gray-300 text-sm mb-1">Image (optional)</label>
+                    <input id="quickTopicImage" type="file" accept="image/*,.webp,.avif,.svg" class="mb-3" />
+                    <div class="flex justify-end gap-2">
+                        <button id="quickTopicCancel" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">Cancel</button>
+                        <button id="quickTopicCreate" class="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded">Create</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // reuse admin panel scripts
+    async function fetchStatesForAdmin_dashboard() {
+        try {
+            const res = await fetch('/admin/states', { credentials: 'same-origin' });
+            const json = await res.json().catch(() => null);
+            if (json && json.success && Array.isArray(json.states)) return json.states;
+            return [];
+        } catch (err) { console.error('fetchStatesForAdmin error', err); return []; }
+    }
+
+    async function populateAdminSelects_dashboard() {
+        const states = await fetchStatesForAdmin_dashboard();
+        const newsStateSel = document.getElementById('adminNewsStateSelect');
+        if (newsStateSel) {
+            newsStateSel.innerHTML = '';
+            const placeholder = document.createElement('option'); placeholder.value=''; placeholder.textContent='Select state'; newsStateSel.appendChild(placeholder);
+            states.forEach(s => { const o = document.createElement('option'); o.value = s._id; o.textContent = s.name; newsStateSel.appendChild(o); });
+        }
+    }
+
+    // When admin changes state selection, populate the topic dropdown
+    document.getElementById('adminNewsStateSelect').addEventListener('change', async (e) => {
+        const stateId = e.target.value;
+        const topicSel = document.getElementById('adminNewsTopicSelect');
+        topicSel.innerHTML = '';
+        if (!stateId) {
+            const placeholder = document.createElement('option'); placeholder.value=''; placeholder.textContent='Select a state first'; topicSel.appendChild(placeholder);
+            return;
+        }
+
+        try {
+            const res = await fetch(`/admin/states/${stateId}/json`, { credentials: 'same-origin' });
+            const data = await res.json();
+            if (data && data.state && Array.isArray(data.state.topics)) {
+                if (data.state.topics.length === 0) {
+                    const placeholder = document.createElement('option'); placeholder.value=''; placeholder.textContent='No topics. Create one first.'; topicSel.appendChild(placeholder);
+                } else {
+                    data.state.topics.forEach(t => {
+                        const o = document.createElement('option'); o.value = t._id; o.textContent = t.name; topicSel.appendChild(o);
+                    });
+                }
+            }
+        } catch (err) { console.error('Failed loading topics', err); }
+    });
+
+    document.getElementById('adminCreateStateBtn').addEventListener('click', async () => {
+        const name = document.getElementById('adminNewStateName').value.trim(); const msg = document.getElementById('adminCreateStateMsg'); if (msg) msg.textContent='';
+        if (!name) return alert('State name required');
+        try { const res = await fetch('/admin/states', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name }) }); const d = await res.json(); if (d && d.success) { if (msg) msg.textContent = 'Created'; document.getElementById('adminNewStateName').value = ''; await populateAdminSelects_dashboard(); } else { alert(d.message || 'Failed creating state'); } } catch (e) { console.error(e); alert('Error'); }
+    });
+
+    // Quick topic creation modal
+    const quickTopicModal = document.getElementById('quickTopicModal');
+    const quickTopicCancel = document.getElementById('quickTopicCancel');
+    const quickTopicCreate = document.getElementById('quickTopicCreate');
+    const adminCreateQuickTopicBtn = document.getElementById('adminCreateQuickTopicBtn');
+
+    adminCreateQuickTopicBtn.addEventListener('click', () => {
+        quickTopicModal.classList.remove('hidden');
+    });
+
+    quickTopicCancel.addEventListener('click', () => {
+        quickTopicModal.classList.add('hidden');
+    });
+
+    quickTopicCreate.addEventListener('click', async () => {
+        const stateId = document.getElementById('adminNewsStateSelect').value;
+        if (!stateId) return alert('Select a state first');
+
+        const name = document.getElementById('quickTopicName').value.trim();
+        const description = document.getElementById('quickTopicDescription').value.trim();
+        const fileEl = document.getElementById('quickTopicImage');
+        if (!name) return alert('Topic name required');
+
+        quickTopicCreate.disabled = true;
+        const prevText = quickTopicCreate.textContent;
+        quickTopicCreate.textContent = 'Creating...';
+
+        try {
+            const form = new FormData();
+            form.append('name', name);
+            form.append('description', description);
+            if (fileEl && fileEl.files && fileEl.files[0]) form.append('image', fileEl.files[0]);
+
+            const res = await fetch(`/admin/states/${stateId}/topics`, { method: 'POST', body: form, credentials: 'same-origin' });
+            const j = await res.json();
+            if (j && j.success) {
+                document.getElementById('quickTopicName').value = '';
+                document.getElementById('quickTopicDescription').value = '';
+                if (fileEl) fileEl.value = '';
+                quickTopicModal.classList.add('hidden');
+                showToast('Topic created', 'success');
+                // Refresh topic dropdown
+                const stateChangeEvent = new Event('change');
+                document.getElementById('adminNewsStateSelect').dispatchEvent(stateChangeEvent);
+            } else {
+                alert(j && j.message ? j.message : 'Failed creating topic');
+            }
+        } catch (err) { console.error('Create topic error', err); alert('Error creating topic'); }
+        finally { quickTopicCreate.disabled = false; quickTopicCreate.textContent = prevText; }
+    });
+
+    document.getElementById('adminCreateNewsBtn').addEventListener('click', async () => {
+        const stateId = document.getElementById('adminNewsStateSelect').value;
+        const topicId = document.getElementById('adminNewsTopicSelect').value;
+        const titleEl = document.getElementById('adminNewsTitle');
+        const contentEl = document.getElementById('adminNewsContent');
+        const urlEl = document.getElementById('adminNewsUrl');
+        const fileEl = document.getElementById('adminNewsImage');
+        const msg = document.getElementById('adminCreateNewsMsg');
+        if (msg) msg.textContent = '';
+        if (!stateId) return showToast('Select a state', 'error');
+        if (!topicId) return showToast('Select or create a topic', 'error');
+        if (!titleEl.value.trim()) return showToast('Title required', 'error');
+
+        // Disable button and show loading
+        const btn = document.getElementById('adminCreateNewsBtn');
+        btn.disabled = true; btn.classList.add('opacity-70');
+        const prevText = btn.textContent; btn.textContent = 'Creating...';
+
+        try {
+            const form = new FormData();
+            form.append('title', titleEl.value.trim());
+            form.append('content', contentEl.value.trim());
+            form.append('url', urlEl.value.trim());
+            if (fileEl && fileEl.files && fileEl.files[0]) form.append('image', fileEl.files[0]);
+
+            const res = await fetch(`/admin/states/${stateId}/topics/${topicId}/news`, { method: 'POST', body: form, credentials: 'same-origin' });
+            const d = await res.json();
+            if (d && d.success) {
+                if (msg) msg.textContent = 'Created';
+                // Clear inputs
+                titleEl.value = '';
+                contentEl.value = '';
+                urlEl.value = '';
+                if (fileEl) { fileEl.value = ''; const preview = document.getElementById('adminNewsImagePreview'); if (preview) preview.innerHTML = ''; }
+                showToast('News created', 'success');
+                if (typeof loadAdminContent === 'function') await loadAdminContent();
+                if (typeof populateAdminSelects_dashboard === 'function') await populateAdminSelects_dashboard();
+                window.dispatchEvent(new CustomEvent('admin:news-created', { detail: d.news }));
+            } else {
+                showToast(d && d.message ? d.message : 'Failed creating news', 'error');
+            }
+        } catch (e) {
+            console.error(e);
+            showToast('Error creating news', 'error');
+        } finally {
+            btn.disabled = false; btn.classList.remove('opacity-70'); btn.textContent = prevText;
+        }
+    });
+
+    // Image preview for Create News
+    document.getElementById('adminNewsImage').addEventListener('change', (e) => {
+        const preview = document.getElementById('adminNewsImagePreview'); preview.innerHTML = '';
+        const f = e.target.files && e.target.files[0];
+        if (!f) return;
+        if (!f.type.startsWith('image/')) return;
+        const img = document.createElement('img'); img.className = 'w-full h-36 object-cover rounded';
+        img.src = URL.createObjectURL(f);
+        preview.appendChild(img);
+    });
+
+    // Simple toast utility
+    function showToast(message, type='info') {
+        const toastEl = document.getElementById('adminCreateNewsToast');
+        if (!toastEl) return alert(message);
+        toastEl.className = '';
+        toastEl.innerHTML = '';
+        const bg = type === 'success' ? 'bg-green-600' : type === 'error' ? 'bg-red-600' : 'bg-gray-700';
+        toastEl.classList.add(bg, 'text-white', 'p-2', 'rounded');
+        toastEl.textContent = message;
+        toastEl.classList.remove('hidden');
+        setTimeout(() => { toastEl.classList.add('hidden'); }, 4000);
+    }
+
+    // initialize selects on load
+    (function(){ populateAdminSelects_dashboard().catch(e => console.error(e)); })();
+
+    // Close modal on outside click
+    quickTopicModal.addEventListener('click', (e) => {
+        if (e.target === quickTopicModal) quickTopicModal.classList.add('hidden');
+    });
+</script>
+
+<!-- Existing content manager -->
+<div class="mb-8 mt-6">
+    <h2 class="text-2xl font-bold text-white mb-4">Existing States → Topics → News</h2>
+    <div id="adminContentList" class="space-y-4">
+        <div class="bg-gray-800 rounded-lg p-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div id="adminStatesCol" class="p-2">
+                    <h3 class="text-sm text-gray-300 mb-2">States</h3>
+                    <div id="adminStatesList" class="space-y-2"></div>
+                </div>
+                <div id="adminTopicsCol" class="p-2">
+                    <h3 class="text-sm text-gray-300 mb-2">Topics</h3>
+                    <div id="adminTopicsList" class="space-y-2"></div>
+                </div>
+                <div id="adminNewsCol" class="p-2">
+                    <h3 class="text-sm text-gray-300 mb-2">News</h3>
+                    <div id="adminNewsList" class="space-y-2"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Load and render existing states/topics/news for edit/delete
+    async function loadAdminContent() {
+        try {
+            const res = await fetch('/admin/states', { credentials: 'same-origin' });
+            const j = await res.json(); if (!j || !j.success) return;
+            renderAdminContent(j.states || []);
+        } catch (e) { console.error('loadAdminContent error', e); }
+    }
+
+    function renderAdminContent(states) {
+        // Populate the three admin columns: states, topics, news
+        const statesCol = document.getElementById('adminStatesList');
+        const topicsCol = document.getElementById('adminTopicsList');
+        const newsCol = document.getElementById('adminNewsList');
+        statesCol.innerHTML = ''; topicsCol.innerHTML = ''; newsCol.innerHTML = '';
+
+        if (!states || states.length === 0) { statesCol.innerHTML = '<div class="text-gray-400">No states created yet.</div>'; return; }
+
+        states.forEach(state => {
+            const wrapper = document.createElement('div'); wrapper.className = 'flex items-center justify-between p-2 rounded hover:bg-gray-700';
+            const nameDiv = document.createElement('div'); nameDiv.className = 'cursor-pointer flex-1'; nameDiv.textContent = state.name; nameDiv.dataset.stateId = state._id;
+            nameDiv.addEventListener('click', () => {
+                // mark selected
+                document.querySelectorAll('#adminStatesList .state-entry').forEach(d=>d.classList.remove('bg-gray-700','text-white'));
+                wrapper.classList.add('bg-gray-700','text-white');
+                renderAdminTopicsForState(state);
+                // preselect state in create form
+                const sel = document.getElementById('adminNewsStateSelect'); if (sel) { sel.value = state._id; }
+            });
+
+            // delete button
+            const delBtn = document.createElement('button');
+            delBtn.className = 'ml-2 text-sm bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded';
+            delBtn.textContent = 'Delete';
+            delBtn.addEventListener('click', async (ev) => {
+                ev.stopPropagation();
+                if (!confirm('Delete this state and all its constituencies and candidates?')) return;
+                try {
+                    const res = await fetch('/admin/states/' + state._id, { method: 'DELETE', credentials: 'same-origin' });
+                    const d = await res.json();
+                    if (d && d.success) {
+                        await loadAdminContent();
+                        await populateAdminSelects_dashboard();
+                        showToast('State deleted', 'success');
+                    } else {
+                        alert(d && d.message ? d.message : 'Failed deleting state');
+                    }
+                } catch (err) { console.error(err); alert('Error deleting state'); }
+            });
+
+            wrapper.appendChild(nameDiv);
+            wrapper.appendChild(delBtn);
+            wrapper.classList.add('state-entry');
+            statesCol.appendChild(wrapper);
+        });
+
+        // auto-select first state
+        const firstState = states[0]; if (firstState) {
+            const firstDiv = statesCol.querySelector('div'); if (firstDiv) { firstDiv.click(); }
+        }
+    }
+
+    function renderAdminTopicsForState(state) {
+        const topicsCol = document.getElementById('adminTopicsList'); topicsCol.innerHTML = '';
+        const newsCol = document.getElementById('adminNewsList'); newsCol.innerHTML = '';
+        if (!state.topics || state.topics.length === 0) { topicsCol.innerHTML = '<div class="text-gray-400">No topics</div>'; return; }
+        state.topics.forEach(topic => {
+            const wrapper = document.createElement('div'); wrapper.className='flex items-center justify-between p-2 rounded hover:bg-gray-700';
+            const t = document.createElement('div'); t.className='cursor-pointer flex-1'; t.textContent = topic.name; t.dataset.topicId = topic._id;
+            t.addEventListener('click', () => {
+                // highlight
+                document.querySelectorAll('#adminTopicsList .topic-entry').forEach(d=>d.classList.remove('bg-gray-700','text-white'));
+                wrapper.classList.add('bg-gray-700','text-white');
+                renderAdminNewsForTopic(state, topic);
+            });
+            const delBtn = document.createElement('button');
+            delBtn.className = 'ml-2 text-sm bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded';
+            delBtn.textContent = 'Delete';
+            delBtn.addEventListener('click', async (ev) => {
+                ev.stopPropagation();
+                if (!confirm('Delete this topic and all its news?')) return;
+                try {
+                    const res = await fetch(`/admin/states/${state._id}/topics/${topic._id}`, { method: 'DELETE', credentials: 'same-origin' });
+                    const d = await res.json();
+                    if (d && d.success) {
+                        await loadAdminContent();
+                        showToast('Topic deleted', 'success');
+                    } else {
+                        alert(d && d.message ? d.message : 'Failed deleting topic');
+                    }
+                } catch (err) { console.error(err); alert('Error deleting topic'); }
+            });
+            wrapper.appendChild(t);
+            wrapper.appendChild(delBtn);
+            wrapper.classList.add('topic-entry');
+            topicsCol.appendChild(wrapper);
+        });
+        // auto-select first topic
+        const first = topicsCol.querySelector('.topic-entry'); if (first) { first.querySelector('div').click(); }
+    }
+
+    function renderAdminNewsForTopic(state, topic) {
+        const newsCol = document.getElementById('adminNewsList'); newsCol.innerHTML = '';
+        if (!topic.infos || topic.infos.length===0) { newsCol.innerHTML = '<div class="text-gray-400">No news</div>'; return; }
+        topic.infos.forEach(info => {
+            const n = document.createElement('div'); n.className='bg-gray-700 p-3 rounded mb-2 border border-gray-600';
+            n.innerHTML = `<div class='flex justify-between items-start'><div class='flex-1'><strong class='text-white block'>${escapeHtml(info.title||'')}</strong><div class='text-gray-400 text-sm mt-1'>${escapeHtml(info.content||'').slice(0,120)}</div></div><div class='flex gap-1 ml-2'><button class='px-2 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded text-xs whitespace-nowrap' data-role='edit-news'>Edit</button><button class='px-2 py-1 bg-red-600 hover:bg-red-700 text-white rounded text-xs whitespace-nowrap' data-role='delete-news'>Delete</button></div></div>`;
+            const editBtn = n.querySelector('[data-role="edit-news"]'); 
+            const delBtn = n.querySelector('[data-role="delete-news"]');
+            if (editBtn) editBtn.addEventListener('click', ()=>openEditNewsModal(state._id, topic._id, info._id));
+            if (delBtn) delBtn.addEventListener('click', async ()=>{ 
+                if (!confirm('Delete this news item?')) return; 
+                try { 
+                    const res = await fetch(`/admin/states/${state._id}/topics/${topic._id}/news/${info._id}`, { method:'DELETE', credentials:'same-origin' }); 
+                    const d = await res.json(); 
+                    if (d && d.success) { 
+                        await loadAdminContent(); 
+                        showToast('News deleted', 'success');
+                    } else {
+                        alert(d.message||'Failed deleting news');
+                    }
+                } catch(e){
+                    console.error(e); 
+                    alert('Error deleting news');
+                } 
+            });
+            newsCol.appendChild(n);
+        });
+    }
+
+    // Simple modal for editing news (creates and reuses DOM node)
+    let editNewsModal = null;
+    function openEditNewsModal(stateId, topicId, newsId) {
+        // fetch state json to find the news item
+        fetch(`/admin/states/${stateId}/json`, { credentials: 'same-origin' }).then(r=>r.json()).then(j=>{
+            if (!j || !j.success) return alert('Failed loading state');
+            const state = j.state; const topic = (state.topics||[]).find(t=>t._id==topicId); if(!topic) return alert('Topic not found');
+            const news = (topic.infos||[]).find(n=>n._id==newsId); if(!news) return alert('News not found');
+            showNewsModal(stateId, topicId, news);
+        }).catch(e=>{ console.error(e); alert('Error loading news'); });
+    }
+
+    function showNewsModal(stateId, topicId, news) {
+        if (!editNewsModal) {
+            editNewsModal = document.createElement('div'); editNewsModal.className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4';
+            editNewsModal.innerHTML = `
+                <div class='bg-gray-800 rounded-lg p-4 w-full max-w-2xl'>
+                    <h3 class='text-xl text-white mb-3'>Edit News</h3>
+                    <input id='editNewsTitle' class='w-full bg-gray-700 text-white rounded px-2 py-1 mb-2' />
+                    <textarea id='editNewsContent' class='w-full bg-gray-700 text-white rounded px-2 py-1 mb-2'></textarea>
+                    <input id='editNewsUrl' class='w-full bg-gray-700 text-white rounded px-2 py-1 mb-2' />
+                    <input id='editNewsImage' type='file' accept='image/*' class='mb-2' />
+                    <div class='flex justify-end space-x-2'>
+                        <button id='saveNewsBtn' class='px-3 py-1 bg-green-600 text-white rounded'>Save</button>
+                        <button id='closeNewsBtn' class='px-3 py-1 bg-gray-600 text-white rounded'>Close</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(editNewsModal);
+            editNewsModal.querySelector('#closeNewsBtn').addEventListener('click', () => { editNewsModal.style.display='none'; });
+        }
+        editNewsModal.style.display='flex';
+        editNewsModal.querySelector('#editNewsTitle').value = news.title||'';
+        editNewsModal.querySelector('#editNewsContent').value = news.content||'';
+        editNewsModal.querySelector('#editNewsUrl').value = news.url||'';
+        const saveBtn = editNewsModal.querySelector('#saveNewsBtn');
+        saveBtn.onclick = async () => {
+            const form = new FormData(); form.append('title', editNewsModal.querySelector('#editNewsTitle').value.trim()); form.append('content', editNewsModal.querySelector('#editNewsContent').value.trim()); form.append('url', editNewsModal.querySelector('#editNewsUrl').value.trim());
+            const fileEl = editNewsModal.querySelector('#editNewsImage'); if (fileEl && fileEl.files && fileEl.files[0]) form.append('image', fileEl.files[0]);
+            try {
+                const res = await fetch(`/admin/states/${stateId}/topics/${topicId}/news/${news._id}`, { method: 'PUT', body: form, credentials: 'same-origin' });
+                const d = await res.json(); if (d && d.success) { editNewsModal.style.display='none'; await loadAdminContent(); } else { alert(d.message || 'Failed updating news'); }
+            } catch (e) { console.error(e); alert('Error'); }
+        };
+    }
+
+    function escapeHtml(str) { return String(str||'').replace(/[&<>"]/g, s=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' })[s]); }
+
+    // Initialize
+    (function(){ loadAdminContent(); })();
+</script>
+
+<!-- Create Election Form -->
+<div class="bg-gray-800 rounded-lg p-6 mb-8">
+    <h2 class="text-2xl font-bold text-white mb-4">Create New Election</h2>
+    <form id="electionForm" enctype="multipart/form-data" class="space-y-6">
+        <!-- Basic Election Details -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label class="block text-gray-300 text-sm font-bold mb-2">Title</label>
+                <input type="text" name="title" required
+                       class="w-full bg-gray-700 text-white rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div>
+                <label class="block text-gray-300 text-sm font-bold mb-2">State</label>
+                <input type="text" name="state" required
+                       class="w-full bg-gray-700 text-white rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div>
+                <label class="block text-gray-300 text-sm font-bold mb-2">Start Date</label>
+                <input type="date" name="startDate" required
+                       class="w-full bg-gray-700 text-white rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div>
+                <label class="block text-gray-300 text-sm font-bold mb-2">End Date</label>
+                <input type="date" name="endDate" required
+                       class="w-full bg-gray-700 text-white rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+        </div>
+
+        <!-- Constituencies and Candidates -->
+        <div id="constituenciesContainer" class="space-y-6">
+            <!-- Constituency template will be added here -->
+        </div>
+
+        <button type="button" onclick="addConstituency()"
+                class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">
+            Add Constituency
+        </button>
+
+        <button type="submit"
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded">
+            Create Election
+        </button>
+    </form>
+</div>
+
+<!-- Constituency Template (hidden) -->
+<template id="constituencyTemplate">
+    <div class="constituency-block bg-gray-700 p-4 rounded-lg">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-bold text-white">Constituency</h3>
+            <button type="button" onclick="removeConstituency(this)"
+                    class="text-red-400 hover:text-red-300">Remove</button>
+        </div>
+        
+        <div class="space-y-4">
+            <div>
+                <label class="block text-gray-300 text-sm font-bold mb-2">Constituency Name</label>
+                <input type="text" name="constituencies[][name]" required
+                       class="w-full bg-gray-600 text-white rounded px-3 py-2">
+            </div>
+
+            <div class="candidates-container space-y-4">
+                <!-- Candidates will be added here -->
+            </div>
+
+            <button type="button" onclick="addCandidate(this)"
+                    class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm">
+                Add Candidate
+            </button>
+        </div>
+    </div>
+</template>
+
+<!-- Candidate Template (hidden) -->
+<template id="candidateTemplate">
+    <div class="candidate-block bg-gray-600 p-3 rounded">
+        <div class="flex justify-between items-center mb-3">
+            <h4 class="text-white font-medium">Candidate</h4>
+            <button type="button" onclick="removeCandidate(this)"
+                    class="text-red-400 hover:text-red-300 text-sm">Remove</button>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div>
+                <label class="block text-gray-300 text-sm mb-1">Name</label>
+                <input type="text" name="candidate_name" required
+                     class="w-full bg-gray-700 text-white rounded px-3 py-2">
+            </div>
+            <div>
+                <label class="block text-gray-300 text-sm mb-1">Party</label>
+                <input type="text" name="candidate_party" required
+                     class="w-full bg-gray-700 text-white rounded px-3 py-2">
+            </div>
+            <div class="md:col-span-2">
+               <label class="block text-gray-300 text-sm mb-1">Photo</label>
+               <input type="file" name="candidate_image" accept="image/*"
+                    class="w-full bg-gray-700 text-white rounded px-3 py-2">
+            </div>
+            <div class="md:col-span-2">
+                <label class="block text-gray-300 text-sm mb-1">Manifesto Points (one per line)</label>
+                <textarea name="candidate_manifesto" rows="4"
+                     class="w-full bg-gray-700 text-white rounded px-3 py-2" 
+                     placeholder="Enter manifesto points, one per line"></textarea>
+            </div>
+
+            <div class="md:col-span-2">
+                <label class="block text-gray-300 text-sm mb-1">Key Achievements (one per line)</label>
+                <textarea name="candidate_achievements" rows="4"
+                     class="w-full bg-gray-700 text-white rounded px-3 py-2"
+                     placeholder="Enter key achievements, one per line"></textarea>
+            </div>
+
+            <div class="md:col-span-2">
+                <label class="block text-gray-300 text-sm mb-1">Corruption Records (one per line)</label>
+                <textarea name="candidate_corruption" rows="4"
+                     class="w-full bg-gray-700 text-white rounded px-3 py-2"
+                     placeholder="Enter corruption records, one per line"></textarea>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+async function showAddConstituencyModal(electionId) {
+    if (electionId) {
+        currentElectionId = electionId;
+        document.getElementById('modalElectionIdForConstituency').value = electionId;
+    }
+    
+    // Load states
+    try {
+        const response = await fetch('/admin/states');
+        const data = await response.json();
+        
+        if (data.success) {
+            const stateSelect = document.getElementById('stateSelect');
+            stateSelect.innerHTML = '<option value="">Select State</option>';
+            
+            data.states.forEach(state => {
+                const option = document.createElement('option');
+                option.value = state._id;
+                option.textContent = state.name;
+                stateSelect.appendChild(option);
+            });
+        }
+    } catch (error) {
+        console.error('Error loading states:', error);
+        showNotification('Error loading states', 'error');
+    }
+    
+    document.getElementById('addConstituencyModal').classList.remove('hidden');
+}
+
+function closeAddConstituencyModal() {
+    document.getElementById('addConstituencyModal').classList.add('hidden');
+    document.getElementById('addConstituencyForm').reset();
+}
+
+function addConstituency() {
+    const container = document.getElementById('constituenciesContainer');
+    const template = document.getElementById('constituencyTemplate');
+    const clone = template.content.cloneNode(true);
+    container.appendChild(clone);
+    updateFieldNames();
+}
+
+function removeConstituency(button) {
+    button.closest('.constituency-block').remove();
+    updateFieldNames();
+}
+
+function addCandidate(button) {
+    const container = button.previousElementSibling;
+    const template = document.getElementById('candidateTemplate');
+    const clone = template.content.cloneNode(true);
+    container.appendChild(clone);
+    updateFieldNames();
+}
+
+function removeCandidate(button) {
+    button.closest('.candidate-block').remove();
+    updateFieldNames();
+}
+
+function updateFieldNames() {
+    const constituencies = document.querySelectorAll('.constituency-block');
+    constituencies.forEach((constituency, constituencyIndex) => {
+        const constituencyInput = constituency.querySelector('input[name*="constituencies[][name]"]');
+        constituencyInput.name = `constituencies[${constituencyIndex}][name]`;
+
+        const candidates = constituency.querySelectorAll('.candidate-block');
+        candidates.forEach((candidate, candidateIndex) => {
+            const inputs = candidate.querySelectorAll('input');
+            inputs.forEach(input => {
+                const fieldName = input.name.match(/\[\]\[([^\]]+)\]$/)[1];
+                input.name = `constituencies[${constituencyIndex}][candidates][${candidateIndex}][${fieldName}]`;
+            });
+        });
+    });
+}
+
+document.getElementById('electionForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    try {
+        const formData = new FormData();
+        
+        // Add basic election details
+        formData.append('title', this.querySelector('[name="title"]').value);
+        formData.append('state', this.querySelector('[name="state"]').value);
+        formData.append('startDate', this.querySelector('[name="startDate"]').value);
+        formData.append('endDate', this.querySelector('[name="endDate"]').value);
+
+        // Process constituencies and candidates
+        const constituencies = [];
+        document.querySelectorAll('.constituency-block').forEach((constituency, constituencyIndex) => {
+            const constituencyData = {
+                name: constituency.querySelector('[name*="[name]"]').value,
+                candidates: []
+            };
+
+            constituency.querySelectorAll('.candidate-block').forEach((candidate, candidateIndex) => {
+                const candidateData = {
+                    name: candidate.querySelector('[name="candidate_name"]').value,
+                    party: candidate.querySelector('[name="candidate_party"]').value
+                };
+                
+                // Add manifesto if present
+                const manifestoInput = candidate.querySelector('[name="candidate_manifesto"]');
+                if (manifestoInput && manifestoInput.value.trim()) {
+                    candidateData.manifesto = manifestoInput.value.trim().split('\n').filter(item => item.trim() !== '');
+                }
+                
+                // Add achievements if present
+                const achievementsInput = candidate.querySelector('[name="candidate_achievements"]');
+                if (achievementsInput && achievementsInput.value.trim()) {
+                    candidateData.achievements = achievementsInput.value.trim().split('\n').filter(item => item.trim() !== '');
+                }
+
+                // Add corruption records if present
+                const corruptionInput = candidate.querySelector('[name="candidate_corruption"]');
+                if (corruptionInput && corruptionInput.value.trim()) {
+                    candidateData.corruption = corruptionInput.value.trim().split('\n').filter(item => item.trim() !== '');
+                }
+
+                // Add image file if present
+                const imageInput = candidate.querySelector('[name="candidate_image"]');
+                if (imageInput && imageInput.files[0]) {
+                    const fieldName = `candidate_image_${constituencyIndex}_${candidateIndex}`;
+                    formData.append(fieldName, imageInput.files[0]);
+                    candidateData.imageField = fieldName;
+                }
+
+                constituencyData.candidates.push(candidateData);
+            });
+
+            constituencies.push(constituencyData);
+        });
+
+        formData.append('constituencies', JSON.stringify(constituencies));
+
+        const response = await fetch('/admin/elections', {
+            method: 'POST',
+            body: formData
+        });
+
+        const data = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(data.message || 'Error creating election');
+        }
+
+        if (data.success) {
+            showNotification('Election created successfully', 'success');
+            setTimeout(() => window.location.reload(), 1000);
+        } else {
+            throw new Error(data.message || 'Error creating election');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showNotification(error.message || 'Error creating election', 'error');
+    }
+});
+
+// These functions are defined in admin.js
+// function showAddCandidateModal(electionId, constituency) - shows the add candidate modal
+// function closeAddCandidateModal() - closes the add candidate modal and resets the form
+// function showAddConstituencyModal() - shows the add constituency modal
+// function closeAddConstituencyModal() - closes the add constituency modal and resets the form
+        
+
+</script>
+
+<!-- Create Election Modal -->
+<div id="createElectionModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50">
+    <div class="bg-gray-800 rounded-lg max-w-4xl mx-auto mt-20 p-6 border border-gray-700">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-bold text-white">Create New Election</h3>
+            <button onclick="closeCreateElectionModal()" class="text-gray-400 hover:text-white">&times;</button>
+        </div>
+        <form id="createElectionForm" class="space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-gray-300 text-sm font-bold mb-2">Title</label>
+                    <input type="text" name="title" required
+                           class="bg-gray-700 border border-gray-600 text-white rounded p-2 w-full">
+                </div>
+                <div>
+                    <label class="block text-gray-300 text-sm font-bold mb-2">State</label>
+                    <select name="state" required class="bg-gray-700 border border-gray-600 text-white rounded p-2 w-full">
+                        <option value="">Select State</option>
+                        <option value="Maharashtra">Maharashtra</option>
+                        <option value="Delhi">Delhi</option>
+                        <option value="Karnataka">Karnataka</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-gray-300 text-sm font-bold mb-2">Start Date</label>
+                    <input type="date" name="startDate" required
+                           class="bg-gray-700 border border-gray-600 text-white rounded p-2 w-full">
+                </div>
+                <div>
+                    <label class="block text-gray-300 text-sm font-bold mb-2">End Date</label>
+                    <input type="date" name="endDate" required
+                           class="bg-gray-700 border border-gray-600 text-white rounded p-2 w-full">
+                </div>
+            </div>
+
+            <!-- Constituencies Section -->
+            <div class="mt-6">
+                <h4 class="text-lg font-semibold text-white mb-4">Constituencies</h4>
+                <div id="createElectionConstituencies" class="space-y-4"></div>
+                <button type="button" onclick="addConstituencyToElection()"
+                        class="mt-4 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">
+                    Add Constituency
+                </button>
+            </div>
+
+            <button type="submit" 
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-200">
+                Create Election
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Add Candidate Modal -->
+<div id="addCandidateModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 overflow-y-auto">
+    <div class="bg-gray-800 rounded-lg max-w-lg mx-auto my-8 p-6 border border-gray-700" style="max-height: 90vh; overflow-y: auto;">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-bold text-white">Add New Candidate</h3>
+            <button onclick="closeAddCandidateModal()" class="text-gray-400 hover:text-white">&times;</button>
+        </div>
+        <form id="addCandidateForm" method="POST" action="/admin/candidates" enctype="multipart/form-data">
+            <input type="hidden" name="electionId" id="modalElectionId">
+            <input type="hidden" name="constituency" id="modalConstituency">
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-gray-300 text-sm font-bold mb-2">Name</label>
+                    <input type="text" name="name" required
+                           class="w-full bg-gray-700 text-white rounded px-3 py-2">
+                </div>
+                <div>
+                    <label class="block text-gray-300 text-sm font-bold mb-2">Party</label>
+                    <input type="text" name="party" required
+                           class="w-full bg-gray-700 text-white rounded px-3 py-2">
+                </div>
+                <div>
+                    <label class="block text-gray-300 text-sm font-bold mb-2">Image</label>
+                    <input type="file" name="image" accept="image/*"
+                           class="w-full bg-gray-700 text-white rounded px-3 py-2">
+                </div>
+                <div>
+                    <label class="block text-gray-300 text-sm font-bold mb-2">Manifesto Points (one per line)</label>
+                    <textarea name="manifesto" rows="3"
+                           class="w-full bg-gray-700 text-white rounded px-3 py-2" 
+                           placeholder="Enter manifesto points, one per line"></textarea>
+                </div>
+                <div>
+                    <label class="block text-gray-300 text-sm font-bold mb-2">Key Achievements (one per line)</label>
+                    <textarea name="achievements" rows="3"
+                           class="w-full bg-gray-700 text-white rounded px-3 py-2"
+                           placeholder="Enter key achievements, one per line"></textarea>
+                </div>
+                <div>
+                    <label class="block text-gray-300 text-sm font-bold mb-2">Corruption Records (one per line)</label>
+                    <textarea name="corruption" rows="3"
+                           class="w-full bg-gray-700 text-white rounded px-3 py-2"
+                           placeholder="Enter corruption records, one per line"></textarea>
+                </div>
+                <button type="submit"
+                        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                    Add Candidate
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function showAddCandidateModal(electionId, constituency) {
+        if (!electionId || !constituency) {
+            showNotification('Election and constituency information is required', 'error');
+            return;
+        }
+        document.getElementById('modalElectionId').value = electionId;
+        document.getElementById('modalConstituency').value = constituency;
+        document.getElementById('addCandidateForm').reset();
+        document.getElementById('addCandidateModal').classList.remove('hidden');
+    }
+
+    function closeAddCandidateModal() {
+        document.getElementById('addCandidateModal').classList.add('hidden');
+        document.getElementById('addCandidateForm').reset();
+    }
+
+    // Add form submission handler for the add candidate form
+    document.getElementById('addCandidateForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        try {
+            const formData = new FormData(this);
+            
+            // Process manifesto, achievements, and corruption as arrays
+            ['manifesto', 'achievements', 'corruption'].forEach(field => {
+                const text = formData.get(field);
+                if (text) {
+                    const array = text.trim().split('\n').filter(item => item.trim() !== '');
+                    formData.set(field, JSON.stringify(array));
+                }
+            });
+            
+            const response = await fetch('/admin/candidates', {
+                method: 'POST',
+                body: formData
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                showNotification('Candidate added successfully', 'success');
+                closeAddCandidateModal();
+                setTimeout(() => window.location.reload(), 1000);
+            } else {
+                throw new Error(result.message || 'Failed to add candidate');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showNotification(error.message || 'Error adding candidate', 'error');
+        }
+    });
+</script>
+
+<!-- Edit Candidate Modal -->
+<div id="editCandidateModal" class="edit hidden fixed inset-0 bg-black bg-opacity-50 z-50 overflow-y-auto">
+    <div class="bg-gray-800 rounded-lg max-w-lg mx-auto my-8 p-6 border border-gray-700" style="max-height: 90vh; overflow-y: auto;">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-bold text-white">Edit Candidate</h3>
+            <button onclick="closeEditCandidateModal()" class="text-gray-400 hover:text-white">&times;</button>
+        </div>
+        <form id="editCandidateForm" class="space-y-4">
+            <input type="hidden" name="candidateId" id="editCandidateId">
+            <div>
+                <label class="block text-gray-300 text-sm font-bold mb-2">Name</label>
+                <input type="text" name="name" id="editCandidateName" required
+                       class="bg-gray-700 border border-gray-600 text-white rounded p-2 w-full">
+            </div>
+            <div>
+                <label class="block text-gray-300 text-sm font-bold mb-2">Party Name</label>
+                <input type="text" name="party" id="editCandidateParty" required
+                       class="bg-gray-700 border border-gray-600 text-white rounded p-2 w-full">
+            </div>
+            <div>
+                <label class="block text-gray-300 text-sm font-bold mb-2">New Image (optional)</label>
+                <input type="file" name="image" accept="image/*"
+                       class="bg-gray-700 border border-gray-600 text-white rounded p-2 w-full">
+            </div>
+            <div>
+                <label class="block text-gray-300 text-sm font-bold mb-2">Manifesto Points (one per line)</label>
+                <textarea name="manifesto" id="editCandidateManifesto" rows="3"
+                       class="bg-gray-700 border border-gray-600 text-white rounded p-2 w-full" 
+                       placeholder="Enter manifesto points, one per line"></textarea>
+            </div>
+            <div>
+                <label class="block text-gray-300 text-sm font-bold mb-2">Key Achievements (one per line)</label>
+                <textarea name="achievements" id="editCandidateAchievements" rows="3"
+                       class="bg-gray-700 border border-gray-600 text-white rounded p-2 w-full"
+                       placeholder="Enter key achievements, one per line"></textarea>
+            </div>
+            <div>
+                <label class="block text-gray-300 text-sm font-bold mb-2">Corruption Records (one per line)</label>
+                <textarea name="corruption" id="editCandidateCorruption" rows="3"
+                       class="bg-gray-700 border border-gray-600 text-white rounded p-2 w-full"
+                       placeholder="Enter corruption records, one per line"></textarea>
+            </div>
+            <button type="submit" 
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-200">
+                Update Candidate
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Add Constituency Modal -->
+<div id="addConstituencyModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50">
+    <div class="bg-gray-800 rounded-lg max-w-lg mx-auto mt-20 p-6">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-bold text-white">Add New Constituency</h3>
+            <button onclick="closeAddConstituencyModal()" class="text-gray-400 hover:text-white">&times;</button>
+        </div>
+        <form id="addConstituencyForm" class="space-y-4">
+            <input type="hidden" name="electionId" id="modalElectionIdForConstituency">
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-gray-300 text-sm font-bold mb-2">Constituency Name</label>
+                    <input type="text" name="name" required
+                           class="w-full bg-gray-700 text-white rounded px-3 py-2">
+                </div>
+                <button type="submit"
+                        class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                    Add Constituency
+                </button>
+            </div>
+        </form>
+        <script>
+            document.getElementById('addConstituencyForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                try {
+                    const electionId = document.getElementById('modalElectionIdForConstituency').value;
+                    const name = document.querySelector('#addConstituencyForm input[name="name"]').value;
+                    
+                    if (!electionId || !name) {
+                        throw new Error('Election ID and constituency name are required');
+                    }
+
+                    const response = await fetch('/admin/constituencies', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            electionId: electionId,
+                            name: name
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        showNotification('Constituency added successfully', 'success');
+                        closeAddConstituencyModal();
+                        setTimeout(() => window.location.reload(), 1000);
+                    } else {
+                        throw new Error(result.message || 'Failed to add constituency');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    showNotification(error.message || 'Error adding constituency', 'error');
+                }
+            });
+        </script>
+    </div>
+</div>
+
+<!-- Add State Modal -->
+<div id="addStateModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50">
+    <div class="bg-gray-800 rounded-lg max-w-lg mx-auto mt-20 p-6">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-bold text-white">Add New State</h3>
+            <button onclick="closeAddStateModal()" class="text-gray-400 hover:text-white">&times;</button>
+        </div>
+        <form id="addStateForm" method="POST" action="/admin/states">
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-gray-300 text-sm font-bold mb-2">State Name</label>
+                    <input type="text" name="name" required
+                           class="w-full bg-gray-700 text-white rounded px-3 py-2">
+                </div>
+                <button type="submit"
+                        class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">
+                    Add State
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Add this button where appropriate in your dashboard -->
+<a href="/admin/bulk-constituency" class="btn btn-primary">
+    Bulk Create Constituencies
+</a>
+
+<!--new code-->
+<script>
+    async function toggleElectionStatus(electionId) {
+      try {
+        const response = await fetch(`/admin/elections/${electionId}/toggle`, { method: 'PATCH' });
+        const data = await response.json();
+        if (data.success) {
+          showNotification('Election status updated successfully', 'success');
+          setTimeout(() => window.location.reload(), 500);
+        } else {
+          showNotification('Failed to update status', 'error');
+        }
+      } catch (error) {
+        console.error(error);
+        showNotification('Error toggling election status', 'error');
+      }
+    }
+    
+    async function deleteElection(electionId) {
+      if (!confirm('Are you sure you want to delete this election?')) return;
+      
+      try {
+        const response = await fetch(`/admin/elections/${electionId}`, { method: 'DELETE' });
+        const data = await response.json();
+        if (data.success) {
+          showNotification('Election deleted successfully', 'success');
+          setTimeout(() => window.location.reload(), 500);
+        } else {
+          showNotification('Failed to delete election', 'error');
+        }
+      } catch (error) {
+        console.error(error);
+        showNotification('Error deleting election', 'error');
+      }
+    }
+    
+    async function deleteConstituency(electionId, constituencyId) {
+      if (!confirm('Are you sure you want to delete this constituency?')) return;
+      
+      try {
+        const response = await fetch(`/admin/elections/${electionId}/constituencies/${constituencyId}`, { method: 'DELETE' });
+        const data = await response.json();
+        if (data.success) {
+          showNotification('Constituency deleted successfully', 'success');
+          setTimeout(() => window.location.reload(), 500);
+        } else {
+          showNotification('Failed to delete constituency', 'error');
+        }
+      } catch (error) {
+        console.error(error);
+        showNotification('Error deleting constituency', 'error');
+      }
+    }
+    
+    async function deleteCandidate(candidateId) {
+      if (!confirm('Are you sure you want to delete this candidate?')) return;
+      
+      try {
+        const response = await fetch(`/admin/candidates/${candidateId}`, { method: 'DELETE' });
+        const data = await response.json();
+        if (data.success) {
+          showNotification('Candidate deleted successfully', 'success');
+          setTimeout(() => window.location.reload(), 500);
+        } else {
+          showNotification('Failed to delete candidate', 'error');
+        }
+      } catch (error) {
+        console.error(error);
+        showNotification('Error deleting candidate', 'error');
+      }
+    }
+    
+    function editCandidate(candidateId) {
+      // Fetch candidate data and show edit modal
+      fetch(`/admin/candidates/${candidateId}`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            const candidate = data.candidate;
+            document.getElementById('editCandidateId').value = candidate._id;
+            document.getElementById('editCandidateName').value = candidate.name;
+            document.getElementById('editCandidateParty').value = candidate.party;
+            
+            // Format manifesto, achievements, and corruption as newline-separated text
+            const manifestoText = Array.isArray(candidate.manifesto) ? candidate.manifesto.join('\n') : '';
+            const achievementsText = Array.isArray(candidate.achievements) ? candidate.achievements.join('\n') : '';
+            const corruptionText = Array.isArray(candidate.corruption) ? candidate.corruption.join('\n') : '';
+            
+            document.getElementById('editCandidateManifesto').value = manifestoText;
+            document.getElementById('editCandidateAchievements').value = achievementsText;
+            document.getElementById('editCandidateCorruption').value = corruptionText;
+            
+            // Show the modal
+            document.getElementById('editCandidateModal').classList.remove('hidden');
+          } else {
+            showNotification('Failed to load candidate data', 'error');
+          }
+        })
+        .catch(error => {
+          console.error(error);
+          showNotification('Error loading candidate data', 'error');
+        });
+    }
+    
+    function closeEditCandidateModal() {
+      document.getElementById('editCandidateModal').classList.add('hidden');
+      document.getElementById('editCandidateForm').reset();
+    }
+    
+    // Edit Candidate Form Submission
+    document.getElementById('editCandidateForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      try {
+        const formData = new FormData(this);
+        
+        // Process manifesto, achievements, and corruption as arrays
+        const manifestoText = document.getElementById('editCandidateManifesto').value;
+        const achievementsText = document.getElementById('editCandidateAchievements').value;
+        const corruptionText = document.getElementById('editCandidateCorruption').value;
+        
+        // Convert to arrays and add to formData
+        const manifestoArray = manifestoText.trim().split('\n').filter(item => item.trim() !== '');
+        const achievementsArray = achievementsText.trim().split('\n').filter(item => item.trim() !== '');
+        const corruptionArray = corruptionText.trim().split('\n').filter(item => item.trim() !== '');
+        
+        const data = {
+            name: formData.get('name'),
+            party: formData.get('party'),
+            manifesto: manifestoArray,
+            achievements: achievementsArray,
+            corruption: corruptionArray
+        };
+
+        // If there's an image, add it to formData
+        if (formData.get('image') && formData.get('image').size > 0) {
+            formData.append('image', formData.get('image'));
+            const response = await fetch('/admin/candidates/' + formData.get('candidateId'), {
+                method: 'PUT',
+                body: formData
+            });
+            const result = await response.json();
+            if (!result.success) throw new Error(result.message);
+        } else {
+            // If no image, send as JSON
+            const response = await fetch('/admin/candidates/' + formData.get('candidateId'), {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+            const result = await response.json();
+            if (!result.success) throw new Error(result.message);
+        }
+        
+        const response = await fetch('/admin/candidates/' + formData.get('candidateId'), {
+          method: 'PUT',
+          body: formData
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          showNotification('Candidate updated successfully', 'success');
+          closeEditCandidateModal();
+          setTimeout(() => window.location.reload(), 1000);
+        } else {
+          showNotification(result.message || 'Failed to update candidate', 'error');
+        }
+      } catch (error) {
+        console.error(error);
+        showNotification('Error updating candidate', 'error');
+      }
+    });
+
+
+
+
+
+
+    //new js
+    document.querySelectorAll('.edit-candidate-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      editCandidate(btn.dataset.id);
+    });
+  });
+
+  document.querySelectorAll('.delete-candidate-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (confirm('Are you sure you want to delete this candidate?')) {
+        deleteCandidate(btn.dataset.id);
+      }
+    });
+  });
+
+
+  document.querySelectorAll('.delete-election-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (confirm('Are you sure you want to delete this election?')) {
+      deleteElection(btn.dataset.id);
+    }
+  });
+});
+
+
+    </script>
+    
+
+
+
+
+
+<!-- Admin Topics & News Modals + JS -->
+<!-- Add Topic Modal -->
+<div id="addTopicModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50">
+    <div class="bg-gray-800 rounded-lg max-w-md mx-auto mt-20 p-6 border border-gray-700">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-bold text-white">Add Topic</h3>
+            <button onclick="closeAddTopicModal()" class="text-gray-400 hover:text-white">&times;</button>
+        </div>
+        <form id="addTopicForm" class="space-y-4">
+            <input type="hidden" id="addTopicStateId">
+            <div>
+                <label class="block text-gray-300 text-sm mb-1">Topic Name</label>
+                <input id="addTopicName" type="text" class="w-full bg-gray-700 text-white rounded px-3 py-2" required>
+            </div>
+            <div class="flex space-x-2">
+                <button type="button" onclick="submitAddTopic()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">Add</button>
+                <button type="button" onclick="closeAddTopicModal()" class="bg-gray-600 text-white px-4 py-2 rounded">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Add News Modal -->
+<div id="addNewsModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50">
+    <div class="bg-gray-800 rounded-lg max-w-2xl mx-auto mt-20 p-6 border border-gray-700">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-bold text-white">Add News</h3>
+            <button onclick="closeAddNewsModal()" class="text-gray-400 hover:text-white">&times;</button>
+        </div>
+        <form id="addNewsForm" class="space-y-4">
+            <input type="hidden" id="addNewsStateId">
+            <input type="hidden" id="addNewsTopicId">
+            <div>
+                <label class="block text-gray-300 text-sm mb-1">Title</label>
+                <input id="addNewsTitle" type="text" class="w-full bg-gray-700 text-white rounded px-3 py-2" required>
+            </div>
+            <div>
+                <label class="block text-gray-300 text-sm mb-1">Content</label>
+                <textarea id="addNewsContent" rows="4" class="w-full bg-gray-700 text-white rounded px-3 py-2"></textarea>
+            </div>
+            <div>
+                <label class="block text-gray-300 text-sm mb-1">URL (optional)</label>
+                <input id="addNewsUrl" type="url" class="w-full bg-gray-700 text-white rounded px-3 py-2">
+            </div>
+            <div class="flex space-x-2">
+                <button type="button" onclick="submitAddNews()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">Add News</button>
+                <button type="button" onclick="closeAddNewsModal()" class="bg-gray-600 text-white px-4 py-2 rounded">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+// Admin topics/news client logic
+async function loadAdminStates() {
+    try {
+        const res = await fetch('/admin/states');
+        const data = await res.json();
+        if (!data.success) return;
+        const select = document.getElementById('adminStateSelect');
+        select.innerHTML = '';
+        data.states.forEach(s => {
+            const opt = document.createElement('option'); opt.value = s._id; opt.textContent = s.name; select.appendChild(opt);
+        });
+        // set change handler
+        select.addEventListener('change', () => { renderStateTopics(select.value); });
+        // load first
+        if (data.states.length) {
+            select.value = data.states[0]._id;
+            renderStateTopics(data.states[0]._id);
+        } else {
+            document.getElementById('stateTopicsContainer').innerHTML = '<p class="text-gray-400">No states available.</p>';
+        }
+    } catch (err) {
+        console.error('Failed to load admin states', err);
+        showNotification('Failed to load states', 'error');
+    }
+}
+
+async function renderStateTopics(stateId) {
+    if (!stateId) return;
+    try {
+        // fetch full state doc from the public route
+        const res = await fetch('/states/' + stateId);
+        // that route returns HTML; instead fetch admin JSON by calling admin/states and find the state
+        const adminRes = await fetch('/admin/states');
+        const data = await adminRes.json();
+        if (!data.success) return;
+        const state = data.states.find(s => s._id === stateId);
+        if (!state) return;
+        const topics = state.topics || [];
+        const container = document.getElementById('stateTopicsContainer');
+        container.innerHTML = '';
+
+        const ul = document.createElement('ul');
+        ul.className = 'space-y-3';
+
+        // Admin-created topics
+        topics.forEach(t => {
+            const li = document.createElement('li');
+            li.className = 'bg-gray-700 rounded p-3 flex justify-between items-center';
+            li.innerHTML = `<div><strong class="text-white">${t.name}</strong><div class="text-xs text-gray-400">${(t.infos||[]).length} news items</div></div>`;
+            const actions = document.createElement('div');
+            actions.innerHTML = `
+                <button class="bg-blue-600 text-white px-3 py-1 rounded mr-2" onclick="openAddNews('${stateId}','${t._id}')">Add News</button>
+                <button class="bg-gray-600 text-white px-3 py-1 rounded mr-2" onclick="editTopic('${stateId}','${t._id}','${encodeURIComponent(t.name)}')">Edit</button>
+                <button class="bg-red-600 text-white px-3 py-1 rounded" onclick="deleteTopic('${stateId}','${t._id}')">Delete</button>
+            `;
+            li.appendChild(actions);
+            ul.appendChild(li);
+        });
+
+        // Defaults not managed by admin
+        const defaults = ['Corruption', 'Spending on Work', 'Work Promises', 'Done'];
+        defaults.forEach(d => {
+            if (!topics.find(tt => tt.name.toLowerCase() === d.toLowerCase())) {
+                const li = document.createElement('li');
+                li.className = 'bg-gray-800 rounded p-3 flex justify-between items-center';
+                li.innerHTML = `<div><strong class="text-gray-200">${d}</strong><div class="text-xs text-gray-400">Default topic</div></div>`;
+                const actions = document.createElement('div');
+                actions.innerHTML = `
+                    <button class="bg-green-600 text-white px-3 py-1 rounded" onclick="openAddTopicModal('${stateId}','${d.replace(/'/g,'')}')">Add as Admin Topic</button>
+                `;
+                li.appendChild(actions);
+                ul.appendChild(li);
+            }
+        });
+
+        container.appendChild(ul);
+    } catch (err) {
+        console.error(err);
+        showNotification('Error rendering topics', 'error');
+    }
+}
+
+function openAddTopicModal(stateId, defaultName) {
+    document.getElementById('addTopicStateId').value = stateId;
+    document.getElementById('addTopicName').value = defaultName || '';
+    document.getElementById('addTopicModal').classList.remove('hidden');
+}
+
+function closeAddTopicModal() { document.getElementById('addTopicModal').classList.add('hidden'); }
+
+async function submitAddTopic() {
+    const stateId = document.getElementById('addTopicStateId').value;
+    const name = document.getElementById('addTopicName').value.trim();
+    if (!stateId || !name) return showNotification('State and topic name required', 'error');
+    try {
+        const res = await fetch(`/admin/states/${stateId}/topics`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ name }) });
+        const data = await res.json();
+        if (data.success) {
+            showNotification('Topic added', 'success');
+            closeAddTopicModal();
+            await loadAdminStates();
+        } else throw new Error(data.message || 'Failed');
+    } catch (err) { console.error(err); showNotification(err.message || 'Error adding topic','error'); }
+}
+
+function openAddNews(stateId, topicId) {
+    document.getElementById('addNewsStateId').value = stateId;
+    document.getElementById('addNewsTopicId').value = topicId;
+    document.getElementById('addNewsForm').reset();
+    document.getElementById('addNewsModal').classList.remove('hidden');
+}
+function closeAddNewsModal() { document.getElementById('addNewsModal').classList.add('hidden'); }
+
+async function submitAddNews() {
+    const stateId = document.getElementById('addNewsStateId').value;
+    const topicId = document.getElementById('addNewsTopicId').value;
+    const title = document.getElementById('addNewsTitle').value.trim();
+    const content = document.getElementById('addNewsContent').value.trim();
+    const url = document.getElementById('addNewsUrl').value.trim();
+    if (!stateId || !topicId || !title) return showNotification('State/topic/title required','error');
+    try {
+        const res = await fetch(`/admin/states/${stateId}/topics/${topicId}/news`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ title, content, url }) });
+        const data = await res.json();
+        if (data.success) { showNotification('News added', 'success'); closeAddNewsModal(); await loadAdminStates(); }
+        else throw new Error(data.message || 'Failed');
+    } catch (err) { console.error(err); showNotification(err.message || 'Error adding news','error'); }
+}
+
+async function editTopic(stateId, topicId, currentNameEncoded) {
+    const currentName = decodeURIComponent(currentNameEncoded);
+    document.getElementById('addTopicStateId').value = stateId;
+    document.getElementById('addTopicName').value = currentName;
+    document.getElementById('addTopicModal').classList.remove('hidden');
+    // reuse add modal; on submit detect presence of topicId
+    // temporarily override submitAddTopic to update
+    const originalSubmit = submitAddTopic;
+    window.submitAddTopic = async function() {
+        try {
+            const name = document.getElementById('addTopicName').value.trim();
+            const res = await fetch(`/admin/states/${stateId}/topics/${topicId}`, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ name }) });
+            const data = await res.json();
+            if (data.success) { showNotification('Topic updated','success'); closeAddTopicModal(); await loadAdminStates(); }
+            else throw new Error(data.message || 'Failed');
+        } catch (err) { console.error(err); showNotification(err.message || 'Error updating topic','error'); }
+        // restore
+        window.submitAddTopic = originalSubmit;
+    };
+}
+
+async function deleteTopic(stateId, topicId) {
+    if (!confirm('Delete this topic?')) return;
+    try {
+        const res = await fetch(`/admin/states/${stateId}/topics/${topicId}`, { method: 'DELETE' });
+        const data = await res.json();
+        if (data.success) { showNotification('Topic deleted','success'); await loadAdminStates(); }
+        else throw new Error(data.message || 'Failed');
+    } catch (err) { console.error(err); showNotification(err.message || 'Error deleting topic','error'); }
+}
+
+// wire refresh and add buttons
+document.getElementById('refreshStatesBtn').addEventListener('click', loadAdminStates);
+document.getElementById('openAddTopicBtn').addEventListener('click', () => { const s = document.getElementById('adminStateSelect').value; openAddTopicModal(s); });
+document.getElementById('adminStateSelect').addEventListener('change', () => {
+    const s = document.getElementById('adminStateSelect').value;
+    const link = document.getElementById('openFullEditorLink');
+    link.href = `/admin/states/${s}/topics`;
+});
+
+// initial load
+loadAdminStates();
+</script>
+
+<!-- Notification function -->
+<script>
+function showNotification(message, type = 'info') {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 ${type === 'success' ? 'bg-green-600' : type === 'error' ? 'bg-red-600' : 'bg-blue-600'} text-white`;
+    notification.textContent = message;
+    
+    // Add to DOM
+    document.body.appendChild(notification);
+    
+    // Remove after 3 seconds
+    setTimeout(() => {
+        notification.classList.add('opacity-0', 'transition-opacity', 'duration-500');
+        setTimeout(() => notification.remove(), 500);
+    }, 3000);
+}
+
+// Function to add constituency to election creation form
+function addConstituencyToElection() {
+    // Check if this function was triggered by an event listener
+    const isEventTriggered = typeof event !== 'undefined' && event instanceof Event;
+    
+    // If it's an event and not a direct function call, prevent duplicate execution
+    if (isEventTriggered && event.target._isProcessing) {
+        return;
+    }
+    
+    // Mark the button as processing if this is an event
+    if (isEventTriggered) {
+        event.target._isProcessing = true;
+        // Reset the flag after a short delay
+        setTimeout(() => {
+            if (event && event.target) {
+                event.target._isProcessing = false;
+            }
+        }, 500);
+    }
+    
+    const container = document.getElementById('createElectionConstituencies');
+    const constituencyId = Date.now(); // Unique ID for the constituency
+    
+    const constituencyHtml = `
+        <div class="constituency-block bg-gray-700 p-4 rounded-lg" data-constituency-id="${constituencyId}">
+            <div class="flex justify-between items-center mb-4">
+                <div class="flex-1">
+                    <label class="block text-gray-300 text-sm font-bold mb-2">Constituency Name</label>
+                    <input type="text" name="constituencies[${constituencyId}][name]" required
+                           class="bg-gray-600 border border-gray-500 text-white rounded p-2 w-full">
+                </div>
+                <button type="button" onclick="removeConstituencyFromElection(${constituencyId})"
+                        class="ml-4 text-red-400 hover:text-red-300">Remove</button>
+            </div>
+            
+            <!-- Candidates Section -->
+            <div class="mt-4">
+                <h5 class="text-md font-semibold text-white mb-2">Candidates</h5>
+                <div class="candidates-container space-y-4" data-constituency-id="${constituencyId}"></div>
+                <button type="button" onclick="addCandidateToConstituency(${constituencyId})"
+                        class="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm">
+                    Add Candidate
+                </button>
+            </div>
+        </div>
+    `;
+    
+    container.insertAdjacentHTML('beforeend', constituencyHtml);
+}
+
+// Function to remove constituency from election creation form
+function removeConstituencyFromElection(constituencyId) {
+    const constituency = document.querySelector(`[data-constituency-id="${constituencyId}"]`);
+    if (constituency) {
+        constituency.remove();
+    }
+}
+
+// Function to add candidate to constituency in election creation form
+function addCandidateToConstituency(constituencyId) {
+    // Check if this function was triggered by an event listener
+    const isEventTriggered = typeof event !== 'undefined' && event instanceof Event;
+    
+    // If it's an event and not a direct function call, prevent duplicate execution
+    if (isEventTriggered && event.target._isProcessing) {
+        return;
+    }
+    
+    // Mark the button as processing if this is an event
+    if (isEventTriggered) {
+        event.target._isProcessing = true;
+        // Reset the flag after a short delay
+        setTimeout(() => {
+            if (event && event.target) {
+                event.target._isProcessing = false;
+            }
+        }, 500);
+    }
+    
+    const container = document.querySelector(`[data-constituency-id="${constituencyId}"] .candidates-container`);
+    const candidateId = Date.now(); // Unique ID for the candidate
+    
+    const candidateHtml = `
+        <div class="candidate-block bg-gray-600 p-3 rounded" data-candidate-id="${candidateId}">
+            <div class="flex justify-between items-center mb-3">
+                <h6 class="text-white font-medium">New Candidate</h6>
+                <button type="button" onclick="removeCandidateFromConstituency(${candidateId})"
+                        class="text-red-400 hover:text-red-300 text-sm">Remove</button>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-gray-300 text-sm mb-1">Name</label>
+                    <input type="text" name="constituencies[${constituencyId}][candidates][${candidateId}][name]" required
+                         class="w-full bg-gray-700 text-white rounded px-3 py-2">
+                </div>
+                <div>
+                    <label class="block text-gray-300 text-sm mb-1">Party</label>
+                    <input type="text" name="constituencies[${constituencyId}][candidates][${candidateId}][party]" required
+                         class="w-full bg-gray-700 text-white rounded px-3 py-2">
+                </div>
+                <div class="md:col-span-2">
+                   <label class="block text-gray-300 text-sm mb-1">Photo</label>
+                   <input type="file" name="constituencies[${constituencyId}][candidates][${candidateId}][image]" accept="image/*"
+                        class="w-full bg-gray-700 text-white rounded px-3 py-2">
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-gray-300 text-sm mb-1">Manifesto Points (one per line)</label>
+                    <textarea name="constituencies[${constituencyId}][candidates][${candidateId}][manifesto]" rows="3"
+                         class="w-full bg-gray-700 text-white rounded px-3 py-2" 
+                         placeholder="Enter manifesto points, one per line"></textarea>
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-gray-300 text-sm mb-1">Key Achievements (one per line)</label>
+                    <textarea name="constituencies[${constituencyId}][candidates][${candidateId}][achievements]" rows="3"
+                         class="w-full bg-gray-700 text-white rounded px-3 py-2"
+                         placeholder="Enter key achievements, one per line"></textarea>
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-gray-300 text-sm mb-1">Corruption Records (one per line)</label>
+                    <textarea name="constituencies[${constituencyId}][candidates][${candidateId}][corruption]" rows="3"
+                         class="w-full bg-gray-700 text-white rounded px-3 py-2"
+                         placeholder="Enter corruption records, one per line"></textarea>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    container.insertAdjacentHTML('beforeend', candidateHtml);
+}
+
+// Function to remove candidate from constituency in election creation form
+function removeCandidateFromConstituency(candidateId) {
+    const candidate = document.querySelector(`[data-candidate-id="${candidateId}"]`);
+    if (candidate) {
+        candidate.remove();
+    }
+}
+
+// Update the createElectionForm submit handler to handle the new structure
+document.getElementById('createElectionForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    try {
+        const formData = new FormData();
+        
+        // Add basic election details
+        formData.append('title', this.querySelector('[name="title"]').value);
+        formData.append('state', this.querySelector('[name="state"]').value);
+        formData.append('startDate', this.querySelector('[name="startDate"]').value);
+        formData.append('endDate', this.querySelector('[name="endDate"]').value);
+
+        // Process constituencies and candidates
+        const constituencies = [];
+        document.querySelectorAll('.constituency-block').forEach((constituency) => {
+            const constituencyId = constituency.dataset.constituencyId;
+            const constituencyData = {
+                name: constituency.querySelector(`[name="constituencies[${constituencyId}][name]"]`).value,
+                candidates: []
+            };
+
+            constituency.querySelectorAll('.candidate-block').forEach((candidate) => {
+                const candidateId = candidate.dataset.candidateId;
+                const candidateData = {
+                    name: candidate.querySelector(`[name="constituencies[${constituencyId}][candidates][${candidateId}][name]"]`).value,
+                    party: candidate.querySelector(`[name="constituencies[${constituencyId}][candidates][${candidateId}][party]"]`).value
+                };
+
+                // Process manifesto, achievements, and corruption
+                const manifestoText = candidate.querySelector(`[name="constituencies[${constituencyId}][candidates][${candidateId}][manifesto]"]`).value;
+                const achievementsText = candidate.querySelector(`[name="constituencies[${constituencyId}][candidates][${candidateId}][achievements]"]`).value;
+                const corruptionText = candidate.querySelector(`[name="constituencies[${constituencyId}][candidates][${candidateId}][corruption]"]`).value;
+
+                candidateData.manifesto = manifestoText.trim().split('\n').filter(item => item.trim());
+                candidateData.achievements = achievementsText.trim().split('\n').filter(item => item.trim());
+                candidateData.corruption = corruptionText.trim().split('\n').filter(item => item.trim());
+
+                // Handle image file
+                const imageFile = candidate.querySelector(`[name="constituencies[${constituencyId}][candidates][${candidateId}][image]"]`).files[0];
+                if (imageFile) {
+                    const fieldName = `candidate_image_${constituencyId}_${candidateId}`;
+                    formData.append(fieldName, imageFile);
+                    candidateData.imageField = fieldName;
+                }
+
+                constituencyData.candidates.push(candidateData);
+            });
+
+            constituencies.push(constituencyData);
+        });
+
+        formData.append('constituencies', JSON.stringify(constituencies));
+
+        const response = await fetch('/admin/elections', {
+            method: 'POST',
+            body: formData
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            showNotification('Election created successfully', 'success');
+            setTimeout(() => window.location.reload(), 1000);
+        } else {
+            throw new Error(result.message || 'Failed to create election');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showNotification(error.message || 'Error creating election', 'error');
+    }
+});
+</script>
+
+<script src="/js/admin.js"></script>
+
+<%- include('../partials/footer') %>

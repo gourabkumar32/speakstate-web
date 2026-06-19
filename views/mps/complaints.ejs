@@ -1,0 +1,80 @@
+<%- include('../partials/header') %>
+
+    <head>
+        <script async
+            src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8814468973632188"
+            crossorigin="anonymous"></script>
+    </head>
+    <style>
+        .container {
+            margin-bottom: 60px;
+            margin-top: -35px;
+        }
+    </style>
+
+    <div class="container mx-auto px-4 py-8">
+        <div class="p-1">
+            <%- include('../partials/leader-profile', { leader: mp }) %>
+                <%- include('../partials/leader-tabs', { type: 'mp' , leader: mp, activeTab: activeTab }) %>
+
+                    <div class="mb-8">
+                        <h2 class="text-xl font-semibold mb-4 text-red-600">Complaints & Issues</h2>
+                        <div class="space-y-4">
+                            <% if (mp.complaints && mp.complaints.length> 0) { %>
+                                <% mp.complaints.forEach(complaint=> { %>
+                                    <div
+                                        class="border rounded-lg p-4 bg-red-50 dark:bg-red-900/10 border-red-100 dark:border-red-900/30">
+                                        <div class="flex justify-between items-start mb-3">
+                                            <div class="flex items-center space-x-3">
+                                                <% if (complaint.displayProfilePicture) { %>
+                                                    <img src="<%= complaint.displayProfilePicture %>"
+                                                        class="w-10 h-10 rounded-full object-cover"
+                                                        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                                                    <div
+                                                        class="w-10 h-10 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold text-lg hidden">
+                                                        <%= complaint.displayName.charAt(0).toUpperCase() %>
+                                                    </div>
+                                                    <% } else { %>
+                                                        <div
+                                                            class="w-10 h-10 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold text-lg">
+                                                            <%= complaint.displayName.charAt(0).toUpperCase() %>
+                                                        </div>
+                                                        <% } %>
+                                                            <div>
+                                                                <p
+                                                                    class="font-semibold text-sm text-gray-900 dark:text-gray-100">
+                                                                    <%= complaint.displayName %>
+                                                                </p>
+                                                                <p class="text-xs text-gray-500">
+                                                                    <%= new
+                                                                        Date(complaint.createdAt).toLocaleDateString()
+                                                                        %>
+                                                                </p>
+                                                            </div>
+                                            </div>
+                                            <a href="/tweets" class="text-blue-600 text-sm hover:underline">View
+                                                Tweet</a>
+                                        </div>
+                                        <p class="text-gray-800 dark:text-gray-200">
+                                            <%= complaint.content %>
+                                        </p>
+                                        <% if (complaint.media && complaint.media.length> 0) { %>
+                                            <div class="mt-2 flex gap-2 overflow-x-auto">
+                                                <% complaint.media.forEach(img=> { %>
+                                                    <img src="/uploads/tweets/<%= img %>"
+                                                        class="h-20 w-auto rounded-md object-cover">
+                                                    <% }) %>
+                                            </div>
+                                            <% } %>
+                                    </div>
+                                    <% }) %>
+                                        <% } else { %>
+                                            <div class="text-center py-6 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
+                                                <p class="text-gray-500 italic">No complaints raised yet.</p>
+                                            </div>
+                                            <% } %>
+                        </div>
+                    </div>
+        </div>
+    </div>
+    <%- include('../partials/footer') %>

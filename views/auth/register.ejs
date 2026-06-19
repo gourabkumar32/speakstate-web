@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-C77SZWTGLY"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-C77SZWTGLY');
+    </script>
+    <title>Register</title>
+    <!-- Add Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        /* Neo-Brutalism Theme */
+        body {
+            background-color: #f3f0ff;
+            /* Soft Violet Background */
+            background-image: radial-gradient(#dcd6f7 2px, transparent 2px);
+            background-size: 30px 30px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            font-family: 'Verdana', sans-serif;
+            color: #000;
+        }
+
+        .main-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        /* Pop Card Styling */
+        .auth-container {
+            background: #ffffff;
+            border: 3px solid #000000;
+            border-radius: 15px;
+            /* Hard Shadow */
+            box-shadow: 10px 10px 0px #000000;
+            padding: 3rem;
+            position: relative;
+            transition: transform 0.2s;
+        }
+
+        .auth-container:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 12px 12px 0px #000000;
+        }
+
+        /* Header Styling */
+        .auth-container h1 {
+            color: #000;
+            font-weight: 900;
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+        }
+
+        /* Form Controls */
+        .form-floating>.form-control,
+        .form-floating>.form-select {
+            background: #fff;
+            border: 3px solid #000;
+            border-radius: 10px;
+            color: #000;
+            font-weight: 600;
+        }
+
+        .form-floating>.form-control:focus,
+        .form-floating>.form-select:focus {
+            background: #fff;
+            border-color: #000;
+            box-shadow: 5px 5px 0px #d4b3ff;
+            /* Pastel accent shadow */
+            transform: translate(-2px, -2px);
+        }
+
+        .form-floating>label {
+            color: #555;
+            font-weight: 600;
+        }
+
+        /* Fix for select padding to match inputs */
+        .form-floating>.form-select {
+            padding-top: 1.625rem;
+            padding-bottom: 0.625rem;
+        }
+
+        /* Primary Button */
+        .btn-primary-neo {
+            background-color: #a855f7;
+            color: #fff;
+            border: 3px solid #000;
+            padding: 14px;
+            font-weight: 800;
+            border-radius: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 1rem;
+            box-shadow: 5px 5px 0px #000;
+            transition: all 0.2s;
+            position: relative;
+            width: 100%;
+            display: block;
+        }
+
+        .btn-primary-neo:hover {
+            background-color: #9333ea;
+            color: #fff;
+            transform: translate(2px, 2px);
+            /* Press effect */
+            box-shadow: 2px 2px 0px #000;
+        }
+
+        .btn-primary-neo:active {
+            transform: translate(5px, 5px);
+            box-shadow: 0px 0px 0px #000;
+        }
+
+        /* Alerts */
+        .custom-alert {
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            font-weight: 700;
+            border: 3px solid #000;
+            box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.2);
+        }
+
+        .custom-alert.danger {
+            background: #ffc9c9;
+            color: #000;
+        }
+
+        .custom-alert.success {
+            background: #bbf7d0;
+            color: #000;
+        }
+
+        .custom-alert .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            line-height: 1;
+            color: #000;
+            cursor: pointer;
+            padding: 0 0 0 10px;
+        }
+
+        .custom-alert .close-btn:hover {
+            opacity: 0.7;
+        }
+
+        /* Footer Links */
+        .register-footer a {
+            color: #a855f7;
+            text-decoration: none;
+            font-weight: 800;
+            background-color: #fff;
+            padding: 2px 5px;
+            border: 2px solid transparent;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .register-footer a:hover {
+            background-color: #000;
+            color: #fff;
+            border: 2px solid #000;
+            text-decoration: none;
+            transform: rotate(-2deg);
+            display: inline-block;
+        }
+    </style>
+</head>
+
+<body>
+    <%- include('../partials/header', { title: 'Register' }) %>
+
+    <div class="main-wrapper">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-7 col-lg-5 col-xl-4">
+                    <div class="auth-container">
+                        <h1 class="text-center">Register</h1>
+
+                        <!-- Flash Messages -->
+                        <% if (typeof error !=='undefined' && error.length> 0) { %>
+                            <div class="custom-alert danger">
+                                <span class="message">
+                                    <i class="material-icons me-2"
+                                        style="font-size: 20px; vertical-align: middle;">error</i>
+                                    <%= Array.isArray(error) ? error[0] : error %>
+                                </span>
+                                <button type="button" class="close-btn"
+                                    onclick="this.parentElement.style.display='none';">&times;</button>
+                            </div>
+                        <% } %>
+
+                        <% if (typeof success !=='undefined' && success.length> 0) { %>
+                            <div class="custom-alert success">
+                                <span class="message">
+                                    <i class="material-icons me-2"
+                                        style="font-size: 20px; vertical-align: middle;">check_circle</i>
+                                    <%= Array.isArray(success) ? success[0] : success %>
+                                </span>
+                                <button type="button" class="close-btn"
+                                    onclick="this.parentElement.style.display='none';">&times;</button>
+                            </div>
+                        <% } %>
+
+                        <form action="/auth/register" method="POST">
+                            <% if (typeof returnTo !=='undefined' && returnTo) { %>
+                                <input type="hidden" name="returnTo" value="<%= returnTo %>">
+                            <% } %>
+
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="name" name="name"
+                                    placeholder="Enter your name" required>
+                                <label for="name">Name</label>
+                            </div>
+
+                            <div class="form-floating mb-3">
+                                <input type="email" class="form-control" id="email" name="email"
+                                    placeholder="Enter your email" required>
+                                <label for="email">Email</label>
+                            </div>
+
+                            <div class="form-floating mb-3">
+                                <select class="form-select" id="state" name="state" required>
+                                    <option value="" selected disabled>Select your state</option>
+                                    <option value="Andhra Pradesh">Andhra Pradesh</option>
+                                    <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                                    <option value="Assam">Assam</option>
+                                    <option value="Bihar">Bihar</option>
+                                    <option value="Chhattisgarh">Chhattisgarh</option>
+                                    <option value="Delhi">Delhi</option>
+                                    <option value="Goa">Goa</option>
+                                    <option value="Gujarat">Gujarat</option>
+                                    <option value="Haryana">Haryana</option>
+                                    <option value="Himachal Pradesh">Himachal Pradesh</option>
+                                    <option value="Jammu and kashmir">jammu and kashmir</option>
+                                    <option value="Jharkhand">Jharkhand</option>
+                                    <option value="Karnataka">Karnataka</option>
+                                    <option value="Kerala">Kerala</option>
+                                    <option value="Madhya Pradesh">Madhya Pradesh</option>
+                                    <option value="Maharashtra">Maharashtra</option>
+                                    <option value="Manipur">Manipur</option>
+                                    <option value="Meghalaya">Meghalaya</option>
+                                    <option value="Mizoram">Mizoram</option>
+                                    <option value="Nagaland">Nagaland</option>
+                                    <option value="Odisha">Odisha</option>
+                                    <option value="Punjab">Punjab</option>
+                                    <option value="Rajasthan">Rajasthan</option>
+                                    <option value="Sikkim">Sikkim</option>
+                                    <option value="Tamil Nadu">Tamil Nadu</option>
+                                    <option value="Telangana">Telangana</option>
+                                    <option value="Tripura">Tripura</option>
+                                    <option value="Uttar Pradesh">Uttar Pradesh</option>
+                                    <option value="Uttarakhand">Uttarakhand</option>
+                                    <option value="West Bengal">West Bengal</option>
+                                </select>
+                                <label for="state">State</label>
+                            </div>
+
+                            <div class="form-floating mb-4">
+                                <input type="password" class="form-control" id="password" name="password"
+                                    placeholder="Enter your password" required>
+                                <label for="password">Password</label>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary-neo mb-4">
+                                Register
+                            </button>
+                        </form>
+
+                        <div class="text-center register-footer">
+                            <p class="mb-0 text-secondary" style="font-weight: 600;">
+                                Already have an account?
+                                <a href="/auth/login">Login</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            // --- Hamburger Menu Logic ---
+            const hamburger = document.getElementById('hamburger');
+            const mobileMenu = document.getElementById('mobileMenu');
+            const menuClose = document.getElementById('menuClose');
+
+            if (hamburger && mobileMenu && menuClose) {
+                hamburger.addEventListener('click', () => {
+                    mobileMenu.classList.remove('translate-x-full');
+                });
+
+                menuClose.addEventListener('click', () => {
+                    mobileMenu.classList.add('translate-x-full');
+                });
+            }
+
+            // --- Alert Auto-dismiss Logic ---
+            const alerts = document.querySelectorAll('.custom-alert');
+            if (alerts.length > 0) {
+                alerts.forEach(alert => {
+                    setTimeout(() => {
+                        alert.style.transition = "opacity 0.5s ease";
+                        alert.style.opacity = '0';
+                        setTimeout(() => alert.remove(), 500);
+                    }, 5000);
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

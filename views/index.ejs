@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-C77SZWTGLY"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-C77SZWTGLY');
+    </script>
+
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8814468973632188"
+        crossorigin="anonymous"></script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>speakstate — Accountability Redefined</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-deep: #050810;
+            --accent-primary: #38bdf8;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-deep);
+            color: #f8fafc;
+            letter-spacing: -0.01em;
+        }
+
+        /* Sophisticated Scroll reveal */
+        .reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s cubic-bezier(0.2, 1, 0.3, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Custom Button Stylings */
+        .btn-action {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .btn-action::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: white;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .btn-action:hover::after {
+            opacity: 0.1;
+        }
+
+        /* Custom Glassware */
+        .bento-card {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(12px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .bento-card:hover {
+            border-color: rgba(56, 189, 248, 0.4);
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+            transform: translateY(-2px);
+        }
+
+        /* Navbar Blur */
+        .nav-blur {
+            backdrop-filter: blur(12px);
+            background-color: rgba(5, 8, 16, 0.8);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Animated Grid Background */
+        .grid-bg {
+            background-image: radial-gradient(rgba(56, 189, 248, 0.1) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        .noise {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            opacity: 0.03;
+            z-index: 9999;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3BaseFilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/feTurbulence%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+        .f{
+            margin-top: -70px;
+        }
+      
+    </style>
+</head>
+
+<body class="selection:bg-sky-500/30">
+    <div class="noise"></div>
+
+    <header id="header" class="fixed top-0 left-0 right-0 z-[100] transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <a href="/" class="flex items-center space-x-2 group">
+                <span class="text-xl font-bold tracking-tighter text-white">
+                    speak<span class="text-sky-500">state</span>
+                </span>
+            </a>
+
+            <nav class="hidden md:flex items-center space-x-10 text-[13px] font-semibold uppercase tracking-widest text-zinc-400">
+                <a href="#features" class="hover:text-white transition-colors">Platform</a>
+                <a href="#how-it-works" class="hover:text-white transition-colors">Methodology</a>
+                <a href="/mlas" class="hover:text-white transition-colors">Directory</a>
+                <div class="h-4 w-[1px] bg-zinc-800"></div>
+                <% if (typeof user !== 'undefined' && user) { %>
+                    <form action="/auth/logout" method="POST">
+                        <button type="submit" class="hover:text-white transition-colors">Logout</button>
+                    </form>
+                <% } else { %>
+                    <a href="/auth/login" class="text-sky-500 hover:text-sky-400 transition-colors">Access Portal</a>
+                <% } %>
+            </nav>
+
+            <button id="hamburger" class="md:hidden text-zinc-400" aria-label="Menu">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"></path></svg>
+            </button>
+        </div>
+    </header>
+
+    <!-- Overlay & Mobile Menu (Logic preserved from original) -->
+    <div id="menuOverlay" class="fixed inset-0 bg-black/90 z-[110] hidden backdrop-blur-sm"></div>
+    <div id="mobileMenu" class="fixed top-0 right-0 h-full w-full sm:w-[400px] bg-zinc-950 z-[120] transform translate-x-full transition-transform duration-500 ease-in-out p-10 flex flex-col justify-center space-y-8">
+        <button id="menuClose" class="absolute top-8 right-8 text-zinc-500 hover:text-white text-4xl">&times;</button>
+        <a href="#features" class="text-4xl font-bold hover:text-sky-500 mobile-link">Platform</a>
+        <a href="#how-it-works" class="text-4xl font-bold hover:text-sky-500 mobile-link">Methodology</a>
+        <a href="/mlas" class="text-4xl font-bold hover:text-sky-500">Directory</a>
+        <div class="pt-10">
+            <% if (typeof user !== 'undefined' && user) { %>
+                <form action="/auth/logout" method="POST"><button type="submit" class="text-2xl text-zinc-500">Logout</button></form>
+            <% } else { %>
+                <a href="/auth/login" class="text-2xl text-sky-500">Login to Dashboard &rarr;</a>
+            <% } %>
+        </div>
+    </div>
+
+    <main>
+        <!-- Hero Section: High Impact Editorial Style -->
+        <section class="relative pt-44 pb-32 overflow-hidden grid-bg">
+            <div class="max-w-7xl mx-auto px-6 relative z-10">
+               <!-- <div class="inline-flex items-center space-x-3 px-3 py-1 rounded-full bg-sky-500/10 border border-sky-500/20 mb-8 reveal active">
+                    <span class="relative flex h-2 w-2">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-sky-500"></span>
+                    </span>
+                    <span class="text-[11px] font-bold uppercase tracking-[0.2em] text-sky-400">Live Accountability Index 2025</span>
+                </div>-->
+                
+                <h1 class="f text-6xl md:text-8xl font-extrabold tracking-tighter leading-[0.9] mb-8 reveal active" style="transition-delay: 100ms">
+                    Measure the <br>
+                    <span class="text-zinc-500">Public Pulse.</span>
+                </h1>
+                
+                <!--<p class="max-w-2xl text-xl text-zinc-400 leading-relaxed mb-12 reveal active" style="transition-delay: 200ms">
+                    The non-partisan dashboard transforming problems into open-source data. 
+                    Browse, track, and audit your representatives with factual transparency.
+                </p>-->
+
+                <div class="flex flex-wrap gap-4 reveal active" style="transition-delay: 300ms">
+                    <a href="/mlas" class="btn-action bg-white text-black px-8 py-4 rounded-xl font-bold text-sm flex items-center group">
+                        Directory of MLAs
+                        <svg class="ml-2 w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    </a>
+                    
+                    <a href="/mps" class="btn-action bg-white text-black px-8 py-4 rounded-xl font-bold text-sm flex items-center group">
+                        Directory of MPs
+                        <svg class="ml-2 w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    </a>
+                    
+                    <!-- Updated Live Feed Button: Modern Vibrant Sky Blue -->
+                    <a href="/tweets" class="group btn-action bg-sky-500 text-white hover:bg-sky-400 border border-sky-400 hover:border-sky-300 px-8 py-4 rounded-xl font-bold text-sm flex items-center gap-3 transition-all shadow-[0_0_20px_rgba(14,165,233,0.3)] hover:shadow-[0_0_30px_rgba(14,165,233,0.5)]">
+                        <span class="relative flex h-2.5 w-2.5">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-white"></span>
+                        </span>
+                        <span>Live Feed</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Absolute decorative element -->
+            <div class="absolute top-1/2 -right-64 w-[600px] h-[600px] bg-sky-500/10 blur-[120px] rounded-full pointer-events-none"></div>
+        </section>
+
+        <!-- Stats Section (Added for "Human" feel) -->
+        <section class="border-y border-zinc-900 bg-black/50 py-5">
+            <div class="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="text-3xl font-bold text-white tracking-tighter">4,000+</div>
+                    <div class="text-xs uppercase tracking-widest text-zinc-500 font-bold mt-1">Representatives</div>
+                </div>
+                <div>
+                    <div class="text-3xl font-bold text-white tracking-tighter">28</div>
+                    <div class="text-xs uppercase tracking-widest text-zinc-500 font-bold mt-1">States Analyzed</div>
+                </div>
+                <!--<div>
+                    <div class="text-3xl font-bold text-white tracking-tighter">1.2M</div>
+                    <div class="text-xs uppercase tracking-widest text-zinc-500 font-bold mt-1">Citizen Reviews</div>
+                </div>
+                <div>
+                    <div class="text-3xl font-bold text-white tracking-tighter">100%</div>
+                    <div class="text-xs uppercase tracking-widest text-zinc-500 font-bold mt-1">Non-Partisan</div>
+                </div>-->
+            </div>
+        </section>
+
+        <!-- Features: Bento Grid Layout -->
+        <section id="features" class=" py-32 bg-zinc-950">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="mb-20">
+                    <h2 class="text-sm font-black uppercase tracking-[0.3em] text-sky-500 mb-4 reveal">The Ecosystem</h2>
+                    <h3 class="text-4xl md:text-5xl font-bold tracking-tight reveal">Tools for an <span class="italic font-normal serif">Accountable</span> Democracy</h3>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="md:col-span-2 bento-card p-10 rounded-3xl reveal">
+                        <div class="w-12 h-12 bg-sky-500/20 text-sky-400 rounded-xl flex items-center justify-center mb-8">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                        </div>
+                        <h4 class="text-2xl font-bold mb-4">Metric-Driven Report Cards</h4>
+                        <p class="text-zinc-400 text-lg leading-relaxed max-w-md">We aggregate public data, attendance, and asset disclosures into a single, readable score. No more digging through PDFs.</p>
+                    </div>
+
+                    <div class="bento-card p-10 rounded-3xl reveal" style="transition-delay: 100ms">
+                        <div class="w-12 h-12 bg-emerald-500/20 text-emerald-400 rounded-xl flex items-center justify-center mb-8">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                        </div>
+                        <h4 class="text-xl font-bold mb-4">Citizen Reviews</h4>
+                        <p class="text-zinc-400">Secure, encrypted, and anonymous. Share real experiences from your constituency without fear.</p>
+                    </div>
+
+                    <div class="bento-card p-10 rounded-3xl reveal" style="transition-delay: 200ms">
+                        <div class="w-12 h-12 bg-amber-500/20 text-amber-400 rounded-xl flex items-center justify-center mb-8">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        </div>
+                        <h4 class="text-xl font-bold mb-4">Geo-Tagging Issues</h4>
+                        <p class="text-zinc-400">Tag your local leader directly in civic issue reports to link the problem to their digital track record.</p>
+                    </div>
+
+                    <div class="md:col-span-2 bento-card p-10 rounded-3xl reveal" style="transition-delay: 300ms">
+                        <div class="flex items-center space-x-6">
+                            <div class="w-12 h-12 bg-purple-500/20 text-purple-400 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                            </div>
+                            <div>
+                                <h4 class="text-2xl font-bold mb-2">Real-time Performance Pulse</h4>
+                                <p class="text-zinc-400">Watch leaders' Citizen Scores fluctuate based on community feedback and project completion data.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Process Flow: Cleaner Timeline -->
+        <section id="how-it-works" class="py-32 relative">
+            <div class="max-w-5xl mx-auto px-6">
+                <div class="text-center mb-24">
+                    <h2 class="text-4xl font-extrabold tracking-tight reveal">How the Platform Works</h2>
+                </div>
+
+                <div class="space-y-24">
+                    <!-- Step 1 -->
+                    <div class="flex flex-col md:flex-row items-start gap-12 reveal">
+                        <div class="text-6xl font-black text-zinc-800 tabular-nums">01</div>
+                        <div class="flex-1">
+                            <h4 class="text-2xl font-bold mb-4 text-sky-500">Locate Representative</h4>
+                            <p class="text-zinc-400 text-lg leading-relaxed">Search by individual or Constituency name. We provide a deep dive into who represents you and what they've promised.</p>
+                        </div>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="flex flex-col md:flex-row items-start gap-12 reveal">
+                        <div class="text-6xl font-black text-zinc-800 tabular-nums">02</div>
+                        <div class="flex-1">
+                            <h4 class="text-2xl font-bold mb-4 text-sky-500">Audit in Public</h4>
+                            <p class="text-zinc-400 text-lg leading-relaxed">Submit a report on local infrastructure. Tag the MLA. This entry becomes a permanent part of their performance history.</p>
+                        </div>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="flex flex-col md:flex-row items-start gap-12 reveal">
+                        <div class="text-6xl font-black text-zinc-800 tabular-nums">03</div>
+                        <div class="flex-1">
+                            <h4 class="text-2xl font-bold mb-4 text-sky-500">Aggregate Score</h4>
+                            <p class="text-zinc-400 text-lg leading-relaxed">Our algorithms process thousands of data points to generate the 'Citizen Confidence Score' — updated every 24 hours.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-[#020408] pt-32 pb-12 border-t border-zinc-900">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-16 mb-24">
+                <div class="md:col-span-5">
+                    <a href="/" class="inline-flex items-center space-x-2 mb-8">
+                       
+                        <span class="text-lg font-bold tracking-tighter text-white">speakstate</span>
+                    </a>
+                    <p class="text-zinc-500 text-sm leading-relaxed max-w-sm mb-8">
+                        The independent infrastructure for political accountability in India. Built for citizens, by citizens. Non-partisan and data-first.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href=" https://x.com/_wekend?t=dzZPPWzmxk8B1C9g03uzVg&s=08" class="w-10 h-10 border border-zinc-800 rounded-full flex items-center justify-center hover:bg-white hover:text-black transition-all">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
+                        </a>
+                        <a href="https://www.instagram.com/speakstate._?igsh=MWZhY2pmbTEwdm04Ng==" class="w-10 h-10 border border-zinc-800 rounded-full flex items-center justify-center hover:bg-white hover:text-black transition-all">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"></path></svg>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="md:col-span-2">
+                    <h5 class="text-white font-bold text-sm mb-6 uppercase tracking-widest">Platform</h5>
+                    <ul class="space-y-4 text-sm text-zinc-500">
+                        <li><a href="/mlas" class="hover:text-white transition-colors">MLA Directory</a></li>
+                        <li><a href="/mps" class="hover:text-white transition-colors">MP Directory</a></li>
+                        <li><a href="/tweets" class="hover:text-white transition-colors">Feed</a></li>
+                    </ul>
+                </div>
+
+                <div class="md:col-span-2">
+                    <h5 class="text-white font-bold text-sm mb-6 uppercase tracking-widest">Information</h5>
+                    <ul class="space-y-4 text-sm text-zinc-500">
+                        <li><a href="/aboutus.html" class="hover:text-white transition-colors">Our Mission</a></li>
+                        <li><a href="/privacy-policy" class="hover:text-white transition-colors">Data Privacy</a></li>
+                        <li><a href="/contactus.html" class="hover:text-white transition-colors">Contact</a></li>
+                    </ul>
+                </div>
+
+                <!--<div class="md:col-span-3">
+                    <h5 class="text-white font-bold text-sm mb-6 uppercase tracking-widest">Citizen Pulse</h5>
+                    <div class="p-4 rounded-xl bg-zinc-900/50 border border-zinc-800">
+                        <p class="text-xs text-zinc-400 leading-relaxed italic">"Access to representative performance data should be a fundamental right in any democracy."</p>
+                    </div>
+                </div>-->
+            </div>
+
+            <div class="flex flex-col md:flex-row justify-between items-center text-[11px] font-bold text-zinc-600 uppercase tracking-widest border-t border-zinc-900 pt-12">
+                <p>© 2025 SpeakState</p>
+                <!--<div class="flex space-x-6 mt-4 md:mt-0">
+                    <a href="#" class="hover:text-zinc-400">Terms of Use</a>
+                    <a href="#" class="hover:text-zinc-400">Cookie Policy</a>
+                </div>-->
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Intersection Observer for reveal animations
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+            // Navbar behavior
+            const header = document.getElementById('header');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    header.classList.add('nav-blur', 'h-16');
+                    header.classList.remove('h-20');
+                } else {
+                    header.classList.remove('nav-blur', 'h-16');
+                    header.classList.add('h-20');
+                }
+            });
+
+            // Mobile menu logic (Cleaned up)
+            const hamburger = document.getElementById('hamburger');
+            const mobileMenu = document.getElementById('mobileMenu');
+            const menuClose = document.getElementById('menuClose');
+            const menuOverlay = document.getElementById('menuOverlay');
+            const mobileLinks = document.querySelectorAll('.mobile-link');
+
+            const toggleMenu = () => {
+                const isOpen = !mobileMenu.classList.contains('translate-x-full');
+                if (isOpen) {
+                    mobileMenu.classList.add('translate-x-full');
+                    menuOverlay.classList.add('hidden');
+                    document.body.style.overflow = '';
+                } else {
+                    mobileMenu.classList.remove('translate-x-full');
+                    menuOverlay.classList.remove('hidden');
+                    document.body.style.overflow = 'hidden';
+                }
+            };
+
+            hamburger.addEventListener('click', toggleMenu);
+            menuClose.addEventListener('click', toggleMenu);
+            menuOverlay.addEventListener('click', toggleMenu);
+            mobileLinks.forEach(link => link.addEventListener('click', toggleMenu));
+        });
+    </script>
+</body>
+
+</html>
+
+

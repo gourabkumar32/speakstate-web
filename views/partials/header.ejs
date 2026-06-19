@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-C77SZWTGLY"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+
+    gtag('config', 'G-C77SZWTGLY');
+  </script>
+
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8814468973632188"
+    crossorigin="anonymous"></script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>
+    <%= typeof title !=='undefined' ? title : 'SpeakState' %>
+  </title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="icon" href="/uploads/check-to-slot-solid (1).png" type="image/png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+
+
+  </style>
+</head>
+
+<body class="bg-gray-50 text-gray-800">
+
+  <header class="bg-[#0f172a] text-white fixed w-full z-50 shadow-lg h-16 md:h-18 flex items-center">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between w-full">
+
+      <a href="/" class="flex items-center gap-2">
+        <!--<div
+          class="h-8 w-8 rounded-xl bg-gradient-to-br from-sky-400 to-indigo-500 flex items-center justify-center text-xs font-bold text-slate-950">
+          SS</div>-->
+        <span class="text-xl sm:text-2xl font-extrabold tracking-tight text-white">
+          speak<span class="text-sky-400">state</span>
+        </span>
+      </a>
+
+      <button id="hamburger" class="md:hidden text-gray-200 hover:text-sky-400 transition-colors"
+        onclick="toggleMobileMenu()">
+        <i data-lucide="menu" class="w-7 h-7"></i>
+      </button>
+
+      <nav class="hidden md:flex gap-4 items-center">
+        <% if (typeof user !=='undefined' && user) { %>
+          <a href="/" class="block text-gray-200 hover:text-sky-400 transition-colors py-3 font-medium">Home</a>
+          <a href="/mlas"
+            class="text-gray-200 hover:text-sky-400 transition-colors duration-200 px-3 py-2 rounded-md text-sm font-medium">Mla</a>
+          <a href="/mps"
+            class="text-gray-200 hover:text-sky-400 transition-colors duration-200 px-3 py-2 rounded-md text-sm font-medium">MP</a>
+          <a href="/tweets" class="block text-gray-200 hover:text-sky-400 transition-colors py-3 font-medium">Issues</a>
+          <!--<a href="/states"
+            class="text-gray-200 hover:text-sky-400 transition-colors duration-200 px-3 py-2 rounded-md text-sm font-medium">Information</a>-->
+          <a href="/profile"
+            class="text-gray-200 hover:text-sky-400 transition-colors duration-200 px-3 py-2 rounded-md text-sm font-medium">Profile</a>
+
+          <% if (user.isAdmin) { %>
+            <a href="/admin/dashboard"
+              class="text-gray-200 hover:text-sky-400 transition-colors duration-200 px-3 py-2 rounded-md text-sm font-medium flex items-center gap-2">
+              <i class="fas fa-tachometer-alt"></i>Admin
+            </a>
+            <a href="/admin/mlas"
+              class="text-gray-200 hover:text-sky-400 transition-colors duration-200 px-3 py-2 rounded-md text-sm font-medium flex items-center gap-2">
+              <i class="fas fa-cog"></i>Manage MLAs
+            </a>
+            <a href="/admin/mps"
+              class="text-gray-200 hover:text-sky-400 transition-colors duration-200 px-3 py-2 rounded-md text-sm font-medium flex items-center gap-2">
+              <i class="fas fa-cog"></i>Manage MPs
+            </a>
+            <% } %>
+
+              <form action="/auth/logout" method="POST" class="ml-2">
+                <button type="submit"
+                  class="text-sky-400 border border-sky-400 hover:bg-sky-400 hover:text-white transition-colors duration-200 px-4 py-2 rounded-md text-sm font-medium">
+                  Logout
+                </button>
+              </form>
+
+              <% } else { %>
+
+                <a href="/auth/login"
+                  class="text-gray-200 hover:text-white bg-black transition-colors duration-200 px-3 py-2 rounded-md text-sm font-medium">Login</a>
+                <a href="/auth/register"
+                  class="bg-sky-400 text-white hover:bg-sky-500 transition-colors duration-200 px-4 py-2 rounded-md text-sm font-medium">Sign
+                  Up</a>
+
+                <% } %>
+      </nav>
+    </div>
+
+    <div id="mobileMenu"
+      class="fixed inset-0 bg-white text-white z-40 transform translate-x-full transition-transform duration-300 md:hidden">
+      <div class="flex justify-between items-center px-4 sm:px-6 h-16 md:h-18 border-b border-grey-700">
+
+        <a href="/" class="flex items-center  text-2xl font-semibold tracking-tight text-black-50">
+
+          Speak<span class="text-sky-400">State</span>
+        </a>
+
+        <button id="menuClose" class="text-black-200 hover:text-sky-400 transition-colors">
+          <i data-lucide="x" class="w-8 h-8"></i>
+        </button>
+      </div>
+
+      <div class="side p-6 space-y-4 text-lg">
+        <% if (typeof user !=='undefined' && user) { %>
+          <a href="/" class="block text-black-200 hover:text-sky-400 transition-colors py-3 font-medium">Home</a>
+          <a href="/mlas" class="block text-black-200 hover:text-sky-400 transition-colors py-3 font-medium">Mla</a>
+          <a href="/mps" class="block text-black-200 hover:text-sky-400 transition-colors py-3 font-medium">Mp</a>
+          <a href="/tweets"
+            class="block text-black-200 hover:text-sky-400 transition-colors py-3 font-medium">Issues</a>
+          <!--<a href="/states"
+            class="block text-black-200 hover:text-sky-400 transition-colors py-3 font-medium">Information</a>-->
+          <a href="/profile"
+            class="block text-black-200 hover:text-sky-400 transition-colors py-3 font-medium">Profile</a>
+
+          <% if (user.isAdmin) { %>
+            <div class="border-t border-gray-700 pt-4 space-y-4">
+              <a href="/admin/dashboard"
+                class="block text-gray-200 hover:text-sky-400 transition-colors py-3 font-medium flex items-center gap-3">
+                <i class="fas fa-tachometer-alt"></i>Admin Dashboard
+              </a>
+              <a href="/admin/mlas"
+                class="block text-gray-200 hover:text-sky-400 transition-colors py-3 font-medium flex items-center gap-3">
+                <i class="fas fa-cog"></i>Manage MLAs
+              </a>
+              <a href="/admin/mps"
+                class="block text-gray-200 hover:text-sky-400 transition-colors py-3 font-medium flex items-center gap-3">
+                <i class="fas fa-cog"></i>Manage MPs
+              </a>
+            </div>
+            <% } %>
+
+              <form action="/auth/logout" method="POST" class="pt-4">
+                <button type="submit"
+                  class="block w-full text-center bg-sky-400 text-white hover:bg-sky-500 transition-colors duration-200 px-4 py-3 rounded-md font-medium">
+                  Logout
+                </button>
+              </form>
+
+              <% } else { %>
+
+                <a href="/auth/login<%= (typeof currentPath !== 'undefined' && currentPath && !currentPath.startsWith('/auth')) ? '?returnTo=' + encodeURIComponent(currentPath) : '' %>"
+                  class="block w-full text-center bg-sky-400 text-white hover:bg-sky-500 transition-colors duration-200 px-4 py-3 rounded-md font-medium">Login</a>
+                <a href="/auth/register"
+                  class="block w-full text-center bg-sky-400 text-white hover:bg-sky-500 transition-colors duration-200 px-4 py-3 rounded-md font-medium">Sign
+                  Up</a>
+
+                <% } %>
+      </div>
+    </div>
+  </header>
+
+  <div class="h-16 md:h-18"></div>
+
+  <script>
+    let isMenuOpen = false;
+
+    function toggleMobileMenu() {
+      const mobileMenu = document.getElementById('mobileMenu');
+      isMenuOpen = !isMenuOpen;
+      mobileMenu.classList.toggle('translate-x-full');
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      // Call this function to render all lucide icons
+      lucide.createIcons();
+
+      const hamburger = document.getElementById('hamburger');
+      const mobileMenu = document.getElementById('mobileMenu');
+      const menuClose = document.getElementById('menuClose');
+
+      // Event listener for close button
+      menuClose.addEventListener('click', toggleMobileMenu);
+
+      // Close menu when clicking outside
+      document.addEventListener('click', function (e) {
+        // Check if hamburger is not null before checking contains
+        const isHamburgerClick = hamburger && hamburger.contains(e.target);
+        if (isMenuOpen && !mobileMenu.contains(e.target) && !isHamburgerClick) {
+          toggleMobileMenu();
+        }
+      });
+
+      // Close menu when pressing escape key
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && isMenuOpen) {
+          toggleMobileMenu();
+        }
+      });
+    });
+  </script>
+
+  <!-- header partial ends here; closing </body> and </html> moved to footer partial -->

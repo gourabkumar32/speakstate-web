@@ -1,0 +1,122 @@
+<%- include('../partials/header') %>
+
+<main class="min-h-screen bg-slate-50 text-slate-900">
+  <div class="max-w-3xl mx-auto px-4 py-10 space-y-6">
+    <header class="space-y-1">
+      <h1 class="text-3xl font-semibold tracking-tight">Terms &amp; Conditions</h1>
+      <p class="text-sm text-slate-500">
+        Last updated:
+        <span class="font-medium"><%= new Date().toLocaleDateString('en-IN') %></span>
+      </p>
+    </header>
+
+    <section class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4 text-sm leading-relaxed text-slate-700">
+      <p>
+        Welcome to <strong>SpeakState.com</strong> (“we”, “our”, “us”). By accessing or using this website, you agree to be bound by these Terms &amp; Conditions.
+        If you do not agree, please do not use our website.
+      </p>
+
+      <h2 class="text-base font-semibold text-slate-900 mt-2">1. Introduction</h2>
+      <p>
+        SpeakState.com is a political information and review platform that provides MLA profiles, topic-based information,
+        corruption and expenditure data, election insights, and user-generated reviews and posts.
+      </p>
+
+      <h2 class="text-base font-semibold text-slate-900 mt-2">2. Use of the Website</h2>
+      <p>You agree to use SpeakState.com only for lawful purposes and in a way that does not:</p>
+      <ul class="list-disc pl-5 space-y-1">
+        <li>Violate any applicable law or regulation</li>
+        <li>Infringe on the rights of others</li>
+        <li>Spread hate speech, harassment, or threats</li>
+        <li>Distribute spam, malware, or harmful content</li>
+      </ul>
+
+      <h2 class="text-base font-semibold text-slate-900 mt-2">3. User-Generated Content</h2>
+      <p>
+        When you submit reviews, comments, or other content on SpeakState.com, you are solely responsible for that content.
+        You agree that:
+      </p>
+      <ul class="list-disc pl-5 space-y-1">
+        <li>Your content is truthful to the best of your knowledge</li>
+        <li>Your content does not contain defamatory, hateful, or illegal material</li>
+        <li>Your content does not violate the privacy or rights of any individual</li>
+        <li>You grant SpeakState.com a non-exclusive right to display your content on the website</li>
+      </ul>
+      <p>
+        We reserve the right (but are not obligated) to edit, moderate, or remove content that we believe violates these Terms, applicable laws,
+        or basic standards of decency.
+      </p>
+
+      <h2 class="text-base font-semibold text-slate-900 mt-2">4. Information Accuracy &amp; Disclaimer</h2>
+      <p>
+        While we strive to provide accurate and up-to-date information about MLAs, political topics, and public work, we do not guarantee
+        the completeness, accuracy, or reliability of any information on SpeakState.com.
+      </p>
+      <p>
+        SpeakState.com is an informational platform and is <strong>not</strong> an official government website. Data may be based on
+        public sources, media reports, or user submissions. You should independently verify any information before relying on it.
+      </p>
+
+      <h2 class="text-base font-semibold text-slate-900 mt-2">5. Ads &amp; Monetization</h2>
+      <p>
+        SpeakState.com may display advertising and affiliate links, including but not limited to Google AdSense.
+        By using the website, you acknowledge that:
+      </p>
+      <ul class="list-disc pl-5 space-y-1">
+        <li>Ads may be personalized based on cookies and browsing data</li>
+        <li>We may earn revenue from clicks, impressions, or purchases made via ads or affiliate links</li>
+        <li>We do not control the content of third-party ads and are not responsible for them</li>
+      </ul>
+
+      <h2 class="text-base font-semibold text-slate-900 mt-2">6. Limitation of Liability</h2>
+      <p>
+        To the maximum extent permitted by law, SpeakState.com and its owners shall not be liable for any direct, indirect, incidental,
+        consequential, or special damages arising out of or in connection with:
+      </p>
+      <ul class="list-disc pl-5 space-y-1">
+        <li>Your use of or inability to use the website</li>
+        <li>Reliance on any information provided on the website</li>
+        <li>User-generated content or third-party content</li>
+        <li>Any third-party websites or services linked from SpeakState.com</li>
+      </ul>
+
+      <h2 class="text-base font-semibold text-slate-900 mt-2">7. Account &amp; Access Termination</h2>
+      <p>
+        We may suspend or permanently terminate your access to SpeakState.com if we believe you have:
+      </p>
+      <ul class="list-disc pl-5 space-y-1">
+        <li>Violated these Terms &amp; Conditions</li>
+        <li>Engaged in illegal or harmful behavior</li>
+        <li>Attempted to attack, hack, or disrupt the website</li>
+      </ul>
+
+      <h2 class="text-base font-semibold text-slate-900 mt-2">8. Third-Party Links</h2>
+      <p>
+        Our website may contain links to third-party websites such as news portals, government pages, or other resources.
+        We do not endorse, control, or take responsibility for the content or practices of those websites.
+      </p>
+
+      <h2 class="text-base font-semibold text-slate-900 mt-2">9. Changes to These Terms</h2>
+      <p>
+        We may update these Terms &amp; Conditions from time to time. When we do, we will post the updated version on this page
+        with a revised “Last updated” date. By continuing to use SpeakState.com, you agree to the updated terms.
+      </p>
+
+      <h2 class="text-base font-semibold text-slate-900 mt-2">10. Governing Law</h2>
+      <p>
+        These Terms &amp; Conditions are governed by the laws of India. Any disputes shall be subject to the jurisdiction of the
+        courts located in the appropriate jurisdiction where the website is operated.
+      </p>
+
+      <h2 class="text-base font-semibold text-slate-900 mt-2">11. Contact</h2>
+      <p>
+        If you have any questions regarding these Terms &amp; Conditions, please contact us at:
+      </p>
+      <p>
+        📧 <a href="mailto:contact@speakstate.com" class="text-indigo-600 hover:underline">contact@speakstate.com</a>
+      </p>
+    </section>
+  </div>
+</main>
+
+<%- include('../partials/footer') %>

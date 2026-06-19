@@ -1,0 +1,1709 @@
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Default text color */
+body, p, h1, h2, h3, h4, h5, h6, span, div {
+    color: #000000;
+}
+
+body {
+    background-color: #ffffff;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    line-height: 1.6;
+}
+
+/* Container */
+.container {
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+    margin-top: 12px;
+}
+
+/* Responsive breakpoints */
+@media (min-width: 576px) {
+    .container { max-width: 540px; }
+}
+
+@media (min-width: 768px) {
+    .container { max-width: 720px; }
+}
+
+@media (min-width: 992px) {
+    .container { max-width: 960px; }
+}
+
+@media (min-width: 1200px) {
+    .container { max-width: 1140px; }
+}
+
+/* Auth Container */
+.auth-container {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.auth-container h1 {
+    color: #2d3748;
+    font-size: 1.5rem;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+/* Form Styles */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #000000;
+    font-weight: 500;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 8px;
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    color: #000000;
+}
+
+.form-control {
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    color: #000000;
+}
+
+.form-control:focus {
+    border-color: #4299e1;
+    box-shadow: 0 0 0 0.25rem rgba(66, 153, 225, 0.25);
+}
+
+/* Button Styles */
+.btn {
+    display: inline-block;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    text-align: center;
+    transition: background-color 0.2s;
+}
+
+.btn-primary {
+    background-color: #4299e1;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #3182ce;
+}
+
+.btn-danger {
+    background-color: #f56565;
+    color: white;
+}
+
+.btn-danger:hover {
+    background-color: #e53e3e;
+}
+
+/* Alert Styles */
+.alert {
+    width: 100%;
+    max-width: 1140px;
+    margin: 0 auto 1rem;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    text-align: center;
+}
+
+.alert-danger {
+    background-color: #fffafa;
+    color: #e21212;
+    border: 1px solid #feb2b2;
+}
+
+.alert-success {
+    background-color: #c6f6d5;
+    color: #2f855a;
+    border: 1px solid #9ae6b4;
+}
+
+/* Navigation Styles */
+.navbar {
+    background-color: #4299e1;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+    height: 60px;
+    color: #ffffff;
+}
+
+.nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    height: 100%;
+}
+
+.nav-link {
+    color: #000000;
+    text-decoration: none;
+    padding: 0.75rem 1rem;
+    border-radius: 0.375rem;
+    transition: background-color 0.2s;
+}
+
+.nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* MLA Card Styles */
+.mla-card {
+    background-color: #ffffff;
+    border-radius: 1rem;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+    display: block; /* Ensure cards are block elements */
+}
+
+.mla-card:hover {
+    transform: translateY(-5px);
+}
+
+.mla-info {
+    padding: 1.5rem;
+    color: #000000;
+}
+
+.mla-info h3,
+.mla-name {
+    color: #000000;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    display: block; /* Ensure name is visible */
+}
+
+.mla-info p,
+.mla-party,
+.mla-constituency {
+    color: #000000;
+    margin-bottom: 0.5rem;
+    font-size: 14px;
+    display: block;
+    width: 100%;
+}
+
+.mla-image {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    object-position: center;
+}
+
+/* Card Container - Remove duplicates */
+.constituency-card {
+    background-color: #ffffff;
+    border-radius: 1rem;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+    color: #000000;
+}
+
+.constituency-card h3,
+.constituency-card p {
+    color: #000000;
+}
+
+/* Remove duplicate MLA card styles */
+.mla-card-content {
+    padding: 1.5rem;
+}
+
+.mla-card h3 {
+    color: #000000 !important;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+}
+
+.mla-card p {
+    color: #000000 !important;
+    margin-bottom: 0.5rem;
+}
+
+/* State Card Styles - Remove duplicates */
+.state-card {
+    background-color: #ffffff;
+    border-radius: 0.75rem;
+    padding: 1rem;
+    transition: transform 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    color: #000000;
+}
+
+.state-card:hover {
+    transform: translateY(-5px);
+}
+
+.state-card h3,
+.state-card p {
+    color: #000000;
+}
+
+/* Review Styles - Remove duplicates */
+.review-card,
+.review-item {
+    background-color: #ffffff;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.review-date,
+.review-comment,
+.review-author {
+    color: #000000;
+}
+
+.review-author {
+    font-style: italic;
+    font-size: 0.9rem;
+}
+
+/* Search Section - Remove duplicates */
+.search-section {
+    background-color: #ffffff;
+    padding: 1.5rem;
+    border-radius: 1rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.search-section input,
+.search-section select {
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    color: #000000;
+}
+
+/* State Heading */
+.state-heading {
+    font-size: 24px;
+    font-weight: bold;
+    color: #000000;
+    margin: 30px 0 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #4299e1;
+}
+
+/* Text Colors */
+/* Do not override utility classes from Tailwind (e.g., .text-white).
+   Ensure .text-white remains white and provide sensible defaults for others. */
+.text-white {
+    color: #ffffff !important;
+}
+.text-gray {
+    color: #6b7280;
+}
+.date,
+.no-reviews {
+    color: #000000;
+}
+
+/* Login form styles */
+.login-container {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.register-link {
+    margin-top: 15px;
+    text-align: center;
+}
+
+.register-link a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.register-link a:hover {
+    text-decoration: underline;
+}
+
+/* Remove any conflicting styles */
+.auth-container .alert {
+    position: static;
+    margin-bottom: 1rem;
+}
+
+/* Ensure alerts are visible in auth container */
+.auth-container .alert-danger,
+.auth-container .alert-success {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* Override auth container alert styles */
+.auth-container {
+    margin-top: -10px;
+}
+
+.auth-container .alert {
+    position: static;
+    margin-bottom: 1rem;
+}
+
+/* Specific alert types with stronger specificity */
+.auth-container .alert.alert-danger {
+    background-color: #dc3545 !important;
+    color: #ffffff !important;
+    border: none !important;
+}
+
+.auth-container .alert.alert-success {
+    background-color: #28a745 !important;
+    color: #ffffff !important;
+    border: none !important;
+}
+
+/* Remove any existing flash message styles */
+#flash-messages {
+    position: fixed;
+    top: 70px;
+    left: 0;
+    right: 0;
+    z-index: 999;
+    padding: 0 20px;
+}
+
+.btn-close {
+    filter: brightness(0) invert(1);
+    opacity: 0.8;
+}
+
+.btn-close:hover {
+    opacity: 1;
+}
+
+/* Animation for flash messages */
+@keyframes slideDown {
+    from {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.alert {
+    animation: slideDown 0.4s ease-out forwards;
+}
+
+/* Adjust heading styles */
+.login-container h1 {
+    margin-bottom: 20px;
+    text-align: center;
+    color: #333;
+}
+
+/* Search Bar Styles */
+.search-bar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+}
+
+.search-input {
+    flex: 2;
+    padding: 10px;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    background-color: #ffffff;
+    color: #000000;
+}
+
+.filter-select {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    background-color: #ffffff;
+    color: #000000;
+}
+
+/* MLA Grid */
+.mla-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    margin: 2rem 0;
+    width: 100%;
+}
+
+/* MLA Card */
+.mla-card {
+    background-color: #ffffff;
+    border-radius: 1rem;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.mla-image {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    object-position: center;
+}
+
+.mla-name {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #000000 !important;
+    text-align: left;
+}
+
+.mla-party,
+.mla-constituency {
+    color: #000000 !important;
+    margin: 5px 0;
+    font-size: 14px;
+    text-align: left;
+}
+
+/* Center the review buttons */
+.review-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+/* Button styles */
+.view-reviews,
+.add-review {
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    transition: background-color 0.2s ease;
+    min-width: 120px;
+    border: none;
+    cursor: pointer;
+    color: #ffffff;
+}
+
+/* Override any text alignment for buttons specifically */
+.mla-info .view-reviews,
+.mla-info .add-review {
+    text-align: center !important;
+    display: block !important;
+}
+
+.view-reviews {
+    background-color: #2b6cb0;
+}
+
+.view-reviews:hover {
+    background-color: #2c5282;
+}
+
+.add-review {
+    background-color: #2f855a;
+}
+
+.add-review:hover {
+    background-color: #276749;
+}
+
+/* Remove the general left alignment for buttons */
+.mla-info * {
+    text-align: left;
+}
+
+/* Exception for buttons */
+.mla-info button {
+    text-align: center !important;
+}
+
+/* Rating Section */
+.rating-section {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+    justify-content: flex-start;
+}
+
+.stars {
+    display: flex;
+    gap: 2px;
+    margin-right: 10px;
+    color: #ecc94b;
+}
+
+.star {
+    color: #000000;
+    font-size: 18px;
+}
+
+.star.filled {
+    color: #ecc94b;
+}
+
+.rating-value {
+    color: #000000;
+    font-size: 14px;
+}
+
+/* Action Buttons */
+.mla-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.action-btn {
+    flex: 1;
+    padding: 8px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.view-btn {
+    background-color: #2c5282;
+    color: white;
+}
+
+.view-btn:hover {
+    background-color: #2b6cb0;
+}
+
+.add-btn {
+    background-color: #2f855a;
+    color: white;
+}
+
+.add-btn:hover {
+    background-color: #38a169;
+}
+
+/* Navigation Bar */
+.navbar {
+    background-color: #ffffff;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+    height: 60px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    height: 100%;
+}
+
+/* Brand/Logo */
+.nav-brand {
+    display: flex;
+    align-items: center;
+}
+
+/* Navigation Links */
+.nav-links {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.5rem;
+}
+
+.nav-link {
+    color: #000000;
+    text-decoration: none;
+    padding: 0.75rem 1rem;
+    border-radius: 0.375rem;
+    transition: background-color 0.2s ease;
+}
+
+.nav-link:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Hamburger Menu - Hidden by default */
+.hamburger {
+    display: none; /* Hide hamburger in desktop */
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    padding: 8px;
+    background: none;
+    border: none;
+    position: absolute;
+    right:20px;
+    
+}
+
+/* Hamburger Lines */
+.hamburger span {
+    display: block;
+    width: 25px;
+    height: 2px;
+    background-color: #ffffff;
+    transition: all 0.3s ease;
+}
+
+/* Mobile Navigation */
+@media (max-width: 768px) {
+    .hamburger {
+        display: flex;
+        
+    }
+
+    .nav-links {
+        display: none;
+        position: fixed;
+        top: 60px;
+        left: 0;
+        width: 250px;
+        height: calc(100vh - 60px);
+        background-color: #1a1a1a;
+        padding: 1rem;
+        flex-direction: column;
+        gap: 0.5rem;
+        z-index: 1000;
+    }
+
+    .nav-links.active {
+        display: flex;
+    }
+
+    /* Navigation Link Styles */
+    .nav-link {
+        width: 100%;
+        text-align: left;
+        padding-left: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .nav-link i {
+        width: 20px;
+        text-align: center;
+    }
+
+    /* Hamburger Animation */
+    .hamburger.active span:nth-child(1) {
+        transform: translateY(8px) rotate(45deg);
+    }
+
+    .hamburger.active span:nth-child(2) {
+        opacity: 0;
+    }
+
+    .hamburger.active span:nth-child(3) {
+        transform: translateY(-8px) rotate(-45deg);
+    }
+}
+
+.site-title {
+    color: #000000;
+    font-size: 24px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.auth-buttons {
+    display: flex;
+    gap: 15px;
+}
+
+.auth-btn {
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 14px;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.login-btn {
+    background-color: #2c5282;
+    color: white;
+}
+
+.register-btn {
+    background-color: #2f855a;
+    color: white;
+}
+
+/* Admin MLA Form Styles */
+.form-section {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.form-section h2 {
+    margin-bottom: 20px;
+    color: #000000;
+}
+
+textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    resize: vertical;
+}
+
+/* Review Styles */
+.mla-details {
+    text-align: center;
+    margin-bottom: 30px;
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.mla-details img {
+    width: 200px;
+    height: 300px;
+    object-fit: cover;
+   /* border-radius: 50%;*/
+    margin-bottom: 15px;
+}
+
+.review-form {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.review-card {
+    background: #ffffff;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.rating {
+    color: #ffd700;
+    font-size: 1.2em;
+}
+
+.date {
+    color: #000000 !important;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+}
+
+/* Dark Theme Overrides */
+.dark .form-section {
+    background-color: #2d3748;
+}
+
+.dark .mla-card {
+    background-color: #2d3748;
+    border-color: #4a5568;
+}
+
+.dark .btn {
+    background-color: #4a5563;
+}
+
+.dark .btn:hover {
+    background-color: #2d3748;
+}
+
+.dark input,
+.dark select,
+.dark textarea {
+    background-color: #4a5568;
+    color: #fff;
+    border-color: #718096;
+}
+
+.dark input:focus,
+.dark select:focus,
+.dark textarea:focus {
+    border-color: #63b3ed;
+    outline: none;
+}
+
+/* New styles from the code block */
+.card {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #D1D5DB;
+    font-weight: 500;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    color: #000000;
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #4299e1;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.25);
+}
+
+/* Fix admin state select readability (override dark theme and other conflicting rules) */
+#selectedState,
+#selectedState option,
+.dark #selectedState,
+.dark #selectedState option {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+}
+
+.btn-primary {
+    background-color: #4299e1;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #3182ce;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+}
+
+.mla-card {
+    background-color: #ffffff;
+    border-radius: 1rem;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+    box-shadow: 10 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.mla-card:hover {
+    transform: translateY(-5px);
+}
+
+.mla-card-content {
+    padding: 1.5rem;
+}
+
+.mla-card h3 {
+    color: #F3F4F6;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+}
+
+.mla-card p {
+    color: #D1D5DB;
+    margin-bottom: 0.5rem;
+}
+
+.search-section {
+    background-color: #ffffff;
+    padding: 1.5rem;
+    border-radius: 1rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.search-section form {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.search-section input,
+.search-section select {
+    flex: 1;
+    min-width: 200px;
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    color: #000000;
+}
+
+.search-section input::placeholder {
+    color: #000000;
+}
+
+.auth-container {
+    background-color: #ffffff;
+    padding: 2rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.auth-container h1 {
+    color: #2d3748;
+    font-size: 1.5rem;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.auth-container .form-group {
+    margin-bottom: 1rem;
+}
+
+.auth-container label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #000000;
+    font-weight: 500;
+}
+
+.auth-container input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    color: #000000;
+    transition: all 0.3s ease;
+}
+
+.auth-container input:focus {
+    outline: none;
+    border-color: #4299e1;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.25);
+}
+
+.auth-container input::placeholder {
+    color: #000000;
+}
+
+.auth-container button {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #4299e1;
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.auth-container button:hover {
+    background-color: #3182ce;
+}
+
+.auth-container .text-center {
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.auth-container a {
+    color: #000000;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.auth-container a:hover {
+    color: #3B82F6;
+}
+
+/* Space utility */
+.space-y-4 > * + * {
+    margin-top: 1rem;
+}
+
+/* Alert styles in auth container */
+.auth-container .alert {
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    text-align: center;
+    font-weight: 500;
+}
+
+.auth-container .alert-danger {
+    background-color: rgba(239, 68, 68, 0.1);
+    border: 1px solid #EF4444;
+    color: #EF4444;
+}
+
+.auth-container .alert-success {
+    background-color: rgba(16, 185, 129, 0.1);
+    border: 1px solid #10B981;
+    color: #10B981;
+}
+
+.admin-section {
+    background-color: #ffffff;
+    padding: 2rem;
+    border-radius: 1rem;
+    margin-bottom: 2rem;
+}
+
+.admin-section h2 {
+    color: #000000;
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.text-white {
+    color: #000000;
+}
+
+.text-gray {
+    color: #000000;
+}
+
+.mb-4 {
+    margin-bottom: 1rem;
+}
+
+.mt-4 {
+    margin-top: 1rem;
+}
+
+/* Search Form Styles */
+.search-form {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+}
+
+.search-btn {
+    background-color: #3B82F6;
+    color: white;
+    padding: 0 20px;
+    white-space: nowrap;
+}
+
+.search-btn:hover {
+    background-color: #2563EB;
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(27, 25, 25, 0.5);
+}
+
+.modal-content {
+    background-color: #ffffff;
+    margin: 15% auto;
+    padding: 20px;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 500px;
+    position: relative;
+}
+
+.close {
+    color: #000000;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: #333333;
+}
+
+.modal h2 {
+    color: #000000;
+    margin-bottom: 20px;
+}
+
+/* Review Page Styles */
+.mla-profile-image {
+    width: 150px;
+    height: 150px;
+    border-radius: 10px;
+    margin: 0 auto 20px;
+    object-fit: cover;
+   display: block;
+    margin-left: 500px;
+    
+}
+@media (max-width: 576px){
+    .mla-profile-image {
+        width: 120px;
+        height: 160px;
+        align-items: center;
+        margin-left: 20%;
+}
+}
+
+.reviews-section {
+    margin-top: 30px;
+    padding: 20px;
+}
+
+.reviews-section h2 {
+    color: #000000;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.review-card {
+    background-color: #ffffff;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.review-date {
+    color: #000000;
+    font-size: 0.9rem;
+}
+
+.review-comment {
+    color: #000000;
+    margin: 10px 0;
+}
+
+.review-author {
+    color: #000000;
+    font-size: 0.9rem;
+    font-style: italic;
+}
+
+.no-reviews {
+    color: #000000;
+    text-align: center;
+    padding: 20px;
+}
+
+.back-button {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.card {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+   /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);*/
+}
+
+.form-control {
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    color: #000000;
+}
+
+.form-control:focus {
+    background-color: #ffffff;
+    border-color: #4299e1;
+    box-shadow: 0 0 0 0.25rem rgba(66, 153, 225, 0.25);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .mla-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+    }
+
+    .mla-image {
+        height: 350px;
+    }
+}
+
+@media (max-width: 640px) {
+    .mla-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .mla-image {
+        height: 300px;
+    }
+
+    .mla-info {
+        padding: 1.25rem;
+    }
+}
+
+/* Responsive search section */
+.search-section {
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.search-form {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+    .search-form {
+        flex-direction: column;
+    }
+
+    .search-form input,
+    .search-form select,
+    .search-form button {
+        width: 100%;
+    }
+}
+
+/* Responsive alerts */
+.alert {
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 0.5rem;
+    text-align: center;
+}
+
+/* Responsive buttons */
+.btn {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    text-align: center;
+    transition: background-color 0.3s ease;
+    width: 100%;
+}
+
+/* Responsive modal */
+.modal {
+    padding: 1rem;
+}
+
+.modal-content {
+    width: 90%;
+    max-width: 500px;
+    margin: 2rem auto;
+}
+
+@media (max-width: 576px) {
+    .modal-content {
+        width: 95%;
+        margin: 1rem auto;
+    }
+}
+
+/* Responsive profile section */
+.profile-section {
+    display: grid;
+    gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+    .profile-section {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Responsive tables */
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Utility classes */
+.text-center {
+    text-align: center;
+}
+
+.mt-4 {
+    margin-top: 1rem;
+}
+
+.mb-4 {
+    margin-bottom: 1rem;
+}
+
+.w-full {
+    width: 100%;
+}
+
+/* Dark theme overrides */
+.dark .form-control {
+    background-color: #374151;
+    color: #ffffff;
+}
+
+.dark .btn {
+    background-color: #4B5563;
+    color: #ffffff;
+}
+
+.dark .card {
+    background-color: #1F2937;
+}
+
+/* Mobile Navigation Styles */
+.hamburger {
+    display: none;
+    cursor: pointer;
+    padding-left: 220px;
+    background: none;
+    border: none;
+    position: relative;
+    z-index: 1000;
+}
+
+.hamburger-line {
+    display: block;
+    width: 20px;
+    height: 2px;
+    margin: 3px 0;
+    background-color: #ffffff;
+    border-radius: 1px;
+    transition: all 0.3s ease;
+}
+
+/* Mobile Navigation */
+@media (max-width: 768px) {
+    .nav-container {
+        padding: 0 1rem;
+    }
+
+    .hamburger {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        
+    }
+
+    /* Animation for active state */
+    .hamburger.active .hamburger-line:nth-child(1) {
+        transform: translateY(5px) rotate(45deg);
+    }
+
+    .hamburger.active .hamburger-line:nth-child(2) {
+        opacity: 0;
+    }
+
+    .hamburger.active .hamburger-line:nth-child(3) {
+        transform: translateY(-5px) rotate(-45deg);
+    }
+}
+
+/* Elections State Cards */
+.elections-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+    
+}
+
+@media (max-width: 768px) {
+    .elections-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .elections-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+    }
+
+    .state-card {
+        padding: 0.75rem;
+    }
+}
+
+/* State Card Styles */
+.state-card {
+    background-color: #ffffff;
+    border-radius: 0.75rem;
+    padding: 1rem;
+    transition: transform 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    color: #000000;
+}
+
+.state-card:hover {
+    transform: translateY(-5px);
+}
+
+.state-card h3 {
+    color: #000000;
+}
+
+.state-card p {
+    color: #000000;
+}
+
+/* Remove the center alignment from these specific classes */
+.mla-info * {
+    text-align: left;
+}
+
+/* Election Card Styles */
+.constituency-card {
+    background-color: #ffffff;
+    border-radius: 1rem;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    color: #000000;
+}
+
+.constituency-card h3 {
+    color: #000000;
+}
+
+.constituency-card p {
+    color: #000000;
+}
+
+/* Election Card Image */
+.constituency-card img {
+    width: 100%;
+    height: 300px !important;
+    object-fit: cover;
+    object-position: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .constituency-card img {
+        height: 250px !important;
+    }
+}
+
+@media (max-width: 640px) {
+    .constituency-card img {
+        height: 200px !important;
+    }
+}
+
+/* Election Card Image Styles */
+.constituency-card img,
+.mla-card img,
+[class*="candidate"] img {
+    width: 100%;
+    height: 300px !important;
+    object-fit: cover;
+    object-position: center;
+}
+
+/* Card Container */
+.constituency-card,
+.mla-card {
+    background-color: #ffffff;
+    border-radius: 1rem;
+    overflow: hidden;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .constituency-card img,
+    .mla-card img,
+    [class*="candidate"] img {
+        height: 250px !important;
+    }
+}
+
+@media (max-width: 640px) {
+    .constituency-card img,
+    .mla-card img,
+    [class*="candidate"] img {
+        height: 200px !important;
+    }
+}
+
+/* Review Styles */
+.reviews-list {
+    margin: 20px 0;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.review-item {
+    background: #ffffff;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.review-date {
+    color: #000000;
+    font-size: 0.9em;
+}
+
+.review-comment {
+    color: #000000;
+    margin: 10px 0;
+}
+
+.review-author {
+    color: #000000;
+    font-size: 0.9em;
+    font-style: italic;
+}
+
+.error-message {
+    color: #f56565;
+    text-align: center;
+    padding: 10px;
+}
+
+.no-reviews {
+    text-align: center;
+    color: #000000;
+    padding: 20px;
+}
+
+/* MLA Reviews Page Styles */
+.reviews-container {
+    max-height: 600px;
+    overflow-y: auto;
+    padding-right: 10px;
+    background-color: #ffffff;
+    border-radius: 8px;
+   /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);*/
+    box-shadow: none;
+}
+
+.reviews-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.reviews-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.reviews-container::-webkit-scrollbar-thumb {
+    background: #cbd5e0;
+    border-radius: 4px;
+}
+
+.reviews-container::-webkit-scrollbar-thumb:hover {
+    background: #a0aec0;
+}
+
+.review-item {
+    transition: transform 0.2s;
+    margin-bottom: 20px;
+    box-shadow: none;
+}
+
+.review-item:hover {
+    transform: translateX(5px);
+}
+
+.stars {
+    letter-spacing: 2px;
+}

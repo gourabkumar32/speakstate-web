@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit MP - Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body class="bg-gray-50">
+    <%- include('../partials/header') %>
+
+        <div class="container mx-auto px-4 py-8">
+            <div class="mb-8">
+                <a href="/admin/mps"
+                    class="text-blue-600 hover:text-blue-700 font-semibold mb-4 inline-flex items-center gap-2">
+                    <i class="fas fa-arrow-left"></i> Back to MPs
+                </a>
+                <h1 class="text-3xl font-bold text-gray-800">Edit MP Profile</h1>
+            </div>
+
+            <!-- Flash Messages -->
+            <% if (typeof success !=='undefined' && success && success.length> 0) { %>
+                <div class="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg flex items-center gap-3">
+                    <i class="fas fa-check-circle text-green-600"></i>
+                    <span class="text-green-700">
+                        <%= success[0] %>
+                    </span>
+                </div>
+                <% } %>
+                    <% if (typeof error !=='undefined' && error && error.length> 0) { %>
+                        <div class="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg flex items-center gap-3">
+                            <i class="fas fa-exclamation-circle text-red-600"></i>
+                            <span class="text-red-700">
+                                <%= error[0] %>
+                            </span>
+                        </div>
+                        <% } %>
+
+                            <div class="max-w-2xl mx-auto bg-white rounded-lg shadow p-8">
+                                <form action="/admin/mps/<%= mp._id %>/edit" method="POST" enctype="multipart/form-data"
+                                    class="space-y-6">
+                                    <!-- Current Image Preview -->
+                                    <div class="flex items-center gap-6 pb-6 border-b border-gray-200">
+                                        <img src="<%= mp.image ? `/uploads/candidates/${mp.image}` : '/uploads/candidates/default-mp.png' %>"
+                                            alt="<%= mp.name %>" loading="lazy"
+                                            class="w-32 h-40 object-cover rounded border border-gray-200">
+                                        <div>
+                                            <p class="text-sm text-gray-600 mb-2">Current Profile Image</p>
+                                            <p class="font-semibold text-gray-800">
+                                                <%= mp.name %>
+                                            </p>
+                                            <p class="text-sm text-gray-600">
+                                                <%= mp.party %> | <%= mp.state %>
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <!-- Name -->
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">Name *</label>
+                                        <input type="text" name="name" value="<%= mp.name %>" required
+                                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    </div>
+
+                                    <!-- Party -->
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">Party *</label>
+                                        <input type="text" name="party" value="<%= mp.party %>" required
+                                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    </div>
+
+                                    <!-- State -->
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">State *</label>
+                                        <select name="state" required
+                                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                            <option value="" disabled>Select State</option>
+                                            <% states.forEach(function(stateName) { %>
+                                                <option value="<%= stateName %>" <%=mp.state===stateName ? 'selected'
+                                                    : '' %>><%= stateName %>
+                                                </option>
+                                                <% }); %>
+                                        </select>
+                                    </div>
+
+                                    <!-- Constituency -->
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">Constituency
+                                            *</label>
+                                        <input type="text" name="constituency" value="<%= mp.constituency %>" required
+                                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    </div>
+
+                                    <!-- Description -->
+                                    <div>
+                                        <label
+                                            class="block text-sm font-semibold text-gray-700 mb-2">Description</label>
+                                        <textarea name="description" rows="6"
+                                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"><%= mp.description || '' %></textarea>
+                                        <p class="text-xs text-gray-500 mt-1">Bio or brief description of the MP</p>
+                                    </div>
+
+                                    <!-- Profile Image Upload -->
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">Update Profile
+                                            Image</label>
+                                        <div class="relative">
+                                            <input type="file" name="image" accept="image/*" id="imageInput"
+                                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        </div>
+                                        <p class="text-xs text-gray-500 mt-1">Recommended: 400x500px, max 5MB (leave
+                                            empty to keep current image)</p>
+                                    </div>
+
+                                    <!-- Buttons -->
+                                    <div class="flex gap-3 pt-6 border-t border-gray-200">
+                                        <button type="submit"
+                                            class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 flex items-center justify-center gap-2">
+                                            <i class="fas fa-save"></i> Update MP
+                                        </button>
+                                        <a href="/admin/mps"
+                                            class="flex-1 bg-gray-400 hover:bg-gray-500 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 flex items-center justify-center gap-2">
+                                            <i class="fas fa-times"></i> Cancel
+                                        </a>
+                                    </div>
+                                </form>
+                            </div>
+        </div>
+
+        <%- include('../partials/footer') %>
+</body>
+
+</html>

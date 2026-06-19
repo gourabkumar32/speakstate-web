@@ -1,0 +1,83 @@
+exports.addComment = async (req, res) => {
+    try {
+        const tweetId = req.params.id;
+        const userId = req.session.user._id; // Using _id instead of id
+        const { content } = req.body;
+
+        console.log('Adding comment:', { tweetId, userId, content });
+
+        // Input validation
+        if (!content || content.trim() === '') {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Comment cannot be empty' 
+            });
+        }
+
+        if (!userId) {
+            return res.status(401).json({ 
+                success: false, 
+                message: 'User must be authenticated to comment' 
+            });
+        }
+
+        // Find the tweet first
+        const tweet = await Tweet.findById(tweetId);
+        if (!tweet) {
+            return res.status(404).json({ 
+                success: false, 
+                message: 'Tweet not found' 
+            });
+        }
+
+        // Create the new comment object
+        const newComment = {
+            user: userId,
+            content: content.trim(),
+            createdAt: new Date()
+        };
+
+        // Add comment to the tweet
+        tweet.comments.push(newComment);
+
+        // Save the tweet with the new comment
+        await tweet.save();
+
+        // Fetch the updated tweet with populated user data for the new comment
+        const updatedTweet = await Tweet.findById(tweetId)
+            .populate('comments.user', 'name profilePicture');
+
+        // Get the newly added comment
+        const addedComment = updatedTweet.comments[updatedTweet.comments.length - 1];
+
+        console.log('Comment added successfully:', {
+            commentId: addedComment._id,
+            userId: addedComment.user._id,
+            content: addedComment.content
+        });
+
+        // Send response
+        return res.status(200).json({
+            success: true,
+            comment: {
+                _id: addedComment._id,
+                content: addedComment.content,
+                createdAt: addedComment.createdAt,
+                user: {
+                    _id: addedComment.user._id,
+                    name: addedComment.user.name,
+                    profilePicture: addedComment.user.profilePicture
+                }
+            },
+            commentCount: updatedTweet.comments.length
+        });
+
+    } catch (error) {
+        console.error('Error adding comment:', error);
+        return res.status(500).json({ 
+            success: false, 
+            message: 'Error adding comment',
+            error: error.message 
+        });
+    }
+};

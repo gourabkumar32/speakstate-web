@@ -1,0 +1,156 @@
+<!-- Work Details -->
+ <head>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8814468973632188"
+     crossorigin="anonymous"></script>
+ </head>
+<style>
+    .w{
+        margin: 20px;
+    }
+    /* Image styles */
+    .work-image {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 0.5rem;
+        transition: transform 0.3s ease;
+    }
+    .work-image:hover {
+        transform: scale(1.05);
+    }
+    .image-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+    .post-actions {
+  position: absolute;   /* Keep it floating */
+  top: 10px;            /* Distance from top of the post */
+  right: 10px;          /* Distance from right side */
+  z-index: 10;          /* Make sure it's above the image */
+  background: white;    /* Optional: background so it’s visible */
+  border-radius: 5px;   /* Optional styling */
+}
+.post-container {
+  position: relative; /* Required so absolute positioning works */
+}
+</style>
+
+<%- include('./edit-work') %>
+
+<div class="w mb-8 bg-white rounded-lg shadow-md p-6">
+    <h2 class="text-2xl font-semibold mb-4">Work Details</h2>
+    <% if (workDetails && workDetails.length > 0) { %>
+        <div class="space-y-4">
+            <% workDetails.forEach(function(work) { %>
+                <div class="border rounded-lg p-4 relative" data-work-id="<%= work.workDetail._id %>">
+                    <div class="absolute top-4 right-4">
+                        <div class="relative inline-block text-left">
+                       <!-- Three dot button -->
+                           <button type="button" 
+                           class="text-gray-500 hover:text-gray-700" 
+                               onclick="toggleWorkMenu('<%= work.workDetail._id %>')">
+                               <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                 <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"/>
+                               </svg>
+                             </button>
+
+                            <!-- Dropdown menu -->
+                        <div id="work-menu-<%= work.workDetail._id %>" 
+                            class="hidden absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
+                           <div class="py-1" role="menu" aria-orientation="vertical">
+                                <a href="/mlas/<%= work.mlaId %>/work/<%= work.workDetail._id %>/edit" 
+                              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" 
+                       role="menuitem">Edit</a>
+                       <button onclick="deleteWork('<%= work.mlaId %>', '<%= work.workDetail._id %>')" 
+                     class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100" 
+                     role="menuitem">Delete</button>
+                   </div>
+                  </div>
+                </div>
+                      
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-lg mb-2"><%= work.workDetail.title %></h3>
+                        <p class="text-gray-600 mb-2"><%= work.workDetail.description %></p>
+                        
+                        <!-- Location -->
+                        <% if (work.workDetail.location && work.workDetail.location !== 'undefined' && work.workDetail.location !== 'null') { %>
+                            <p class="text-sm text-gray-600 mt-2">
+                                <i class="fas fa-map-marker-alt text-blue-500"></i>
+                                <%= work.workDetail.location %>
+                            </p>
+                        <% } %>
+
+                        <!-- Images with proper error handling -->
+                        <% if (work.workDetail.images && work.workDetail.images.length > 0) { %>
+                            <div class="mt-4 grid grid-cols-2 sm:grid-cols-3 gap-4">
+                                <% work.workDetail.images.forEach((image, index) => { %>
+                                    <div class="relative group aspect-square cursor-zoom-in" onclick="openImageModal('<%= image.startsWith('/') ? image : `/uploads/work/${image}` %>')">
+                                        <% const imagePath = image.startsWith('/') ? image : `/uploads/work/${image}`; %>
+                                        <img src="<%= imagePath %>" 
+                                            alt="Work image <%= index + 1 %>"
+                                            class="work-image w-full h-full object-cover rounded-lg transition-transform duration-300 hover:scale-105"
+                                            onerror="console.error('Image failed to load:', this.src); this.src='/uploads/mlas/default-mla.png';">
+                                        <div class="absolute inset-0 bg-black opacity-0 group-hover:opacity-20 transition-opacity duration-300 rounded-lg pointer-events-none"></div>
+                                        <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                                            <i class="fas fa-search-plus text-white text-2xl"></i>
+                                        </div>
+                                    </div>
+                                <% }); %>
+                            </div>
+                        <% } %>
+
+                        <div class="flex items-center justify-between mt-4">
+                            <div>
+                                <span class="text-sm text-gray-500">MLA: <%= work.mlaName %></span>
+                            </div>
+                            <div>
+                                <span class="px-3 py-1 rounded-full text-sm 
+                                    <%= work.workDetail.status === 'Completed' ? 'bg-green-100 text-green-800' : 
+                                       work.workDetail.status === 'In Progress' ? 'bg-blue-100 text-blue-800' : 
+                                       'bg-yellow-100 text-yellow-800' %>">
+                                    <%= work.workDetail.status %>
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="text-sm text-gray-500 mt-2">
+                            Posted on: <%= new Date(work.workDetail.date).toLocaleDateString() %>
+                        </div>
+                    </div>
+                </div>
+            <% }); %>
+        </div>
+    <% } else { %>
+        <p class="text-gray-500">No work details posted yet.</p>
+    <% } %>
+</div>
+
+<script>
+function toggleWorkMenu(workId) {
+    const menu = document.getElementById(`work-menu-${workId}`);
+    const allMenus = document.querySelectorAll('[id^="work-menu-"]');
+    
+    // Close all other menus
+    allMenus.forEach(m => {
+        if (m.id !== `work-menu-${workId}`) {
+            m.classList.add('hidden');
+        }
+    });
+    
+    // Toggle the clicked menu
+    menu.classList.toggle('hidden');
+}
+
+// Close menus when clicking outside
+document.addEventListener('click', function(event) {
+    const menus = document.querySelectorAll('[id^="work-menu-"]');
+    const buttons = document.querySelectorAll('button[onclick^="toggleWorkMenu"]');
+    
+    if (!Array.from(buttons).some(button => button.contains(event.target))) {
+        menus.forEach(menu => menu.classList.add('hidden'));
+    }
+});
+</script>

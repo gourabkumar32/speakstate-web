@@ -1,0 +1,122 @@
+<%- include('../partials/header') %>
+<link rel="stylesheet" href="/css/style.css">
+
+<div class="container mt-4">
+    <h2>Bulk Constituency Creation</h2>
+    
+    <form id="bulkConstituencyForm">
+        <div class="form-group">
+            <label for="state">Select State</label>
+            <select class="form-control" id="state" name="stateId" required>
+                <option value="">Select a state</option>
+                <% states.forEach(state => { %>
+                    <option value="<%= state._id %>"><%= state.name %></option>
+                <% }); %>
+            </select>
+        </div>
+
+        <div id="constituenciesContainer">
+            <div class="constituency-entry border p-3 mb-3">
+                <h4>Constituency 1</h4>
+                <div class="form-group">
+                    <label>Constituency Name</label>
+                    <input type="text" class="form-control constituency-name" required>
+                </div>
+                
+                <div class="candidates-container">
+                    <h5>Candidates</h5>
+                    <div class="candidate-entry">
+                        <div class="form-group">
+                            <label>Candidate Name</label>
+                            <input type="text" class="form-control candidate-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Party</label>
+                            <input type="text" class="form-control candidate-party" required>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-info btn-sm mt-2 add-candidate">Add Candidate</button>
+            </div>
+        </div>
+
+        <button type="button" class="btn btn-secondary mt-2" id="addConstituency">Add Another Constituency</button>
+        <button type="submit" class="btn btn-primary mt-2">Submit</button>
+    </form>
+</div>
+
+<script>
+document.getElementById('bulkConstituencyForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const stateId = document.getElementById('state').value;
+    const constituencies = [];
+
+    document.querySelectorAll('.constituency-entry').forEach(constituencyDiv => {
+        const constituencyData = {
+            name: constituencyDiv.querySelector('.constituency-name').value,
+            candidates: []
+        };
+
+        constituencyDiv.querySelectorAll('.candidate-entry').forEach(candidateDiv => {
+            constituencyData.candidates.push({
+                name: candidateDiv.querySelector('.candidate-name').value,
+                party: candidateDiv.querySelector('.candidate-party').value
+            });
+        });
+
+        constituencies.push(constituencyData);
+    });
+
+    try {
+        const response = await fetch('/admin/bulk-constituency', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ stateId, constituencies })
+        });
+
+        const data = await response.json();
+        if (data.success) {
+            alert('Constituencies created successfully!');
+            window.location.href = '/admin/dashboard';
+        } else {
+            alert(data.message);
+        }
+    } catch (error) {
+        alert('Error creating constituencies');
+    }
+});
+
+document.getElementById('addConstituency').addEventListener('click', () => {
+    const constituenciesContainer = document.getElementById('constituenciesContainer');
+    const constituencyCount = constituenciesContainer.children.length + 1;
+    
+    const newConstituency = document.querySelector('.constituency-entry').cloneNode(true);
+    newConstituency.querySelector('h4').textContent = `Constituency ${constituencyCount}`;
+    
+    // Clear input values
+    newConstituency.querySelectorAll('input').forEach(input => input.value = '');
+    
+    // Reset candidates container to just one candidate
+    const candidatesContainer = newConstituency.querySelector('.candidates-container');
+    const firstCandidate = candidatesContainer.querySelector('.candidate-entry').cloneNode(true);
+    firstCandidate.querySelectorAll('input').forEach(input => input.value = '');
+    candidatesContainer.innerHTML = '';
+    candidatesContainer.appendChild(firstCandidate);
+    
+    constituenciesContainer.appendChild(newConstituency);
+});
+
+document.addEventListener('click', (e) => {
+    if (e.target.classList.contains('add-candidate')) {
+        const candidatesContainer = e.target.previousElementSibling;
+        const newCandidate = candidatesContainer.querySelector('.candidate-entry').cloneNode(true);
+        newCandidate.querySelectorAll('input').forEach(input => input.value = '');
+        candidatesContainer.appendChild(newCandidate);
+    }
+});
+</script>
+
+<%- include('../partials/footer') %> 

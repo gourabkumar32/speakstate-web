@@ -1,0 +1,284 @@
+<%- include('../partials/header', { title: 'Representatives' }) %>
+
+    <head>
+        <script async
+            src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8814468973632188"
+            crossorigin="anonymous"></script>
+    </head>
+    <style>
+        /* Custom styles for the new UI */
+        body {
+            background-color: #f1f5f9;
+            /* slate-100 */
+        }
+
+        .filter-bar {
+            background-color: white;
+            border-radius: 0.75rem;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+        }
+
+        .search-input,
+        .filter-select {
+            border: none;
+            height: 3rem;
+            /* 48px */
+            background-color: transparent;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .search-input:focus,
+        .filter-select:focus {
+            outline: none;
+            box-shadow: none;
+        }
+
+        .filter-select {
+            border-right: 1px solid #e2e8f0;
+            color: #475569;
+            /* slate-600 */
+            font-weight: 500;
+        }
+
+        .state-heading {
+            color: #1e293b;
+            /* slate-800 */
+        }
+
+        .mla-card {
+            background-color: white;
+            border-radius: 1rem;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            display: flex;
+            flex-direction: column;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: cardFadeIn 0.6s forwards ease-out;
+        }
+
+        @keyframes cardFadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .mla-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+
+        .star.filled {
+            color: #f59e0b;
+            /* amber-500 */
+        }
+    </style>
+
+    <div class="container mx-auto px-4 sm:px-6 py-8">
+        <!-- Page Header -->
+        <div class="text-center mb-10">
+            <h1 class="text-3xl md:text-5xl font-extrabold text-slate-800">Member of Legislative Assembly</h1>
+            <p class="mt-3 text-lg text-slate-600 max-w-2xl mx-auto">Search and review the public record of your
+                representatives.</p>
+        </div>
+
+        <!-- Search and Filter Bar -->
+        <div class="filter-bar sticky top-4 z-20 p-2 mb-12 flex flex-col md:flex-row items-center gap-2">
+            <!-- State Filter -->
+            <div class="w-full md:w-auto relative">
+                <select id="stateSelect" name="state"
+                    class="filter-select w-full md:w-64 appearance-none px-4 text-base rounded-md md:rounded-r-none">
+                    <option value="">All States</option>
+                    <% if (Array.isArray(states)) { states.forEach(function(state) { %>
+                        <option value="<%= state %>" <%=currentFilters?.state===state ? 'selected' : '' %>><%= state %>
+                        </option>
+                        <% }); } %>
+                </select>
+                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400">
+                    <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                        <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                    </svg>
+                </div>
+            </div>
+            <!-- MLA Search -->
+            <div class="w-full flex-grow relative">
+                <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-slate-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                            clip-rule="evenodd" />
+                    </svg>
+                </div>
+                <input type="text" id="searchInput" placeholder="Search by name or constituency..."
+                    class="search-input w-full pl-12 pr-4 text-base rounded-md md:rounded-l-none"
+                    value="<%= currentFilters?.search || '' %>">
+            </div>
+        </div>
+
+        <!-- MLAs Grid -->
+        <div class="grid grid-cols-1 gap-12" id="mlaCardsContainer">
+            <% try { if (!locals.mlasByState || typeof locals.mlasByState !=='object' ||
+                Object.keys(locals.mlasByState).length===0) { %>
+                <div class="col-span-full text-center py-16 text-slate-500">
+                    <p class="text-xl font-medium">No MLAs Found</p>
+                    <p class="mt-2">Please try adjusting your search or filter criteria.</p>
+                </div>
+                <% } else { Object.entries(locals.mlasByState).forEach(function([state, mlasList]) { if
+                    (Array.isArray(mlasList) && mlasList.length> 0) {
+                    %>
+                    <div class="state-section col-span-full" data-state="<%= state %>">
+                        <h2 class="state-heading text-3xl font-bold mb-8">
+                            <%= state %>
+                        </h2>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                            <% mlasList.forEach(function(mla, index) { %>
+                                <div class="mla-card" <%='style="animation-delay:' + (index * 75) + 'ms;"' %>
+                                    data-name="<%= mla.name %>"
+                                        data-party="<%= mla.party %>"
+                                            data-constituency="<%= mla.constituency %>"
+                                                data-state="<%= state %>">
+
+                                                    <img src="<%= (typeof mla.thumbnail !== 'undefined' ? mla.thumbnail : mla.image) %>"
+                                                        alt="<%= mla.name %>" loading="lazy" decoding="async"
+                                                        class="w-full h-64 object-cover object-top">
+
+                                                    <div class="p-5 flex-grow flex flex-col">
+                                                        <span class="party-name text-sm font-bold text-blue-600 mb-2">
+                                                            <%= mla.party %>
+                                                        </span>
+                                                        <h3
+                                                            class="mla-name text-xl font-bold text-slate-900 leading-tight">
+                                                            <%= mla.name %>
+                                                        </h3>
+                                                        <p class="constituency-name text-slate-500 text-sm mt-1">
+                                                            <%= mla.constituency %>
+                                                        </p>
+
+                                                        <div class="rating-section my-4 py-4 border-y border-slate-100"
+                                                            id="rating-section-<%= mla._id %>">
+                                                            <p class="text-sm font-medium text-slate-500 mb-2"></p>
+                                                            <div class="flex items-center gap-2">
+                                                                <div class="stars text-2xl text-slate-300 flex">
+                                                                    <% for(var i=0; i < 5; i++) { %>
+                                                                        <span
+                                                                            class="star <%= i < Math.floor(mla.rating || 0) ? 'filled' : '' %>">★</span>
+                                                                        <% } %>
+                                                                </div>
+                                                                <div class="flex items-center text-slate-600">
+                                                                    <span class="rating-value font-bold text-lg">
+                                                                        <%= (mla.rating || 0).toFixed(1) %>
+                                                                    </span>
+                                                                    <span class="text-sm ml-2 text-slate-400">(<%=
+                                                                            mla.reviewCount || 0 %> reviews)</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="mt-auto">
+                                                            <% if (user) { %>
+                                                                <a href="/mlas/<%= mla._id %>/complaints"
+                                                                    class="w-full block text-center bg-blue-500 text-white px-4 py-3 rounded-lg font-semibold hover:bg-blue-600 transition-all duration-300">
+                                                                    View Details
+                                                                </a>
+                                                                <% } else { %>
+                                                                    <a href="/auth/login?returnTo=/mlas/<%= mla._id %>/complaints"
+                                                                        class="w-full block text-center bg-blue-500 text-white px-4 py-3 rounded-lg font-semibold hover:bg-blue-600 transition-all duration-300">
+                                                                        View Details
+                                                                    </a>
+                                                                    <% } %>
+                                                        </div>
+                                                    </div>
+                                </div>
+                                <% }); %>
+                        </div>
+                    </div>
+                    <% } }); } } catch (error) { %>
+                        <div class="col-span-full text-center py-16 text-red-500">
+                            <p class="text-xl font-medium">Error Loading MLAs</p>
+                            <p class="mt-2">Please try refreshing the page.</p>
+                        </div>
+                        <% } %>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            // NOTE: The JavaScript logic remains unchanged as it works with the existing data attributes.
+            const searchInput = document.getElementById('searchInput');
+            const stateSelect = document.getElementById('stateSelect');
+            const mlaCards = document.querySelectorAll('.mla-card');
+            const stateSections = document.querySelectorAll('.state-section');
+
+            function debounce(fn, delay) {
+                let timer;
+                return function (...args) {
+                    clearTimeout(timer);
+                    timer = setTimeout(() => fn.apply(this, args), delay);
+                };
+            }
+
+            function filterMLAs() {
+                const searchTerm = searchInput.value.toLowerCase().trim();
+                const selectedState = stateSelect.value;
+
+                mlaCards.forEach(card => {
+                    const name = card.dataset.name.toLowerCase();
+                    const constituency = card.dataset.constituency.toLowerCase();
+                    const party = card.dataset.party.toLowerCase();
+                    const state = card.dataset.state;
+
+                    const matchesSearch = !searchTerm ||
+                        name.includes(searchTerm) ||
+                        constituency.includes(searchTerm);
+
+                    const matchesState = !selectedState || state === selectedState;
+                    const isVisible = matchesSearch && matchesState;
+
+                    card.style.display = isVisible ? 'flex' : 'none';
+                });
+
+                let hasVisibleCards = false;
+                stateSections.forEach(section => {
+                    let stateHasVisibleCard = false;
+                    const cardsInSection = section.querySelectorAll('.mla-card');
+                    cardsInSection.forEach(card => {
+                        if (card.style.display !== 'none') {
+                            stateHasVisibleCard = true;
+                        }
+                    });
+
+                    section.style.display = stateHasVisibleCard ? '' : 'none';
+                    if (stateHasVisibleCard) hasVisibleCards = true;
+                });
+
+                const noResults = document.getElementById('noResultsMessage');
+                if (!hasVisibleCards) {
+                    if (!noResults) {
+                        const msg = document.createElement('div');
+                        msg.id = 'noResultsMessage';
+                        msg.className = 'col-span-full text-center py-16 text-slate-500';
+                        msg.innerHTML = `
+                    <p class="text-xl font-medium">No MLAs Found</p>
+                    <p class="mt-2">Please try adjusting your search or filter criteria.</p>
+                `;
+                        const container = document.querySelector('.grid.grid-cols-1.gap-12');
+                        if (container) container.appendChild(msg);
+                    }
+                } else if (noResults) {
+                    noResults.remove();
+                }
+            }
+
+            if (searchInput && stateSelect) {
+                searchInput.addEventListener('input', debounce(filterMLAs, 200));
+                stateSelect.addEventListener('change', filterMLAs);
+                filterMLAs(); // Initial filter
+            }
+        })();
+    </script>
+
+    <%- include('../partials/footer') %>

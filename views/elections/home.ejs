@@ -1,0 +1,106 @@
+<%- include('../partials/header') %>
+<style>
+    .block{
+        margin-left: 20px;
+        margin-right: 20px;
+       /* background:white;
+        color: white;*/
+       
+       box-shadow: 2px;
+        
+    }
+    .text-3xl{
+        font-size: 20px;
+        padding-left: 20px;
+        text-align: center;
+        color: rgb(2, 2, 2);
+        font-weight: 700;
+        font-size: 22px;
+        margin-top: 20px;
+    }
+   .w-full{
+   margin-top: 0px;
+   }
+   .slogan{
+    margin-top: -15px;
+    margin-bottom: 20px;
+   }
+
+</style>
+
+    
+
+<!--div class="relative isolate overflow-hidden bg-gray-900 py-24 sm:py-32"-->
+ <!--   <img src="https://images.unsplash.com/photo-1569060368917-3689b132a48a?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&dl=markus-spiske-D-QiXQgJxzA-unsplash.jpg" alt="" class="absolute inset-0 -z-10 size-full object-cover  object-right md:object-center"> -->
+
+<div class="mb-8">
+    <h1 class="text-3xl font-bold mb-6">Upcoming Elections in 2025</h1>
+     <p class="text-lg slogan sm:text-xl text-center text-gray-600 max-w-2xl mx-auto px-4">
+        Choose your representative wisely. Learn about each candidate's achievements.
+    </p>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <% states.forEach(state => { %>
+            <div class="block dark:bg-gray-700 bg-white rounded-lg shadow-lg border border-gray-200 hover:border-blue-500 transition duration-200">
+                <div class="p-6">
+                    <h2 class="text-xl font-bold text-black mb-2"><%= state.name %></h2>
+                    <div class="flex justify-between text-white-700">
+                        <span class="text-black">Active Elections: <%= state.activeElections %></span>
+                        <span class="text-black">Total Constituencies: <%= state.constituencies %></span>
+                    </div>
+                   <a href="/elections/<%= state.electionId %>" class="block"> 
+                        <button class="w-full text-center bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200">
+                              participate
+                        </button>
+                   </a>
+                </div>
+            </div>
+        <% }) %>
+    </div>
+</div>
+
+</div>
+<script>
+    // Hamburger Menu Logic
+document.addEventListener('DOMContentLoaded', function() {
+            
+            // --- Hamburger Menu Logic ---
+            const hamburger = document.getElementById('hamburger');
+            const mobileMenu = document.getElementById('mobileMenu');
+            const menuClose = document.getElementById('menuClose');
+
+            // Check if the elements actually exist on the page before adding event listeners
+            if (hamburger && mobileMenu && menuClose) {
+                hamburger.addEventListener('click', () => {
+                    mobileMenu.classList.remove('translate-x-full');
+                });
+
+                menuClose.addEventListener('click', () => {
+                    mobileMenu.classList.add('translate-x-full');
+                });
+            }
+            });
+document.addEventListener('DOMContentLoaded', function() {
+        
+        // --- Hamburger Menu Logic ---
+        const hamburger = document.getElementById('hamburger');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const menuClose = document.getElementById('menuClose');
+
+        // This checks if the menu elements exist before trying to use them.
+        if (hamburger && mobileMenu && menuClose) {
+            
+            // Show the menu when hamburger is clicked
+            hamburger.addEventListener('click', () => {
+                mobileMenu.classList.remove('translate-x-full');
+            });
+
+            // Hide the menu when the close button is clicked
+            menuClose.addEventListener('click', () => {
+                mobileMenu.classList.add('translate-x-full');
+            });
+        }
+
+    });
+</script>
+<%- include('../partials/footer') %>

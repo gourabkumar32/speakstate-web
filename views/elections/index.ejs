@@ -1,0 +1,189 @@
+<!-- Election Review Modal -->
+<style>
+    #menuClose{
+        background-color:azure;
+        margin-bottom: -100px;
+    }
+    
+</style>
+<div id="electionReviewModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Add Review</h2>
+        
+        <!-- Reviews List -->
+        <div class="reviews-list">
+            <!-- Reviews will be loaded here -->
+        </div>
+
+        <!-- Review Form -->
+        <form id="electionReviewForm">
+            <div class="form-group">
+                <label for="electionRating">Rating:</label>
+                <select name="rating" id="electionRating" required>
+                    <option value="5">5 - Excellent</option>
+                    <option value="4">4 - Very Good</option>
+                    <option value="3">3 - Good</option>
+                    <option value="2">2 - Fair</option>
+                    <option value="1">1 - Poor</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="electionComment">Comment:</label>
+                <textarea name="comment" id="electionComment" required></textarea>
+            </div>
+            <button type="submit" id="electionSubmitBtn" class="action-btn add-btn">Submit Review</button>
+        </form>
+    </div>
+</div>
+
+<script>
+
+    // Hamburger Menu Logic
+document.addEventListener('DOMContentLoaded', function() {
+            
+            // --- Hamburger Menu Logic ---
+            const hamburger = document.getElementById('hamburger');
+            const mobileMenu = document.getElementById('mobileMenu');
+            const menuClose = document.getElementById('menuClose');
+
+            // Check if the elements actually exist on the page before adding event listeners
+            if (hamburger && mobileMenu && menuClose) {
+                hamburger.addEventListener('click', () => {
+                    mobileMenu.classList.remove('translate-x-full');
+                });
+
+                menuClose.addEventListener('click', () => {
+                    mobileMenu.classList.add('translate-x-full');
+                });
+            }
+            });
+document.addEventListener('DOMContentLoaded', function() {
+        
+        // --- Hamburger Menu Logic ---
+        const hamburger = document.getElementById('hamburger');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const menuClose = document.getElementById('menuClose');
+
+        // This checks if the menu elements exist before trying to use them.
+        if (hamburger && mobileMenu && menuClose) {
+            
+            // Show the menu when hamburger is clicked
+            hamburger.addEventListener('click', () => {
+                mobileMenu.classList.remove('translate-x-full');
+            });
+
+            // Hide the menu when the close button is clicked
+            menuClose.addEventListener('click', () => {
+                mobileMenu.classList.add('translate-x-full');
+            });
+        }
+
+    });
+
+    
+// Global variables
+const electionModal = document.getElementById('electionReviewModal');
+const electionForm = document.getElementById('electionReviewForm');
+const electionSubmitBtn = document.getElementById('electionSubmitBtn');
+let currentElectionId = null;
+
+// Add this function to load reviews
+async function loadReviews(candidateId) {
+    try {
+        const response = await fetch(`/mlas/${candidateId}/reviews`);
+        const data = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(data.error || 'Failed to load reviews');
+        }
+
+        // Display reviews
+        const reviewsContainer = document.querySelector('.reviews-list');
+        if (data.reviews && data.reviews.length > 0) {
+            reviewsContainer.innerHTML = data.reviews.map(review => `
+                <div class="review-item">
+                    <div class="review-header">
+                        <div class="stars">
+                            ${Array(5).fill(0).map((_, i) => 
+                                `<span class="star ${i < review.rating ? 'filled' : ''}">
+                                    ${i < review.rating ? '★' : '☆'}
+                                </span>`
+                            ).join('')}
+                        </div>
+                        <span class="review-date">${new Date(review.createdAt).toLocaleDateString()}</span>
+                    </div>
+                    <p class="review-comment">${review.comment}</p>
+                    <p class="review-author">By: ${review.userName}</p>
+                </div>
+            `).join('');
+        } else {
+            reviewsContainer.innerHTML = '<p class="no-reviews">No reviews yet</p>';
+        }
+
+    } catch (error) {
+        console.error('Error:', error);
+        document.querySelector('.reviews-list').innerHTML = 
+            '<p class="error-message">Error loading reviews</p>';
+    }
+}
+
+// Update the show modal function to load reviews
+function showElectionReviewModal(candidateId) {
+    currentElectionId = candidateId;
+    electionModal.style.display = 'block';
+    electionForm.reset();
+    electionSubmitBtn.disabled = false;
+    
+    // Load reviews when opening modal
+    loadReviews(candidateId);
+}
+
+// Form submission
+electionForm.onsubmit = async function(e) {
+    e.preventDefault();
+    
+    if (!currentElectionId || electionSubmitBtn.disabled) {
+        return;
+    }
+
+    electionSubmitBtn.disabled = true;
+    electionSubmitBtn.textContent = 'Submitting...';
+
+    try {
+        const formData = new FormData(electionForm);
+        const response = await fetch(`/mlas/${currentElectionId}/reviews`, {
+            method: 'POST',
+            body: formData
+        });
+
+        if (response.ok) {
+            location.reload();
+        } else {
+            throw new Error('Review submission failed');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Failed to submit review. Please try again.');
+        electionSubmitBtn.disabled = false;
+        electionSubmitBtn.textContent = 'Submit Review';
+    }
+};
+
+// Close modal handlers
+const closeElectionModal = () => {
+    electionModal.style.display = 'none';
+    electionForm.reset();
+    currentElectionId = null;
+    electionSubmitBtn.disabled = false;
+    electionSubmitBtn.textContent = 'Submit Review';
+};
+
+electionModal.querySelector('.close').onclick = closeElectionModal;
+
+window.onclick = function(event) {
+    if (event.target === electionModal) {
+        closeElectionModal();
+    }
+};
+</script> 

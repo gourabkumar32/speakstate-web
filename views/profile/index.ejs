@@ -1,0 +1,1107 @@
+<%- include('../partials/header', { title: 'Profile' }) %>
+
+    <head>
+        <script async
+            src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8814468973632188"
+            crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    </head>
+
+    <% const displayName=user && user.anonName ? user.anonName : (user && user.name ? user.name : 'User' ); %>
+        <% const isAnon=!!(user && user.anonName); %>
+
+            <style>
+                /* Custom Scrollbar for Comment Section */
+                .comments-list-container::-webkit-scrollbar {
+                    width: 5px;
+                }
+
+                .comments-list-container::-webkit-scrollbar-track {
+                    background: #f8fafc;
+                }
+
+                .comments-list-container::-webkit-scrollbar-thumb {
+                    background: #cbd5e1;
+                    border-radius: 10px;
+                }
+
+                .tab-content {
+                    display: none;
+                    transition: opacity 0.3s ease;
+                }
+
+                .tab-content.active {
+                    display: block;
+                    opacity: 1;
+                }
+
+                .glass-effect {
+                    background: rgba(255, 255, 255, 0.95);
+                    backdrop-filter: blur(8px);
+                }
+            </style>
+
+            <div class="bg-slate-50 min-h-screen pb-12">
+                <!-- Flash Messages -->
+                <% if (typeof error !=='undefined' && error && error.length> 0) { %>
+                    <div class="max-w-7xl mx-auto px-4 pt-6">
+                        <div class="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-lg shadow-sm flex items-center"
+                            role="alert">
+                            <i class="fas fa-exclamation-circle mr-3"></i>
+                            <p class="font-medium">
+                                <%= error %>
+                            </p>
+                        </div>
+                    </div>
+                    <% } %>
+                        <!-- Success Message -->
+                        <% if (typeof success !=='undefined' && success && success.length> 0) { %>
+                            <div class="max-w-7xl mx-auto px-4 pt-6">
+                                <div id="flash-success-message"
+                                    class="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 rounded-lg shadow-sm flex items-center"
+                                    role="alert">
+                                    <i class="fas fa-check-circle mr-3"></i>
+                                    <p class="font-medium">
+                                        <%= success %>
+                                    </p>
+                                </div>
+                            </div>
+                            <% } %>
+
+                                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+                                    <div class="flex flex-col lg:flex-row gap-8">
+
+                                        <!-- LEFT COLUMN: PROFILE CARD -->
+                                        <aside class="w-full lg:w-1/3 xl:w-1/4">
+                                            <div class="lg:sticky lg:top-24">
+                                                <!-- View Mode Card -->
+                                                <div id="viewMode"
+                                                    class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden transform transition-all">
+                                                    <!-- Banner -->
+                                                    <div
+                                                        class="h-32 bg-gradient-to-r from-blue-600 to-indigo-600 relative">
+                                                        <div class="absolute -bottom-12 left-1/2 -translate-x-1/2">
+                                                            <div
+                                                                class="w-24 h-24 rounded-2xl overflow-hidden border-4 border-white shadow-xl bg-slate-100">
+                                                                <% const avatarTweet={ isAnonymous: isAnon,
+                                                                    displayProfilePicture: user && user.profilePicture ?
+                                                                    `/uploads/profiles/${user.profilePicture}`
+                                                                    : '/img/default-avatar.png' , displayName:
+                                                                    displayName }; %>
+                                                                    <%- include('../partials/avatar', { tweet:
+                                                                        avatarTweet, sizeClass: 'w-full h-full' ,
+                                                                        showAnonymousImage: false }) %>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- User Info -->
+                                                    <div class="pt-16 pb-6 px-6 text-center">
+                                                        <h1 class="text-xl font-bold text-slate-900 truncate">
+                                                            <%= displayName %>
+                                                        </h1>
+                                                        <div
+                                                            class="flex items-center justify-center mt-1 text-slate-500 text-sm">
+                                                            <i class="fas fa-map-marker-alt mr-1.5 text-blue-500"></i>
+                                                            <span>
+                                                                <%= user.state %>
+                                                            </span>
+                                                            <% if (user.constituency) { %>
+                                                                <span class="mx-1.5 opacity-30">|</span>
+                                                                <span>
+                                                                    <%= user.constituency %>
+                                                                </span>
+                                                                <% } %>
+                                                        </div>
+
+                                                        <!-- Modern Stats Grid -->
+                                                        <div
+                                                            class="grid grid-cols-2 gap-2 mt-8 py-4 border-y border-slate-100">
+                                                            <div class="text-center border-r border-slate-100">
+                                                                <div class="text-lg font-bold text-slate-900">
+                                                                    <%= tweets.length %>
+                                                                </div>
+                                                                <div
+                                                                    class="text-[10px] uppercase tracking-wider font-semibold text-slate-400">
+                                                                    Posts</div>
+                                                            </div>
+                                                            <div class="text-center">
+                                                                <div class="text-lg font-bold text-slate-900">
+                                                                    <%= typeof userReviews !=='undefined' ?
+                                                                        userReviews.length : 0 %>
+                                                                </div>
+                                                                <div
+                                                                    class="text-[10px] uppercase tracking-wider font-semibold text-slate-400">
+                                                                    Reviews</div>
+                                                            </div>
+                                                        </div>
+
+                                                        <button onclick="toggleEditMode()"
+                                                            class="w-full mt-6 bg-slate-900 hover:bg-black text-white py-3 rounded-2xl font-bold text-sm transition-all duration-200 shadow-lg shadow-slate-200">
+                                                            <i class="fas fa-user-edit mr-2 text-xs"></i>Edit
+                                                            Profile
+                                                        </button>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Edit Mode Form -->
+                                                <form id="editMode" action="/profile/update" method="POST"
+                                                    enctype="multipart/form-data"
+                                                    class="hidden glass-effect rounded-3xl shadow-2xl border border-slate-200 p-6 space-y-4">
+                                                    <h2 class="text-lg font-bold text-slate-900">Update Profile</h2>
+
+                                                    <div class="space-y-4">
+                                                        <div>
+                                                            <label
+                                                                class="block text-xs font-bold text-slate-500 uppercase mb-1">Display
+                                                                Name</label>
+                                                            <input type="text" name="anonName"
+                                                                value="<%= user.anonName || '' %>"
+                                                                placeholder="Anonymous handle"
+                                                                class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                                                        </div>
+
+                                                        <div>
+                                                            <label
+                                                                class="block text-xs font-bold text-slate-500 uppercase mb-1">Profile
+                                                                Photo</label>
+                                                            <div class="relative group">
+                                                                <input type="file" name="profilePicture"
+                                                                    accept="image/*"
+                                                                    class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                                                                <div
+                                                                    class="w-full border-2 border-dashed border-slate-200 rounded-xl py-4 text-center text-slate-400 group-hover:border-blue-400 transition-colors">
+                                                                    <i class="fas fa-camera mb-1"></i>
+                                                                    <p class="text-[10px]">Click to upload</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div>
+                                                            <label
+                                                                class="block text-xs font-bold text-slate-500 uppercase mb-1">State</label>
+                                                            <select name="state" required
+                                                                class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                                                                <% ['Andhra Pradesh', 'Arunachal Pradesh' , 'Assam'
+                                                                    , 'Bihar' , 'Chhattisgarh' , 'Goa' , 'Gujarat'
+                                                                    , 'Haryana' , 'Himachal Pradesh' , 'Jharkhand'
+                                                                    , 'Karnataka' , 'Kerala' , 'Madhya Pradesh'
+                                                                    , 'Maharashtra' , 'Manipur' , 'Meghalaya'
+                                                                    , 'Mizoram' , 'Nagaland' , 'Odisha' , 'Punjab'
+                                                                    , 'Rajasthan' , 'Sikkim' , 'Tamil Nadu'
+                                                                    , 'Telangana' , 'Tripura' , 'Uttar Pradesh'
+                                                                    , 'Uttarakhand' , 'West Bengal'
+                                                                    ].forEach(function(state) { %>
+                                                                    <option value="<%= state %>" <%=user.state===state
+                                                                        ? 'selected' : '' %>>
+                                                                        <%= state %>
+                                                                    </option>
+                                                                    <% }); %>
+                                                            </select>
+                                                        </div>
+
+                                                        <div>
+                                                            <label
+                                                                class="block text-xs font-bold text-slate-500 uppercase mb-1">Constituency</label>
+                                                            <input type="text" name="constituency"
+                                                                value="<%= user.constituency || '' %>"
+                                                                placeholder="Your constituency"
+                                                                class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="flex gap-2 pt-2">
+                                                        <button type="button" onclick="toggleEditMode()"
+                                                            class="flex-1 bg-slate-100 text-slate-600 font-bold py-2.5 rounded-xl text-sm">Cancel</button>
+                                                        <button type="submit"
+                                                            class="flex-1 bg-blue-600 text-white font-bold py-2.5 rounded-xl text-sm shadow-md shadow-blue-100">Save</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </aside>
+
+                                        <!-- RIGHT COLUMN: FEED -->
+                                        <main class="flex-1 max-w-3xl">
+                                            <!-- Composer Entry -->
+                                            <div
+                                                class="bg-white rounded-3xl shadow-sm border border-slate-200 p-4 mb-6">
+                                                <div class="flex items-center gap-4">
+                                                    <div
+                                                        class="w-10 h-10 rounded-xl overflow-hidden shadow-sm flex-shrink-0">
+                                                        <% const writerAvatar={ displayName: displayName,
+                                                            displayProfilePicture: user && user.profilePicture ?
+                                                            `/uploads/profiles/${user.profilePicture}`
+                                                            : '/img/default-avatar.png' , isAnonymous: !!user.anonName
+                                                            }; %>
+                                                            <%- include('../partials/avatar', { tweet: writerAvatar,
+                                                                sizeClass: 'w-full h-full' , showAnonymousImage: false
+                                                                }) %>
+                                                    </div>
+                                                    <button onclick="openCreateTweetModal()"
+                                                        class="flex-1 bg-slate-50 hover:bg-slate-100 text-slate-500 rounded-2xl py-3 px-5 text-left text-sm font-medium transition-all border border-slate-100">
+                                                        What's the latest update, <%= displayName.split(' ')[0] %>?
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tabs & Content -->
+                <div class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden">
+                    <!-- Tab Header -->
+                    <div class="flex px-2 border-b border-slate-100">
+                        <button onclick="switchTab(event, ' posts')"
+                                                            class="tab-button flex-1 py-4 text-sm font-bold border-b-2 border-blue-600 text-blue-600 transition-all">
+                                                            My Posts
+                                                    </button>
+                                                    <button onclick="switchTab(event, 'reviews')"
+                                                        class="tab-button flex-1 py-4 text-sm font-bold border-b-2 border-transparent text-slate-400 hover:text-slate-600 transition-all">
+                                                        Reviews
+                                                    </button>
+                                                </div>
+
+                                                <!-- Posts Tab -->
+                                                <section id="posts" class="tab-content active">
+                                                    <% if (typeof tweets !=='undefined' && tweets.length> 0) { %>
+                                                        <div class="divide-y divide-slate-100">
+                                                            <% tweets.forEach(function(tweet) { %>
+                                                                <div class="p-6 hover:bg-slate-50/50 transition-colors relative"
+                                                                    data-tweet-id="<%= tweet._id %>">
+                                                                    <div class="flex items-start gap-4">
+                                                                        <div
+                                                                            class="w-10 h-10 rounded-xl overflow-hidden flex-shrink-0 shadow-sm">
+                                                                            <%- include('../partials/avatar', { tweet:
+                                                                                tweet, showAnonymousImage: false }) %>
+                                                                        </div>
+                                                                        <div class="flex-1 min-w-0">
+                                                                            <div
+                                                                                class="flex justify-between items-start">
+                                                                                <div>
+                                                                                    <span
+                                                                                        class="font-bold text-slate-900">
+                                                                                        <%= tweet.isAnonymous ?
+                                                                                            (tweet.displayName
+                                                                                            || 'Anonymous' ) :
+                                                                                            (tweet.displayName
+                                                                                            || 'Unknown' ) %>
+                                                                                    </span>
+                                                                                    <span
+                                                                                        class="tweet-time text-[11px] text-slate-400 ml-2"
+                                                                                        data-timestamp="<%= tweet.createdAt %>"></span>
+                                                                                </div>
+
+                                                                                <% if (currentUser &&
+                                                                                    tweet.user._id.toString()===currentUser._id.toString())
+                                                                                    { %>
+                                                                                    <div class="relative">
+                                                                                        <button
+                                                                                            onclick="toggleTweetMenu(this)"
+                                                                                            class="p-1.5 text-slate-400 hover:text-slate-900 hover:bg-white rounded-lg transition-all">
+                                                                                            <i
+                                                                                                class="fas fa-ellipsis-h text-sm"></i>
+                                                                                        </button>
+                                                                                        <div
+                                                                                            class="tweet-menu hidden absolute right-0 mt-2 w-36 glass-effect rounded-2xl shadow-xl z-20 border border-slate-200 overflow-hidden">
+                                                                                            <button
+                                                                                                onclick="editTweet('<%= tweet._id %>')"
+                                                                                                class="w-full text-left px-4 py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50 border-b border-slate-50">
+                                                                                                <i
+                                                                                                    class="far fa-edit mr-2"></i>Edit
+                                                                                            </button>
+                                                                                            <button
+                                                                                                onclick="deleteTweet('<%= tweet._id %>')"
+                                                                                                class="w-full text-left px-4 py-2.5 text-xs font-bold text-red-600 hover:bg-red-50">
+                                                                                                <i
+                                                                                                    class="far fa-trash-alt mr-2"></i>Delete
+                                                                                            </button>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <% } %>
+                                                                            </div>
+
+                                                                            <div
+                                                                                class="mt-2 text-slate-700 text-sm leading-relaxed whitespace-pre-line">
+                                                                                <%- tweet.enrichedContent ||
+                                                                                    tweet.content %>
+                                                                            </div>
+
+                                                                            <% if (tweet.location) { %>
+                                                                                <div
+                                                                                    class="mt-2 inline-flex items-center text-[10px] font-bold text-blue-500 bg-blue-50 px-2 py-0.5 rounded-md">
+                                                                                    <i
+                                                                                        class="fas fa-map-marker-alt mr-1.5"></i>
+                                                                                    <%= tweet.location %>
+                                                                                </div>
+                                                                                <% } %>
+
+                                                                                    <% if (tweet.media &&
+                                                                                        tweet.media.length> 0)
+                                                                                        { %>
+                                                                                        <div
+                                                                                            class="mt-4 grid gap-2 rounded-2xl overflow-hidden <%= tweet.media.length === 1 ? '' : 'grid-cols-2' %>">
+                                                                                            <% tweet.media.forEach(function(mediaItem)
+                                                                                                { %>
+                                                                                                <img src="/uploads/tweets/<%= mediaItem %>"
+                                                                                                    class="w-full h-48 object-cover cursor-zoom-in hover:scale-105 transition-transform duration-500"
+                                                                                                    onclick="showImageModal(this.src)"
+                                                                                                    onerror="this.src='/images/placeholder.png';">
+                                                                                                <% }); %>
+                                                                                        </div>
+                                                                                        <% } %>
+
+                                                                                            <!-- Engagement -->
+                                                                                            <div
+                                                                                                class="flex gap-6 mt-5 pt-4 border-t border-slate-50">
+                                                                                                <button
+                                                                                                    onclick="handleLike(event, '<%= tweet._id %>', true)"
+                                                                                                    class="flex items-center gap-1.5 group">
+                                                                                                    <div
+                                                                                                        class="w-8 h-8 rounded-full flex items-center justify-center transition-all <%= tweet.isLiked ? 'text-red-500 bg-red-50' : 'text-slate-400 group-hover:text-red-500 group-hover:bg-red-50' %>">
+                                                                                                        <i
+                                                                                                            class="<%= tweet.isLiked ? 'fas' : 'far' %> fa-heart"></i>
+                                                                                                    </div>
+                                                                                                    <span
+                                                                                                        class="text-xs font-bold text-slate-500">
+                                                                                                        <%= tweet.likes
+                                                                                                            ?
+                                                                                                            tweet.likes.length
+                                                                                                            : 0 %>
+                                                                                                    </span>
+                                                                                                </button>
+                                                                                                <button
+                                                                                                    onclick="handleComment(event, '<%= tweet._id %>')"
+                                                                                                    class="flex items-center gap-1.5 group">
+                                                                                                    <div
+                                                                                                        class="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 group-hover:text-blue-500 group-hover:bg-blue-50 transition-all">
+                                                                                                        <i
+                                                                                                            class="far fa-comment"></i>
+                                                                                                    </div>
+                                                                                                    <span
+                                                                                                        class="text-xs font-bold text-slate-500">
+                                                                                                        <%= tweet.comments
+                                                                                                            ?
+                                                                                                            tweet.comments.length
+                                                                                                            : 0 %>
+                                                                                                    </span>
+                                                                                                </button>
+                                                                                            </div>
+
+                                                                                            <!-- Comment Section -->
+                                                                                            <div id="comments-section-<%= tweet._id %>"
+                                                                                                class="hidden mt-4 pt-4 border-t border-slate-50">
+                                                                                                <% if (currentUser) { %>
+                                                                                                    <form
+                                                                                                        class="comment-form flex gap-3 mb-4"
+                                                                                                        data-tweet-id="<%= tweet._id %>">
+                                                                                                        <input
+                                                                                                            type="text"
+                                                                                                            class="flex-1 bg-slate-50 border-none rounded-xl px-4 py-2 text-sm focus:ring-1 focus:ring-blue-500 outline-none"
+                                                                                                            placeholder="Write a comment...">
+                                                                                                        <button
+                                                                                                            type="submit"
+                                                                                                            class="bg-blue-600 text-white w-10 h-10 rounded-xl flex items-center justify-center shadow-sm"><i
+                                                                                                                class="fas fa-paper-plane text-sm"></i></button>
+                                                                                                    </form>
+                                                                                                    <% } %>
+                                                                                                        <div id="comments-list-<%= tweet._id %>"
+                                                                                                            class="comments-list-container max-h-60 overflow-y-auto space-y-3 pr-2">
+                                                                                                            <!-- Comments injected here -->
+                                                                                                        </div>
+                                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <% }); %>
+                                                        </div>
+                                                        <% } else { %>
+                                                            <div class="py-20 text-center">
+                                                                <div
+                                                                    class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                                                                    <i class="far fa-edit text-slate-300 text-2xl"></i>
+                                                                </div>
+                                                                <p class="text-slate-400 font-medium">You haven't
+                                                                    posted
+                                                                    anything yet.</p>
+                                                            </div>
+                                                            <% } %>
+                                                </section>
+
+                                                <!-- Reviews Tab -->
+                                                <section id="reviews" class="tab-content">
+                                                    <% if (typeof userReviews !=='undefined' && userReviews.length>
+                                                        0) { %>
+                                                        <div class="divide-y divide-slate-100">
+                                                            <% userReviews.forEach(function(item) { %>
+                                                                <div class="p-6 hover:bg-slate-50 transition-colors">
+                                                                    <div class="flex items-center justify-between mb-3">
+                                                                        <div class="flex items-center gap-3">
+                                                                            <div
+                                                                                class="px-2 py-0.5 rounded bg-slate-900 text-[9px] font-black text-white uppercase">
+                                                                                <%= item.leaderType %>
+                                                                            </div>
+                                                                            <h4
+                                                                                class="font-bold text-slate-900 text-sm">
+                                                                                <%= item.leaderName %>
+                                                                            </h4>
+                                                                        </div>
+                                                                        <div class="relative">
+                                                                            <button onclick="toggleReviewMenu(this)"
+                                                                                class="p-1.5 text-slate-400 hover:text-slate-900 hover:bg-white rounded-lg transition-all">
+                                                                                <i
+                                                                                    class="fas fa-ellipsis-h text-sm"></i>
+                                                                            </button>
+                                                                            <div
+                                                                                class="review-menu hidden absolute right-0 mt-2 w-36 glass-effect rounded-2xl shadow-xl z-20 border border-slate-200 overflow-hidden">
+                                                                                <button
+                                                                                    onclick="prepareProfileEditReview(this)"
+                                                                                    data-review-id="<%= item.review._id %>"
+                                                                                    data-leader-id="<%= item.leaderId %>"
+                                                                                    data-leader-type="<%= item.leaderType %>"
+                                                                                    data-rating="<%= item.review.rating %>"
+                                                                                    data-comment="<%= item.review.comment %>"
+                                                                                    class="w-full text-left px-4 py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50 border-b border-slate-50">
+                                                                                    <i class="far fa-edit mr-2"></i>Edit
+                                                                                </button>
+                                                                                <button
+                                                                                    onclick="deleteProfileReview('<%= item.review._id %>', '<%= item.leaderId %>', '<%= item.leaderType %>')"
+                                                                                    class="w-full text-left px-4 py-2.5 text-xs font-bold text-red-600 hover:bg-red-50">
+                                                                                    <i
+                                                                                        class="far fa-trash-alt mr-2"></i>Delete
+                                                                                </button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="flex text-yellow-400 gap-0.5 mb-2">
+                                                                        <% for(let i=1; i<=5; i++) { %>
+                                                                            <i
+                                                                                class="<%= i <= item.review.rating ? 'fas' : 'far' %> fa-star text-[10px]"></i>
+                                                                            <% } %>
+                                                                    </div>
+                                                                    <p class="text-slate-600 text-sm italic">"<%=
+                                                                            item.review.comment %>"</p>
+                                                                    <div
+                                                                        class="mt-4 flex justify-between items-center text-[10px] font-bold text-slate-400 uppercase tracking-tighter">
+                                                                        <span>
+                                                                            <%= new
+                                                                                Date(item.review.createdAt).toLocaleDateString()
+                                                                                %>
+                                                                        </span>
+                                                                        <a href="/<%= item.leaderType %>s/<%= item.leaderId %>/reviews"
+                                                                            class="text-slate-500 hover:underline ml-2">View
+                                                                            Profile</a>
+                                                                    </div>
+                                                                </div>
+                                                                <% }); %>
+                                                        </div>
+                                                        <% } else { %>
+                                                            <div class="py-20 text-center">
+                                                                <p class="text-slate-400 font-medium">You haven't
+                                                                    submitted any
+                                                                    reviews.</p>
+                                                            </div>
+                                                            <% } %>
+                                                </section>
+                                            </div>
+                                        </main>
+                                    </div>
+                                </div>
+            </div>
+
+            <!-- Review Edit Modal -->
+            <div id="profileReviewModal"
+                class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-[100]">
+                <div class="bg-white rounded-lg p-6 w-full max-w-lg shadow-2xl">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xl font-semibold">Edit Review</h3>
+                        <button onclick="closeProfileReviewModal()" class="text-gray-500 hover:text-gray-700">
+                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                    <form id="profileReviewForm" class="space-y-4">
+                        <input type="hidden" id="editReviewId">
+                        <input type="hidden" id="editLeaderId">
+                        <input type="hidden" id="editLeaderType">
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Rating</label>
+                            <div class="flex gap-2 mt-1" id="profileRatingStars">
+                                <% for(var i=1; i <=5; i++) { %>
+                                    <button type="button"
+                                        onclick="setProfileRating(this.querySelector('svg').dataset.rating)"
+                                        class="profile-star-button p-1 focus:outline-none">
+                                        <svg class="h-8 w-8" viewBox="0 0 20 20" data-rating="<%= i %>">
+                                            <path fill="#D1D5DB"
+                                                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                        </svg>
+                                    </button>
+                                    <% } %>
+                            </div>
+                            <input type="hidden" id="profileRating" name="rating" required>
+                        </div>
+                        <div>
+                            <label for="profileComment" class="block text-sm font-medium text-gray-700">Comment</label>
+                            <textarea id="profileComment" name="comment" rows="4" required
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"></textarea>
+                        </div>
+                        <div class="flex justify-end gap-4">
+                            <button type="button" onclick="closeProfileReviewModal()"
+                                class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200">
+                                Cancel
+                            </button>
+                            <button type="submit"
+                                class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700">
+                                Update Review
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <script>
+                // Profile Review Logic
+                let currentProfileRating = 0;
+
+                function toggleReviewMenu(btn) {
+                    // Close other open menus first
+                    document.querySelectorAll('.review-menu').forEach(menu => {
+                        if (menu !== btn.nextElementSibling) {
+                            menu.classList.add('hidden');
+                        }
+                    });
+
+                    const menu = btn.nextElementSibling;
+                    menu.classList.toggle('hidden');
+                }
+
+                // Close menus when clicking outside
+                document.addEventListener('click', function (e) {
+                    if (!e.target.closest('.relative')) {
+                        document.querySelectorAll('.review-menu').forEach(menu => {
+                            menu.classList.add('hidden');
+                        });
+                    }
+                });
+
+                function setProfileRating(rating) {
+                    currentProfileRating = rating;
+                    document.getElementById('profileRating').value = rating;
+                    const stars = document.querySelectorAll('.profile-star-button svg path');
+                    stars.forEach((star) => {
+                        const starRating = parseInt(star.closest('svg').dataset.rating);
+                        star.setAttribute('fill', starRating <= rating ? '#F59E0B' : '#D1D5DB');
+                    });
+                }
+
+                function prepareProfileEditReview(btn) {
+                    const reviewId = btn.dataset.reviewId;
+                    const leaderId = btn.dataset.leaderId;
+                    const leaderType = btn.dataset.leaderType;
+                    const rating = parseInt(btn.dataset.rating);
+                    const comment = btn.dataset.comment;
+
+                    showEditReviewModal(reviewId, leaderId, leaderType, rating, comment);
+                }
+
+                function showEditReviewModal(reviewId, leaderId, leaderType, rating, comment) {
+                    document.getElementById('editReviewId').value = reviewId;
+                    document.getElementById('editLeaderId').value = leaderId;
+                    document.getElementById('editLeaderType').value = leaderType;
+
+                    document.getElementById('profileReviewModal').classList.remove('hidden');
+                    setProfileRating(rating);
+                    document.getElementById('profileComment').value = comment;
+                }
+
+                function closeProfileReviewModal() {
+                    document.getElementById('profileReviewModal').classList.add('hidden');
+                }
+
+                async function deleteProfileReview(reviewId, leaderId, leaderType) {
+                    if (!confirm('Are you sure you want to delete this review?')) return;
+
+                    const endpoint = leaderType === 'mla' ? 'mlas' : 'mps';
+
+                    try {
+                        const response = await fetch(`/${endpoint}/${leaderId}/reviews/${reviewId}`, {
+                            method: 'DELETE'
+                        });
+                        const result = await response.json();
+
+                        if (result.success) {
+                            window.location.href = window.location.pathname + '?tab=reviews';
+                        } else {
+                            alert(result.message || 'Failed to delete review');
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        alert('Error deleting review');
+                    }
+                }
+
+                document.getElementById('profileReviewForm').addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    const rating = document.getElementById('profileRating').value;
+                    const comment = document.getElementById('profileComment').value;
+                    const reviewId = document.getElementById('editReviewId').value;
+                    const leaderId = document.getElementById('editLeaderId').value;
+                    const leaderType = document.getElementById('editLeaderType').value;
+
+                    if (!rating) {
+                        alert('Please select a rating');
+                        return;
+                    }
+
+                    const endpoint = leaderType === 'mla' ? 'mlas' : 'mps';
+
+                    fetch(`/${endpoint}/${leaderId}/reviews/${reviewId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({ rating, comment })
+                    })
+                        .then(async response => {
+                            if (response.status === 401) {
+                                window.location.reload();
+                                return;
+                            }
+                            const result = await response.json();
+                            if (result.success) {
+                                closeProfileReviewModal();
+                                window.location.href = window.location.pathname + '?tab=reviews';
+                            } else {
+                                alert(result.message || 'Failed to update review');
+                            }
+                        })
+                        .catch((err) => {
+                            console.error(err);
+                            alert('Error updating review');
+                        });
+                });
+            </script>
+
+            <!-- COMPOSER MODAL -->
+            <div id="createTweetModal"
+                class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                <div class="bg-white rounded-3xl w-full max-w-lg shadow-2xl animate-in fade-in zoom-in duration-200">
+                    <div class="p-6 border-b border-slate-900 flex justify-between items-center">
+                        <h3 class="font-bold text-slate-900 text-lg">Create Post</h3>
+                        <button onclick="closeCreateTweetModal()"
+                            class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100 transition-colors">
+                            <i class="fas fa-times text-slate-400"></i>
+                        </button>
+                    </div>
+                    <form id="createTweetForm" action="/tweets" method="POST" enctype="multipart/form-data"
+                        class="p-6 space-y-5"
+                        data-is-logged-in="<%= !!(typeof currentUser !== 'undefined' && currentUser) %>">
+                        <div class="relative">
+                            <textarea id="createTweetContent" name="content" rows="4" required
+                                class="w-full bg-slate-50 border-none rounded-2xl p-4 text-slate-800 placeholder:text-slate-400 focus:ring-2 focus:ring-blue-600 outline-none resize-none caret-black"
+                                placeholder="What's happening in your area?"></textarea>
+                            <div id="autocomplete-list"
+                                class="hidden absolute left-0 right-0 top-full mt-1 bg-white border border-slate-200 rounded-xl shadow-2xl z-50 max-h-48 overflow-y-auto">
+                            </div>
+                        </div>
+
+                        <div class="flex justify-between items-center">
+                            <span id="createTweetRemaining"
+                                class="text-[10px] font-black uppercase text-slate-400 px-2 py-1 bg-slate-100 rounded">300
+                                WORDS LEFT</span>
+                            <div id="createTweetError" class="text-xs text-red-500 hidden font-bold">Limit exceeded!
+                            </div>
+                        </div>
+
+                        <!-- Location -->
+                        <div class="flex items-center space-x-2 pt-4 border-t border-slate-300">
+                            <i class="fas fa-map-marker-alt text-blue-600"></i>
+                            <input type="text" name="location" placeholder="Add location"
+                                class="flex-1 bg-transparent border-none text-sm text-slate-700 placeholder:text-slate-400 focus:ring-0">
+                        </div>
+
+                        <!-- Media -->
+                        <div class="flex items-center space-x-2 pt-2">
+                            <label for="createTweetMedia"
+                                class="flex items-center space-x-2 cursor-pointer w-max text-blue-600 hover:text-blue-700 transition-colors">
+                                <div class="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center">
+                                    <i class="fas fa-image"></i>
+                                </div>
+                                <span class="text-sm font-medium">Add Photos/Video</span>
+                            </label>
+                            <input type="file" id="createTweetMedia" name="media" accept="image/*,video/*" multiple
+                                class="hidden">
+                            <div id="mediaCountLabel" class="text-sm text-slate-500 ml-2"></div>
+                        </div>
+
+                        <button type="submit"
+                            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-2xl shadow-xl shadow-blue-200 transition-all active:scale-[0.98]">
+                            Post
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- EDIT TWEET MODAL -->
+            <div id="editTweetModal"
+                class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                <div class="bg-white rounded-3xl w-full max-w-lg shadow-2xl animate-in fade-in zoom-in duration-200">
+                    <div class="p-6 border-b border-slate-100 flex justify-between items-center">
+                        <h3 class="font-bold text-slate-900 text-lg">Edit Post</h3>
+                        <button onclick="closeEditTweetModal()"
+                            class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100 transition-colors">
+                            <i class="fas fa-times text-slate-400"></i>
+                        </button>
+                    </div>
+                    <form id="editTweetForm" method="POST" enctype="multipart/form-data" class="p-6 space-y-5">
+                        <input type="hidden" name="_method" value="PUT">
+                        <input type="hidden" id="editTweetId" name="tweetId">
+
+                        <div class="relative">
+                            <textarea id="editTweetContent" name="content" rows="4" required
+                                class="w-full bg-slate-50 border-none rounded-2xl p-4 text-slate-800 focus:ring-2 focus:ring-blue-600 outline-none resize-none"></textarea>
+                        </div>
+
+                        <div class="flex justify-between items-center">
+                            <span id="editTweetRemaining"
+                                class="text-[10px] font-black uppercase text-slate-400 px-2 py-1 bg-slate-100 rounded">300
+                                WORDS LEFT</span>
+                            <div id="editTweetError" class="text-xs text-red-500 hidden font-bold">Limit exceeded!</div>
+                        </div>
+
+                        <div>
+                            <!-- Location -->
+                            <div class="flex items-center space-x-2 pt-4 border-t border-slate-300">
+                                <i class="fas fa-map-marker-alt text-blue-600"></i>
+                                <input type="text" name="location" placeholder="Add location"
+                                    class="flex-1 bg-transparent border-none text-sm text-slate-700 placeholder:text-slate-400 focus:ring-0">
+                            </div>
+
+                            <div class="flex gap-2">
+                                <button type="button" onclick="closeEditTweetModal()"
+                                    class="flex-1 bg-slate-100 text-slate-600 font-bold py-3 rounded-xl text-sm">Cancel</button>
+                                <button type="submit"
+                                    class="flex-1 bg-blue-600 text-white font-bold py-3 rounded-xl text-sm shadow-md shadow-blue-100">Update
+                                    Post</button>
+                            </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- IMAGE LIGHTBOX -->
+            <div id="imageModal"
+                class="hidden fixed inset-0 bg-black/95 z-[60] flex items-center justify-center p-4 cursor-zoom-out"
+                onclick="closeImageModal()">
+                <img id="modalImage" src="" class="max-w-full max-h-[90vh] object-contain rounded shadow-2xl">
+            </div>
+
+            <script>
+                // Tab Logic
+                function switchTab(event, tabName) {
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    document.getElementById(tabName.trim()).classList.add('active');
+
+                    // Update URL params
+                    const url = new URL(window.location);
+                    url.searchParams.set('tab', tabName.trim());
+                    window.history.pushState({}, '', url);
+
+                    // Update button styles
+                    document.querySelectorAll('.tab-button').forEach(btn => {
+                        if (btn.textContent.trim().toLowerCase().includes(tabName.trim())) {
+                            btn.classList.add('border-blue-600', 'text-blue-600');
+                            btn.classList.remove('border-transparent', 'text-slate-400');
+                        } else {
+                            btn.classList.remove('border-blue-600', 'text-blue-600');
+                            btn.classList.add('border-transparent', 'text-slate-400');
+                        }
+                    });
+                }
+
+                // On load, check tab param
+                const urlParams = new URLSearchParams(window.location.search);
+                const tab = urlParams.get('tab');
+                if (tab) {
+                    switchTab(null, tab);
+                }
+
+                // Initialize tab from URL (legacy check)
+                document.addEventListener('DOMContentLoaded', () => {
+                    const params = new URLSearchParams(window.location.search);
+                    if (params.get('tab') === 'reviews') {
+                        const reviewsBtn = document.querySelector('button[onclick*="\'reviews\'"]');
+                        if (reviewsBtn) {
+                            switchTab(reviewsBtn, 'reviews');
+                        }
+                    }
+                });
+
+                // Word counter helper
+                function setupTweetWordCounter(textareaId, remainingId, errorId, formId) {
+                    const ta = document.getElementById(textareaId);
+                    const remainingEl = document.getElementById(remainingId);
+                    const errorEl = document.getElementById(errorId);
+                    const form = document.getElementById(formId);
+                    if (!ta || !remainingEl) return;
+
+                    function update() {
+                        const words = ta.value.trim().split(/\s+/).filter(Boolean).length;
+                        const remaining = 300 - words;
+                        remainingEl.textContent = `${Math.abs(remaining)} WORDS ${remaining < 0 ? 'OVER' : 'LEFT'}`;
+                        if (remaining < 0) {
+                            remainingEl.classList.add('bg-red-100', 'text-red-600');
+                            errorEl?.classList.remove('hidden');
+                        } else {
+                            remainingEl.classList.remove('bg-red-100', 'text-red-600');
+                            errorEl?.classList.add('hidden');
+                        }
+                    }
+                    ta.addEventListener('input', update);
+                    update();
+                }
+
+                // Modal Helpers 
+                function toggleEditMode() {
+                    const view = document.getElementById('viewMode');
+                    const edit = document.getElementById('editMode');
+                    view.classList.toggle('hidden');
+                    edit.classList.toggle('hidden');
+                }
+
+                function openCreateTweetModal() {
+                    document.getElementById('createTweetModal').classList.remove('hidden');
+                    document.body.classList.add('overflow-hidden');
+                }
+
+                function closeCreateTweetModal() {
+                    document.getElementById('createTweetModal').classList.add('hidden');
+                    document.body.classList.remove('overflow-hidden');
+                }
+
+                function openEditTweetModal() {
+                    document.getElementById('editTweetModal').classList.remove('hidden');
+                    document.body.classList.add('overflow-hidden');
+                }
+
+                function closeEditTweetModal() {
+                    document.getElementById('editTweetModal').classList.add('hidden');
+                    document.body.classList.remove('overflow-hidden');
+                }
+
+                function showImageModal(src) {
+                    document.getElementById('modalImage').src = src;
+                    document.getElementById('imageModal').classList.remove('hidden');
+                }
+
+                function closeImageModal() {
+                    document.getElementById('imageModal').classList.add('hidden');
+                }
+
+                function toggleTweetMenu(button) {
+                    const menu = button.nextElementSibling;
+                    const allMenus = document.querySelectorAll('.tweet-menu');
+                    allMenus.forEach(m => { if (m !== menu) m.classList.add('hidden'); });
+                    menu.classList.toggle('hidden');
+                }
+
+                // Time Formatting
+                function timeAgo(date) {
+                    const now = new Date();
+                    const diffSecs = Math.round((now - date) / 1000);
+                    const diffMins = Math.round(diffSecs / 60);
+                    const diffHours = Math.round(diffMins / 60);
+                    if (diffSecs < 60) return 'Just now';
+                    if (diffMins < 60) return `${diffMins}m`;
+                    if (diffHours < 24) return `${diffHours}h`;
+                    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                }
+
+                document.addEventListener('DOMContentLoaded', () => {
+                    document.querySelectorAll('.tweet-time').forEach(el => {
+                        const ts = el.getAttribute('data-timestamp');
+                        if (ts) el.textContent = `· ${timeAgo(new Date(ts))}`;
+                    });
+
+                    setupTweetWordCounter('createTweetContent', 'createTweetRemaining', 'createTweetError', 'createTweetForm');
+                    setupTweetWordCounter('editTweetContent', 'editTweetRemaining', 'editTweetError', 'editTweetForm');
+
+                    // Media count logic
+                    const mediaInput = document.getElementById('createTweetMedia');
+                    const mediaLabel = document.getElementById('mediaCountLabel');
+                    if (mediaInput && mediaLabel) {
+                        mediaInput.addEventListener('change', function () {
+                            const count = this.files.length;
+                            if (count > 0) {
+                                mediaLabel.innerHTML = `<i class="fas fa-check mr-2 text-green-500"></i>${count} file${count === 1 ? '' : 's'} selected`;
+                                mediaLabel.classList.add('text-slate-900', 'font-medium');
+                            } else {
+                                mediaLabel.innerHTML = `<i class="far fa-image mr-2"></i>Select files`;
+                                mediaLabel.classList.remove('text-slate-900', 'font-medium');
+                            }
+                        });
+                    }
+                });
+
+                // Close menus/modals on background click
+                window.onclick = function (event) {
+                    if (event.target.classList.contains('fixed')) {
+                        closeCreateTweetModal();
+                        closeEditTweetModal();
+                        closeImageModal();
+                    }
+                }
+            </script>
+
+            <script src="/js/tweet-operations.js"></script>
+            <script src="/js/autocomplete.js"></script>
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    setupAutocomplete('createTweetContent', 'autocomplete-list');
+                });
+            </script>
+            <script src="/js/form-preservation.js"></script>
+            <%- include('../partials/footer') %>
+                document.getElementById(tabName.trim()).classList.add('active');
+
+                // Update URL params
+                const url = new URL(window.location);
+                url.searchParams.set('tab', tabName.trim());
+                window.history.pushState({}, '', url);
+
+                // Update button styles
+                document.querySelectorAll('.tab-button').forEach(btn => {
+                if (btn.textContent.trim().toLowerCase().includes(tabName.trim())) {
+                btn.classList.add('border-blue-600', 'text-blue-600');
+                btn.classList.remove('border-transparent', 'text-slate-400');
+                } else {
+                btn.classList.remove('border-blue-600', 'text-blue-600');
+                btn.classList.add('border-transparent', 'text-slate-400');
+                }
+                });
+                }
+
+                // On load, check tab param
+                const urlParams = new URLSearchParams(window.location.search);
+                const tab = urlParams.get('tab');
+                if (tab) {
+                switchTab(null, tab);
+                }
+                </script>
+                <script src="/js/autocomplete.js"></script>
+                <script>
+                    document.addEventListener('DOMContentLoaded', function () {
+                        setupAutocomplete('createTweetContent', 'autocomplete-list');
+                    });
+                </script>
+                <script src="/js/form-preservation.js"></script>
+                <%- include('../partials/footer') %>
+                    document.querySelectorAll('.tab-button').forEach(b => {
+                    b.classList.remove('border-blue-600', 'text-blue-600');
+                    b.classList.add('border-transparent', 'text-slate-400');
+                    });
+
+                    document.getElementById(tabName).classList.add('active');
+                    // Handle both event click and direct element passed
+                    let target = event.currentTarget || event;
+                    target.classList.add('border-blue-600', 'text-blue-600');
+                    target.classList.remove('border-transparent', 'text-slate-400');
+                    }
+
+                    // Initialize tab from URL
+                    document.addEventListener('DOMContentLoaded', () => {
+                    const params = new URLSearchParams(window.location.search);
+                    if (params.get('tab') === 'reviews') {
+                    const reviewsBtn = document.querySelector('button[onclick*="\'reviews\'"]');
+                    if (reviewsBtn) {
+                    switchTab(reviewsBtn, 'reviews');
+                    }
+                    }
+                    });
+
+                    // Word counter helper
+                    function setupTweetWordCounter(textareaId, remainingId, errorId, formId) {
+                    const ta = document.getElementById(textareaId);
+                    const remainingEl = document.getElementById(remainingId);
+                    const errorEl = document.getElementById(errorId);
+                    const form = document.getElementById(formId);
+                    if (!ta || !remainingEl) return;
+
+                    function update() {
+                    const words = ta.value.trim().split(/\s+/).filter(Boolean).length;
+                    const remaining = 300 - words;
+                    remainingEl.textContent = `${Math.abs(remaining)} WORDS ${remaining < 0 ? 'OVER' : 'LEFT' }`; if
+                        (remaining < 0) { remainingEl.classList.add('bg-red-100', 'text-red-600' );
+                        errorEl?.classList.remove('hidden'); } else {
+                        remainingEl.classList.remove('bg-red-100', 'text-red-600' ); errorEl?.classList.add('hidden'); }
+                        } ta.addEventListener('input', update); update(); } // Modal Helpers function toggleEditMode() {
+                        const view=document.getElementById('viewMode'); const edit=document.getElementById('editMode');
+                        view.classList.toggle('hidden'); edit.classList.toggle('hidden'); } function
+                        openCreateTweetModal() { document.getElementById('createTweetModal').classList.remove('hidden');
+                        document.body.classList.add('overflow-hidden'); } function closeCreateTweetModal() {
+                        document.getElementById('createTweetModal').classList.add('hidden');
+                        document.body.classList.remove('overflow-hidden'); } function openEditTweetModal() {
+                        document.getElementById('editTweetModal').classList.remove('hidden');
+                        document.body.classList.add('overflow-hidden'); } function closeEditTweetModal() {
+                        document.getElementById('editTweetModal').classList.add('hidden');
+                        document.body.classList.remove('overflow-hidden'); } function showImageModal(src) {
+                        document.getElementById('modalImage').src=src;
+                        document.getElementById('imageModal').classList.remove('hidden'); } function closeImageModal() {
+                        document.getElementById('imageModal').classList.add('hidden'); } function
+                        toggleTweetMenu(button) { const menu=button.nextElementSibling; const
+                        allMenus=document.querySelectorAll('.tweet-menu'); allMenus.forEach(m=> { if (m !== menu)
+                        m.classList.add('hidden'); });
+                        menu.classList.toggle('hidden');
+                        }
+
+                        // Time Formatting
+                        function timeAgo(date) {
+                        const now = new Date();
+                        const diffSecs = Math.round((now - date) / 1000);
+                        const diffMins = Math.round(diffSecs / 60);
+                        const diffHours = Math.round(diffMins / 60);
+                        if (diffSecs < 60) return 'Just now' ; if (diffMins < 60) return `${diffMins}m`; if (diffHours <
+                            24) return `${diffHours}h`; return date.toLocaleDateString('en-US', { month: 'short' ,
+                            day: 'numeric' }); } document.addEventListener('DOMContentLoaded', ()=> {
+                            document.querySelectorAll('.tweet-time').forEach(el => {
+                            const ts = el.getAttribute('data-timestamp');
+                            if (ts) el.textContent = `· ${timeAgo(new Date(ts))}`;
+                            });
+
+                            setupTweetWordCounter('createTweetContent', 'createTweetRemaining', 'createTweetError',
+                            'createTweetForm');
+                            setupTweetWordCounter('editTweetContent', 'editTweetRemaining', 'editTweetError',
+                            'editTweetForm');
+
+                            // Media count logic
+                            const mediaInput = document.getElementById('createTweetMedia');
+                            const mediaLabel = document.getElementById('mediaCountLabel');
+                            if (mediaInput && mediaLabel) {
+                            mediaInput.addEventListener('change', function () {
+                            const count = this.files.length;
+                            if (count > 0) {
+                            mediaLabel.innerHTML = `<i class="fas fa-check mr-2 text-green-500"></i>${count} file${count
+                            ===
+                            1 ? '' : 's'} selected`;
+                            mediaLabel.classList.add('text-slate-900', 'font-medium');
+                            } else {
+                            mediaLabel.innerHTML = `<i class="far fa-image mr-2"></i>Select files`;
+                            mediaLabel.classList.remove('text-slate-900', 'font-medium');
+                            }
+                            });
+                            }
+                            });
+
+                            // Close menus/modals on background click
+                            window.onclick = function (event) {
+                            if (event.target.classList.contains('fixed')) {
+                            closeCreateTweetModal();
+                            closeEditTweetModal();
+                            closeImageModal();
+                            }
+                            }
+                            </script>
+
+                            <script src="/js/tweet-operations.js"></script>
+                            <script src="/js/autocomplete.js"></script>
+                            <script src="/js/form-preservation.js"></script>
+                            <%- include('../partials/footer') %>

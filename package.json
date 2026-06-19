@@ -1,0 +1,45 @@
+{
+  "name": "election-system",
+  "version": "1.0.0",
+  "description": "Online Election & Candidate Review System",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "start:prod": "NODE_ENV=production node server.js",
+    "start:win-prod": "node start-production.js",
+    "deploy": "node deploy.js",
+    "backfill-anonnames": "node scripts/backfillAnonNames.js",
+    "anonymize-users": "node scripts/anonymizeUsers.js",
+    "revert-anonymize": "node scripts/revertAnonymize.js"
+  },
+  "dependencies": {
+    "axios": "^1.11.0",
+    "bcryptjs": "^2.4.3",
+    "connect-flash": "^0.1.1",
+    "connect-mongo": "^5.1.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "csurf": "^1.11.0",
+    "dotenv": "^10.0.0",
+    "ejs": "^3.1.6",
+    "express": "^4.17.1",
+    "express-session": "^1.18.1",
+    "jsonwebtoken": "^9.0.2",
+    "lucide": "^0.525.0",
+    "method-override": "^3.0.0",
+    "mongodb": "^6.18.0",
+    "mongoose": "^6.0.12",
+    "multer": "^1.4.4",
+    "passport": "^0.7.0",
+    "passport-google-oauth20": "^2.0.0",
+    "sharp": "^0.34.5",
+    "socket.io": "^4.8.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.14"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

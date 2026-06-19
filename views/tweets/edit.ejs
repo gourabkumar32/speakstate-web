@@ -1,0 +1,200 @@
+<%- include('../partials/header') %>
+<style>
+    .container{
+        margin-top: 60px;
+        margin-bottom: 30px;
+    }
+</style>
+<div class="container mx-auto px-4 py-6">
+    <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-lg p-4">
+        <h1 class="text-2xl font-bold mb-6">Edit Tweet</h1>
+
+        <% if (error && error.length > 0) { %>
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-6" role="alert">
+                <span class="block sm:inline"><%= error %></span>
+            </div>
+        <% } %>
+
+        <form id="editTweetForm" action="/tweets/<%= tweet._id %>" method="POST" enctype="multipart/form-data" class="space-y-6">
+            <!-- Content -->
+            <div>
+                <label for="content" class="block text-sm font-medium text-gray-700 mb-2">
+                    Content <span class="text-red-500">*</span>
+                </label>
+                <textarea
+                    id="content"
+                    name="content"
+                    rows="3"
+                    required
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="What's happening?"
+                ><%= tweet.content %></textarea>
+                <div class="flex items-center justify-between text-sm text-slate-500 mt-1">
+                    <span id="editPageRemaining" class="font-mono">300</span>
+                    <span>words remaining (show negative when over)</span>
+                 </div>
+                <div id="editPageError" class="text-sm text-red-600 mt-1 hidden"></div>
+            </div>
+
+            
+
+            <!-- Location -->
+            <div>
+                <label for="location" class="block text-sm font-medium text-gray-700 mb-2">
+                    Location
+                </label>
+                <input
+                    type="text"
+                    id="location"
+                    name="location"
+                    value="<%= tweet.location || '' %>"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Location"
+                >
+            </div>
+
+            <!-- Institution 
+            <div>
+                <label for="institution" class="block text-sm font-medium text-gray-700 mb-2">
+                    Institution/Organization
+                </label>
+                <input
+                    type="text"
+                    id="institution"
+                    name="institution"
+                    value="<%= tweet.institution || '' %>"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Related institution or organization"
+                >
+            </div>-->
+
+            <!-- Current Media -->
+            <% if (tweet.media && tweet.media.length > 0) { %>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Current Images</label>
+                    <div class="grid grid-cols-2 gap-4">
+                        <% tweet.media.forEach((file, index) => { %>
+                            <div class="relative">
+                                <img src="/uploads/tweets/<%= file %>" 
+                                     alt="Tweet image <%= index + 1 %>" 
+                                     class="w-full h-32 object-cover rounded-lg">
+                                <div class="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+                                    <label class="flex items-center space-x-2 bg-white px-3 py-1 rounded-md shadow-md cursor-pointer hover:bg-gray-50">
+                                        <input type="checkbox" name="removeMedia" value="<%= file %>" class="text-blue-600">
+                                        <span class="text-sm">Remove</span>
+                                    </label>
+                                </div>
+                            </div>
+                        <% }) %>
+                    </div>
+                </div>
+            <% } %>
+
+            <!-- New Media Upload -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Media (Images/Videos)
+                </label>
+                <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md hover:border-blue-400 transition-all duration-200">
+                    <div class="space-y-1 text-center">
+                        <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
+                            <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                        <div class="flex text-sm text-gray-600">
+                            <label for="media" class="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500">
+                                <span>Upload files</span>
+                                <input id="media" name="media" type="file" class="sr-only" multiple accept="image/*">
+                            </label>
+                            <p class="pl-1">or drag and drop</p>
+                        </div>
+                        <p class="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
+                    </div>
+                </div>
+                <div id="preview" class="mt-4 grid grid-cols-2 gap-4"></div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="flex items-center justify-end">
+                <div class="flex justify-end">
+                    <button
+                        type="submit"
+                        class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                    >
+                        Update Tweet
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Handle form submission
+    document.getElementById('editTweetForm').addEventListener('submit', function(event) {
+        const content = document.getElementById('content').value || '';
+        const words = content.trim().split(/\s+/).filter(Boolean).length;
+        const remaining = 300 - words;
+        if (remaining < 0) {
+            event.preventDefault();
+            const err = document.getElementById('editPageError');
+            err.textContent = `Please remove ${Math.abs(remaining)} word${Math.abs(remaining) === 1 ? '' : 's'} to meet the 300-word limit.`;
+            err.classList.remove('hidden');
+            return;
+        }
+
+        const submitButton = this.querySelector('button[type="submit"]');
+        submitButton.disabled = true;
+        submitButton.innerHTML = 'Updating...';
+        // Form will submit normally
+    });
+
+    // Live remaining counter on edit page
+    document.getElementById('content').addEventListener('input', function () {
+        const words = (this.value || '').trim().split(/\s+/).filter(Boolean).length;
+        const remaining = 300 - words;
+        const el = document.getElementById('editPageRemaining');
+        el.textContent = remaining;
+        if (remaining < 0) el.classList.add('text-red-600'); else el.classList.remove('text-red-600');
+        const err = document.getElementById('editPageError');
+        if (remaining < 0) { err.textContent = `Please remove ${Math.abs(remaining)} word${Math.abs(remaining) === 1 ? '' : 's'} to meet the 300-word limit.`; err.classList.remove('hidden'); } else { err.textContent = ''; err.classList.add('hidden'); }
+        const submitButton = document.querySelector('#editTweetForm button[type="submit"]');
+        if (submitButton) submitButton.disabled = remaining < 0;
+    });
+    // initialize count
+    document.getElementById('content').dispatchEvent(new Event('input'));
+
+    // Preview uploaded images
+    document.getElementById('media').addEventListener('change', function(event) {
+        const preview = document.getElementById('preview');
+        preview.innerHTML = '';
+        
+        // Only show first 5 images in preview
+        Array.from(event.target.files).slice(0, 5).forEach(file => {
+            if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const div = document.createElement('div');
+                    div.className = 'relative';
+                    div.innerHTML = `
+                        <img src="${e.target.result}" class="w-full h-48 object-cover rounded-lg">
+                        <button type="button" class="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    `;
+                    preview.appendChild(div);
+
+                    // Add remove functionality
+                    div.querySelector('button').addEventListener('click', function() {
+                        div.remove();
+                    });
+                };
+                
+                reader.readAsDataURL(file);
+            }
+        });
+    });
+</script>
+
+<%- include('../partials/footer') %>

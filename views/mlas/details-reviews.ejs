@@ -1,0 +1,190 @@
+<style>
+
+</style>
+
+
+<!-- Reviews Section -->
+<div class="mt-8 r">
+    <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-semibold">Reviews</h2>
+        <% if (user) { %>
+            <button onclick="showAddReviewModal()"
+                class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
+                Add Review
+            </button>
+            <% } %>
+    </div>
+
+    <!-- Reviews List -->
+    <div class="space-y-4 r" id="reviewsList">
+        <% if (mla.reviews && mla.reviews.length> 0) { %>
+            <% mla.reviews.forEach(review=> { %>
+                <div class="border rounded-lg p-4">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-gray-600 font-semibold">
+                                <%= review.displayName %>
+                            </p>
+                            <div class="flex items-center mt-1">
+                                <% for(var i=1; i <=5; i++) { %>
+                                    <span class="inline-block mr-1">
+                                        <svg class="h-5 w-5" fill="<%= i <= review.rating ? '#F59E0B' : '#D1D5DB' %>"
+                                            viewBox="0 0 20 20">
+                                            <path
+                                                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                        </svg>
+                                    </span>
+                                    <% } %>
+                            </div>
+                        </div>
+                        <p class="text-gray-500 text-sm">
+                            <%= new Date(review.createdAt).toLocaleDateString() %>
+                        </p>
+                    </div>
+                    <p class="mt-2 text-gray-700">
+                        <%= review.comment %>
+                    </p>
+                </div>
+                <% }); %>
+                    <% } else { %>
+                        <p class="text-gray-500">No reviews yet. Be the first to review!</p>
+                        <% } %>
+    </div>
+</div>
+
+<!-- Review Modal -->
+<div id="reviewModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden">
+    <div class="bg-white rounded-lg p-6 w-full max-w-lg">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-semibold">Add Review</h3>
+            <button onclick="closeReviewModal()" class="text-gray-500 hover:text-gray-700">
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+        <form id="reviewForm" class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Rating</label>
+                <div class="flex gap-2 mt-1" id="ratingStars">
+                    <% for(var i=1; i <=5; i++) { %>
+                        <button type="button" onclick="setRating(this.querySelector('svg').dataset.rating)"
+                            class="star-button p-1 focus:outline-none">
+                            <svg class="h-8 w-8" viewBox="0 0 20 20" data-rating="<%= i %>">
+                                <path fill="#D1D5DB"
+                                    d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                            </svg>
+                        </button>
+                        <% } %>
+                </div>
+                <input type="hidden" id="rating" name="rating" required>
+            </div>
+            <div>
+                <label for="comment" class="block text-sm font-medium text-gray-700">Comment</label>
+                <textarea id="comment" name="comment" rows="4" required
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"></textarea>
+            </div>
+            <div class="flex justify-end gap-4">
+                <button type="button" onclick="closeReviewModal()"
+                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200">
+                    Cancel
+                </button>
+                <button type="submit"
+                    class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700">
+                    Submit Review
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Review handling
+    let currentRating = 0;
+    const mlaId = '<%= mla._id %>';
+
+    function setRating(rating) {
+        currentRating = rating;
+        document.getElementById('rating').value = rating;
+        const stars = document.querySelectorAll('.star-button svg path');
+        stars.forEach((star) => {
+            const starRating = parseInt(star.closest('svg').dataset.rating);
+            star.setAttribute('fill', starRating <= rating ? '#F59E0B' : '#D1D5DB');
+        });
+    }
+
+    function showAddReviewModal() {
+        document.getElementById('reviewModal').classList.remove('hidden');
+        setRating(0);
+        document.getElementById('reviewForm').reset();
+    }
+
+    function closeReviewModal() {
+        document.getElementById('reviewModal').classList.add('hidden');
+        // Also ensure work modal is hidden
+        const workModal = document.getElementById('workModal');
+        if (workModal) {
+            workModal.classList.add('hidden');
+        }
+    }
+
+    document.getElementById('reviewForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const rating = document.getElementById('rating').value;
+        const comment = document.getElementById('comment').value;
+
+        if (!rating) {
+            alert('Please select a rating');
+            return;
+        }
+
+        fetch(`/mlas/${mlaId}/reviews`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({ rating, comment })
+        })
+            .then(async response => {
+                if (response.status === 401) {
+                    window.location.href = '/auth/login?returnTo=/mlas/' + mlaId + '/details';
+                    throw new Error('Redirecting to login');
+                }
+
+                // Check for JSON response
+                const contentType = response.headers.get("content-type");
+                if (contentType && contentType.indexOf("application/json") !== -1) {
+                    const result = await response.json();
+                    if (!response.ok) {
+                        throw new Error(result.message || result.error || 'Server error');
+                    }
+                    return result;
+                } else {
+                    // Start of fallback for non-JSON (likely 404 or 500 HTML)
+                    throw new Error(`Server returned status ${response.status}`);
+                }
+            })
+            .then(result => {
+                if (result.success) {
+                    closeReviewModal();
+                    // Ensure work modal stays hidden
+                    const workModal = document.getElementById('workModal');
+                    if (workModal) {
+                        workModal.classList.add('hidden');
+                    }
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 100);
+                } else {
+                    alert(result.message || 'Failed to add review');
+                }
+            })
+            .catch((err) => {
+                if (err.message !== 'Redirecting to login') {
+                    console.error(err);
+                    alert(err.message || 'Error submitting review');
+                }
+            });
+    });
+</script>

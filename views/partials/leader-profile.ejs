@@ -1,0 +1,14 @@
+<div class="flex items-center mb-6">
+    <img src="<%= leader.imageUrl %>" alt="<%= leader.name %>" class="w-24 h-24 rounded-full object-cover mr-4"
+        onerror="this.onerror=null; this.src='/uploads/mlas/default-mla.png';">
+    <div>
+        <h1 class="text-2xl font-bold">
+            <%= leader.name %>
+        </h1>
+        <p class="text-gray-600">
+            <%= leader.constituency %>, <%= leader.state %>
+        </p>
+        <p class="text-gray-600">Party: <%= leader.party %>
+        </p>
+    </div>
+</div>

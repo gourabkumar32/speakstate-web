@@ -1,0 +1,61 @@
+<!-- Footer partial: bottom navigation bar
+<nav class="fixed bottom-4 left-1/2 -translate-x-1/2 bg-white rounded-full shadow-xl ring-1 ring-black/5 z-50">
+  <div class="nav-container flex justify-around items-center max-w-md mx-auto h-16 p-2 space-x-2">
+
+    <a href="/" class="nav-link" data-page="home">
+      <i class="fa-solid fa-house"></i>
+      <span>Home</span>
+    </a>
+
+    <a href="/mlas" class="nav-link" data-page="mlas">
+      <i class="fa-solid fa-users"></i>
+      <span>Mlas</span>
+    </a>
+
+    <a href="/tweets" class="nav-link" data-page="tweets">
+      <i class="fa-solid fa-pencil"></i>
+      <span>Post</span>
+    </a>
+
+    <a href="/profile" class="nav-link" data-page="profile">
+      <i class="fa-solid fa-user"></i>
+      <span>Profile</span>
+    </a>
+
+  </div>
+</nav>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const navLinks = document.querySelectorAll('.nav-link');
+    let currentActiveLink = null;
+    const currentPath = window.location.pathname;
+    let initialLink = Array.from(navLinks).find(link => link.getAttribute('href') === currentPath);
+    if (!initialLink) initialLink = navLinks[0];
+
+    function setActiveLink(targetLink) {
+      navLinks.forEach(link => link.classList.remove('active'));
+      targetLink.classList.add('active');
+      currentActiveLink = targetLink;
+    }
+
+    setActiveLink(initialLink);
+    setTimeout(() => document.body.classList.remove('js-loading'), 100);
+
+    navLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const target = e.currentTarget;
+        const href = target.href;
+        const isNewLink = target !== currentActiveLink;
+        if (isNewLink) setActiveLink(target);
+        if (isNewLink) setTimeout(() => { window.location.href = href; }, 350);
+        else window.location.href = href;
+      });
+    });
+  });
+</script>
+
+
+</body>
+</html>-->

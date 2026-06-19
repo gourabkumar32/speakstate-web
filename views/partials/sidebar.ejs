@@ -1,0 +1,109 @@
+<% if (currentUser) { %>
+    <!-- User Profile Card -->
+    <div
+        class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden border border-gray-100 dark:border-gray-700 mb-6 sticky top-24">
+        <!-- Banner -->
+        <div class="h-24 bg-gradient-to-r from-blue-500 to-indigo-600 relative"></div>
+
+        <!-- Profile Content -->
+        <div class="px-6 pb-6 relative">
+            <!-- Avatar -->
+            <div class="-mt-12 mb-3 flex justify-center">
+                <div class="rounded-full p-1 bg-white dark:bg-gray-800">
+                    <%- include('./avatar', { tweet: { displayName: currentUser.name, isAnonymous: false,
+                        displayProfilePicture: currentUser.profilePicture ?
+                        `/uploads/profiles/${currentUser.profilePicture}` : null }, sizeClass: 'w-20 h-20' ,
+                        showAnonymousImage: false }) %>
+                </div>
+            </div>
+
+            <!-- User Info -->
+            <div class="text-center mb-6">
+                <h3 class="text-lg font-bold text-gray-900 dark:text-white">
+                    <%= currentUser.name %>
+                </h3>
+                <% if (currentUser.constituency) { %>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 flex items-center justify-center gap-1 mt-1">
+                        <i class="fas fa-map-marker-alt text-xs"></i>
+                        <%= currentUser.constituency %>
+                    </p>
+                    <% } %>
+            </div>
+
+            <!-- Stats/Links -->
+            <div class="grid grid-cols-2 gap-4 border-t border-gray-100 dark:border-gray-700 pt-4 mb-4">
+                <a href="/profile"
+                    class="text-center hover:bg-gray-50 dark:hover:bg-gray-700 p-2 rounded-lg transition-colors">
+                    <span class="block font-bold text-gray-900 dark:text-white">Profile</span>
+                    <span class="text-xs text-gray-500">View</span>
+                </a>
+                <div class="text-center p-2">
+                    <span class="block font-bold text-blue-600">
+                        <%= (typeof tweets !=='undefined' ? tweets.length : 0) %>
+                    </span>
+                    <span class="text-xs text-gray-500">Posts Today</span>
+                </div>
+            </div>
+
+            <!-- Navigation Menu -->
+            <nav class="space-y-1">
+                <a href="/mlas"
+                    class="flex items-center px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                    <i class="fas fa-users w-6 text-gray-400"></i>
+                    Find MLAs
+                </a>
+                <a href="/mps"
+                    class="flex items-center px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                    <i class="fas fa-landmark w-6 text-gray-400"></i>
+                    Find MPs
+                </a>
+                <!-- <a href="/tweets" class="flex items-center px-4 py-2.5 text-sm font-medium text-blue-600 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                    <i class="fas fa-bullhorn w-6"></i>
+                    Issues Feed
+                </a> -->
+            </nav>
+        </div>
+    </div>
+    <% } else { %>
+        <!-- Guest Call to Action -->
+        <div class="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-xl shadow-lg p-6 text-white mb-6">
+            <h3 class="text-xl font-bold mb-2">Join the Conversation</h3>
+            <p class="text-blue-100 text-sm mb-6">Sign up to raise issues, rate leaders, and make your voice heard in
+                your constituency.</p>
+            <div class="space-y-3">
+                <a href="/auth/login"
+                    class="block w-full text-center bg-white text-blue-700 font-bold py-2.5 rounded-lg hover:bg-blue-50 transition-colors">
+                    Login
+                </a>
+                <a href="/auth/register"
+                    class="block w-full text-center bg-blue-500 hover:bg-blue-400 text-white font-semibold py-2.5 rounded-lg border border-blue-400 transition-colors">
+                    Register
+                </a>
+            </div>
+        </div>
+
+        <!-- Quick Links for Guests -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4">
+            <h4 class="font-semibold text-gray-900 dark:text-white mb-3 px-2">Explore</h4>
+            <nav class="space-y-1">
+                <a href="/mlas"
+                    class="flex items-center px-3 py-2 text-sm text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700">
+                    <i class="fas fa-users w-6 text-gray-400"></i>
+                    Browse MLAs
+                </a>
+                <a href="/mps"
+                    class="flex items-center px-3 py-2 text-sm text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700">
+                    <i class="fas fa-landmark w-6 text-gray-400"></i>
+                    Browse MPs
+                </a>
+            </nav>
+        </div>
+        <% } %>
+
+            <!-- Footer Links -->
+            <div class="mt-6 flex flex-wrap gap-x-4 gap-y-2 px-4 text-xs text-gray-400">
+                <a href="/aboutus.html" class="hover:underline">About</a>
+                <a href="/privacy-policy" class="hover:underline">Privacy</a>
+                <a href="/terms-and-conditions" class="hover:underline">Terms</a>
+                <span>© 2025 SpeakState</span>
+            </div>

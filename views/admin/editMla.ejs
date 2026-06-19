@@ -1,0 +1,65 @@
+<%- include('../partials/header', { title: 'Edit MLA' }) %>
+<link rel="stylesheet" href="/css/style.css">
+
+<div class="container bg-gray-800 p-6 rounded-lg shadow-lg">
+    <h1 class="text-2xl font-bold mb-6 text-white">Edit MLA</h1>
+
+    <% if (success && success.length > 0) { %>
+<div class="alert alert-success"><%= success %></div>
+<% } %>
+    <% if (error && error.length > 0) { %>
+<div class="alert alert-danger"><%= error %></div>
+<% } %>
+
+    <form action="/admin/mlas/<%= mla._id %>/edit" method="POST" enctype="multipart/form-data" class="space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="form-group">
+                <label for="name" class="text-gray-300">Name:</label>
+                <input type="text" id="name" name="name" value="<%= mla.name %>" required 
+                       class="w-full bg-gray-600 text-white rounded p-2 mt-1">
+            </div>
+
+            <div class="form-group">
+                <label for="constituency" class="text-gray-300">Constituency:</label>
+                <input type="text" id="constituency" name="constituency" value="<%= mla.constituency %>" required 
+                       class="w-full bg-gray-600 text-white rounded p-2 mt-1">
+            </div>
+
+            <div class="form-group">
+                <label for="party" class="text-gray-300">Party:</label>
+                <input type="text" id="party" name="party" value="<%= mla.party %>" required 
+                       class="w-full bg-gray-600 text-white rounded p-2 mt-1">
+            </div>
+
+            <div class="form-group">
+                <label for="state" class="text-gray-300">State:</label>
+                <select id="state" name="state" required class="w-full bg-gray-600 text-white rounded p-2 mt-1">
+                    <option value="">Select State</option>
+                    <% const states = ["Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", "Delhi", "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand", "Karnataka", "Kerala", "Madhya Pradesh", "Maharashtra", "Manipur", "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Punjab", "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana", "Tripura", "Uttar Pradesh", "Uttarakhand", "West Bengal"]; %>
+                    <% states.forEach(state => { %>
+                        <option value="<%= state %>" <%= mla.state === state ? 'selected' : '' %>><%= state %></option>
+                    <% }); %>
+                </select>
+            </div>
+
+            <div class="form-group col-span-2">
+                <label for="image" class="text-gray-300">Current Image:</label>
+                <img src="<%= mla.image %>" alt="<%= mla.name %>" loading="lazy" class="w-32 h-32 object-cover rounded mt-2">
+                <label class="block mt-4 text-gray-300">Update Image (optional):</label>
+                <input type="file" id="image" name="image" accept="image/*" 
+                       class="w-full bg-gray-600 text-white rounded p-2 mt-1">
+            </div>
+        </div>
+
+        <div class="flex gap-4 mt-6">
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                Update MLA
+            </button>
+            <a href="/admin/mlas" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+                Cancel
+            </a>
+        </div>
+    </form>
+</div>
+
+<%- include('../partials/footer') %> 

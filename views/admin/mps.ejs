@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage MPs - Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body class="bg-gray-50">
+    <%- include('../partials/header') %>
+
+        <div class="container mx-auto px-4 py-8">
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold text-gray-800 mb-2">Manage MPs</h1>
+                <p class="text-gray-600">Create, edit, and delete Member of Parliament profiles</p>
+            </div>
+
+            <!-- Flash Messages -->
+            <% if (typeof success !=='undefined' && success && success.length> 0) { %>
+                <div class="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg flex items-center gap-3">
+                    <i class="fas fa-check-circle text-green-600"></i>
+                    <span class="text-green-700">
+                        <%= success[0] %>
+                    </span>
+                </div>
+                <% } %>
+                    <% if (typeof error !=='undefined' && error && error.length> 0) { %>
+                        <div class="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg flex items-center gap-3">
+                            <i class="fas fa-exclamation-circle text-red-600"></i>
+                            <span class="text-red-700">
+                                <%= error[0] %>
+                            </span>
+                        </div>
+                        <% } %>
+
+                            <div class="grid md:grid-cols-3 gap-8">
+                                <!-- Add New MP Form -->
+                                <div class="md:col-span-1">
+                                    <div class="bg-white rounded-lg shadow p-6">
+                                        <h2 class="text-xl font-bold text-gray-800 mb-6">
+                                            <i class="fas fa-plus-circle text-blue-600 mr-2"></i>Add New MP
+                                        </h2>
+                                        <form action="/admin/mps" method="POST" enctype="multipart/form-data"
+                                            class="space-y-4">
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 mb-2">Name
+                                                    *</label>
+                                                <input type="text" name="name" required
+                                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                    placeholder="Enter MP name">
+                                            </div>
+
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 mb-2">Party
+                                                    *</label>
+                                                <input type="text" name="party" required
+                                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                    placeholder="Enter party name">
+                                            </div>
+
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 mb-2">State
+                                                    *</label>
+                                                <select name="state" required
+                                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                                    <option value="" disabled selected>Select State</option>
+                                                    <% states.forEach(function(stateName) { %>
+                                                        <option value="<%= stateName %>">
+                                                            <%= stateName %>
+                                                        </option>
+                                                        <% }); %>
+                                                </select>
+                                            </div>
+
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 mb-2">Constituency
+                                                    *</label>
+                                                <input type="text" name="constituency" required
+                                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                    placeholder="Enter constituency">
+                                            </div>
+
+                                            <!-- <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                            <textarea name="description" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter MP bio/description"></textarea>
+                        </div>-->
+
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 mb-2">Profile
+                                                    Image</label>
+                                                <input type="file" name="image"
+                                                    accept="image/jpeg,image/png,image/gif,image/webp,image/avif"
+                                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                                <p class="text-xs text-gray-500 mt-1">Recommended: 400x500px, max 5MB
+                                                    (JPG, PNG, GIF, WebP, AVIF)</p>
+                                            </div>
+
+                                            <button type="submit"
+                                                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-200 flex items-center justify-center gap-2">
+                                                <i class="fas fa-save"></i> Add MP
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+
+                                <!-- MPs List -->
+                                <div class="md:col-span-2">
+                                    <div class="bg-white rounded-lg shadow">
+                                        <div class="px-6 py-4 border-b border-gray-200">
+                                            <h2 class="text-xl font-bold text-gray-800">
+                                                <i class="fas fa-users text-blue-600 mr-2"></i>MPs Directory (<%=
+                                                    mps.length %>)
+                                            </h2>
+                                        </div>
+
+                                        <% if (mps.length===0) { %>
+                                            <div class="p-8 text-center text-gray-500">
+                                                <i class="fas fa-inbox text-4xl mb-4 opacity-50"></i>
+                                                <p>No MPs added yet. Create your first MP profile using the form on the
+                                                    left.</p>
+                                            </div>
+                                            <% } else { %>
+                                                <div class="divide-y divide-gray-200">
+                                                    <% mps.forEach(mp=> { %>
+                                                        <div class="p-6 hover:bg-gray-50 transition">
+                                                            <div class="flex items-start justify-between gap-4">
+                                                                <div class="flex items-start gap-4 flex-1">
+                                                                    <img src="<%= mp.image ? ((typeof mp.image === 'string' && (mp.image.indexOf('/uploads/') === 0 || mp.image.indexOf('http') === 0)) ? mp.image : ('/uploads/candidates/' + mp.image)) : '/uploads/candidates/default-mp.png' %>"
+                                                                        alt="<%= mp.name %>" loading="lazy"
+                                                                        class="w-16 h-20 object-cover rounded border border-gray-200">
+                                                                    <div class="flex-1">
+                                                                        <h3 class="text-lg font-bold text-gray-800">
+                                                                            <%= mp.name %>
+                                                                        </h3>
+                                                                        <div
+                                                                            class="text-sm text-gray-600 space-y-1 mt-2">
+                                                                            <p><i class="fas fa-flag-usa w-4"></i>
+                                                                                <strong>Party:</strong>
+                                                                                <%= mp.party %>
+                                                                            </p>
+                                                                            <p><i class="fas fa-map w-4"></i>
+                                                                                <strong>State:</strong>
+                                                                                <%= mp.state %>
+                                                                            </p>
+                                                                            <p><i class="fas fa-landmark w-4"></i>
+                                                                                <strong>Constituency:</strong>
+                                                                                <%= mp.constituency %>
+                                                                            </p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="flex gap-2">
+                                                                    <a href="/admin/mps/<%= mp._id %>/edit"
+                                                                        class="bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded transition duration-200 flex items-center gap-2">
+                                                                        <i class="fas fa-edit"></i> Edit
+                                                                    </a>
+                                                                    <button
+                                                                        onclick="deleteMp('<%= mp._id %>', '<%= mp.name %>')"
+                                                                        class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded transition duration-200 flex items-center gap-2">
+                                                                        <i class="fas fa-trash"></i> Delete
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <% }); %>
+                                                </div>
+                                                <% } %>
+                                    </div>
+                                </div>
+                            </div>
+        </div>
+
+        <%- include('../partials/footer') %>
+
+            <script>
+                function deleteMp(mpId, mpName) {
+                    if (confirm(`Are you sure you want to delete ${mpName}? This action cannot be undone.`)) {
+                        fetch(`/admin/mps/${mpId}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    alert(data.message);
+                                    location.reload();
+                                } else {
+                                    alert('Error: ' + data.message);
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                alert('Error deleting MP');
+                            });
+                    }
+                }
+            </script>
+</body>
+
+</html>
